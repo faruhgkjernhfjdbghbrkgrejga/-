@@ -18,7 +18,7 @@ def main():
     elif selected_page == "퀴즈 생성":
         quiz_creation_page()
     elif selected_page == "퀴즈 채점":
-        quiz_grading_page(quiz_questions, page_state)
+        quiz_grading_page(st.session_state)
 
 # 메인 함수 실행
 if __name__ == "__main__":
