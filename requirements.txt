@@ -6,3 +6,4 @@ langchain_openai
 pytesseract
 pillow
 langchain_community
+scikit-learn
