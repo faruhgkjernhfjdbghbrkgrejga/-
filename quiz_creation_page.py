@@ -122,10 +122,13 @@ def quiz_creation_page():
             st.header("생성된 퀴즈")
             for j, question in enumerate(st.session_state.quizs):
                 if quiz_type == "주관식":
-                    st.write(f"{question.quiz}")
+                    st.write(f"주관식 문제{j+1}: {question.quiz}")
                     st.write("\n")
                 else:
-                    st.write(f"{question.quiz}")
+                    if quiz_type == "객관식":
+                        st.write(f"객관식 문제{j+1}: {question.quiz}")
+                    else:
+                        st.write(f"OX퀴즈 문제{j+1}: {question.quiz}")
                     st.write("\n")
                     st.write(f"{question.options}")
                     st.write("\n")
