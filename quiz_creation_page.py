@@ -1,5 +1,3 @@
-#quiz_creation_page.py
-
 import streamlit as st
 from langchain_openai import ChatOpenAI
 from langchain_core.pydantic_v1 import BaseModel, Field
