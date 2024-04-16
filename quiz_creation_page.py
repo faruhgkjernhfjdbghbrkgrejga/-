@@ -125,7 +125,7 @@ def quiz_creation_page():
                     st.write(f"주관식 문제{j+1}: {question.quiz}")
                     st.write("\n")
                 else:
-                    if quiz_type == "객관식":
+                    if quiz_type == "다중 선택 (객관식)":
                         st.write(f"객관식 문제{j+1}: {question.quiz}")
                     else:
                         st.write(f"OX퀴즈 문제{j+1}: {question.quiz}")
