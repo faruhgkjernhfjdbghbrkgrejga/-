@@ -1,3 +1,5 @@
+#main.py
+
 import streamlit as st
 from upload_page import upload_page
 from quiz_creation_page import quiz_creation_page
