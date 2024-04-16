@@ -4,7 +4,7 @@ import pytesseract
 from PyPDF2 import PdfReader
 import io
 
-# 파일 처리 함수
+@st.cache(allow_output_mutation=True)
 def process_file(uploaded_file):
     if uploaded_file is None:
         st.warning("파일을 업로드하세요.")
@@ -27,23 +27,15 @@ def process_file(uploaded_file):
 
     return text_content
 
-# 파일 업로드 페이지
 def upload_page():
     st.title("파일 업로드")
-    
+
     # 파일 업로드 옵션
     uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
 
-    # 파일 처리
     text_content = process_file(uploaded_file)
 
     if text_content is not None:
         st.success("파일 처리 완료!")
-
-        # 업로드된 파일 내용 표시
-        st.header("파일 내용")
-        st.text(text_content)
-
-# 테스트용 코드: upload_page() 함수 직접 호출
-if __name__ == "__main__":
-    upload_page()
+        st.text("파일 내용:")
+        st.write(text_content)
