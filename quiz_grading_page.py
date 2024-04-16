@@ -12,7 +12,7 @@ def grade_quiz_answers(user_answers, quiz_answers):
             graded_answers.append("오답")
     return graded_answers
 
-# 메인 함수
+# 퀴즈 채점 페이지 함수
 def quiz_grading_page(quiz_questions, page_state):
     # 현재 페이지 상태
     page = page_state.get("page", 1)
