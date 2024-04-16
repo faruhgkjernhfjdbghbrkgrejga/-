@@ -5,8 +5,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 def grade_quiz_answers(user_answers, quiz_answers):
     graded_answers = []
     for user_answer, quiz_answer in zip(user_answers, quiz_answers):
-        similarity = cosine_similarity([user_answer], [quiz_answer])[0][0]
-        if similarity > 0.7:
+        cosimil = cosine_similarity([user_answer], [quiz_answer])[0][0]
+        if cosimil > 0.7:
             graded_answers.append("정답")
         else:
             graded_answers.append("오답")
