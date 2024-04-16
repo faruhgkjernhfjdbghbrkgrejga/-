@@ -117,6 +117,8 @@ def quiz_creation_page():
                 quiz_answers.append(quiz_questions[i].correct_answer)
             st.session_state['quizs'] = quiz_questions
             st.session_state['canswer'] = quiz_answers
+            if st.button("퀴즈 채점 페이지로 이동"):  # New button
+                st.experimental_rerun()
 
         if st.session_state.quizs is not None:
             st.header("생성된 퀴즈")
