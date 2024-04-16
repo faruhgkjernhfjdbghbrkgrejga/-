@@ -1,5 +1,6 @@
 import streamlit as st
 from langchain.chat_models import ChatOpenAI
+from upload_page import process_file
 
 chat_model = ChatOpenAI()
 
