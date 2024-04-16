@@ -1,5 +1,3 @@
-#quiz_grading_page.py
-
 import streamlit as st
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -45,3 +43,8 @@ def quiz_grading_page(quiz_questions, page_state):
 
             # 페이지 상태 초기화
             page_state["page"] = 1
+
+        # 추가된 버튼: 퀴즈 생성 페이지로 이동
+        if st.button("퀴즈 생성 페이지로 이동"):
+            page_state["page"] = 0
+            st.experimental_rerun()
