@@ -1,3 +1,5 @@
+import streamlit as st
+
 # 샘플 사용자 데이터베이스 (실제로는 데이터베이스나 API 호출로 대체해야 합니다)
 users = {
     "user1": {"password": "password1"},
@@ -37,7 +39,24 @@ def login_user(username, password):
     else:
         return "오류: 잘못된 사용자 이름 또는 비밀번호입니다."
 
-# 예시 사용
-print(register_user("user3", "password3"))
-print(login_user("user1", "password1"))
-print(login_user("user1", "wrong_password"))
+def main():
+    st.title("User Registration & Login")
+
+    # User registration
+    st.header("Register")
+    new_username = st.text_input("Enter a new username:")
+    new_password = st.text_input("Enter a new password:", type="password")
+    if st.button("Register"):
+        result = register_user(new_username, new_password)
+        st.success(result)
+
+    # User login
+    st.header("Login")
+    existing_username = st.text_input("Enter your username:")
+    existing_password = st.text_input("Enter your password:", type="password")
+    if st.button("Login"):
+        result = login_user(existing_username, existing_password)
+        st.success(result)
+
+if __name__ == "__main__":
+    main()
