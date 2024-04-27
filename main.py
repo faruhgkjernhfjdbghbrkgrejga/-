@@ -1,11 +1,10 @@
-#main.py
+# main.py
 
 import streamlit as st
 from upload_page import upload_page
 from quiz_creation_page import quiz_creation_page
 from quiz_grading_page import quiz_grading_page
-from quiz_solve_page import quiz_slove_page
-from quiz_solve_page import quiz_solve_page
+from quiz_solve_page import quiz_solve_page  # 수정된 부분
 from sign import sign
 
 # 페이지 타이틀 설정
@@ -30,7 +29,7 @@ def main():
     elif st.session_state.selected_page == "퀴즈 풀이":
         placeholder.empty()
         with placeholder.container():
-            quiz_slove_page()
+            quiz_solve_page()  # 수정된 부분
     elif selected_page == "로그인":
         sign()
 
