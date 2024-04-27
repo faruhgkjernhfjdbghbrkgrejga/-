@@ -1,8 +1,7 @@
 import streamlit as st
 import streamlit_authenticator as auth
+import yaml
 
-with open('config.yaml') as file:
-    config = yaml.load(file, Loader=auth.SafeLoader)
 
 # 샘플 사용자 데이터베이스 (실제로는 데이터베이스나 API 호출로 대체해야 합니다)
 authenticator = auth.Authenticate(
@@ -13,7 +12,7 @@ authenticator = auth.Authenticate(
     config['preauthorized']
 )
 
-def register_user(username, password):
+def register_user(name, username, password):
     """
     새로운 사용자를 등록합니다.
 
@@ -24,11 +23,28 @@ def register_user(username, password):
     Returns:
         str: 성공적인 등록 또는 오류 메시지.
     """
-    if username in users:
-        return f"오류: '{username}' 사용자가 이미 존재합니다."
-    else:
-        users[username] = {"password": password}
-        return f"'{username}' 사용자가 성공적으로 등록되었습니다."
+    new_data = {
+        "credentials": {
+            "usernames": {
+                username: {
+                    "name": name,
+                    "password": auth.Hasher([password]).generate()[0]  # 비밀번호 해싱
+                }
+            }
+        }
+    }
+    # 기존 데이터 읽기
+    with open('user_db.yaml', 'r') as file:
+        existing_data = yaml.safe_load(file)
+    
+    # 새로운 계정 정보 추가
+    existing_data['credentials']['usernames'].update(new_data['credentials']['usernames'])
+    
+    # YAML 파일에 쓰기
+    with open('user_db.yaml', 'w') as file:
+        yaml.dump(existing_data, file, default_flow_style=False)
+    
+    st.success("계정이 성공적으로 생성되었습니다!")
 
 def login_user(name, authentication_status, username, password):
     """
@@ -59,13 +75,16 @@ def login_user(name, authentication_status, username, password):
 
 def main():
     st.title("User Registration & Login")
-
+    with open('config.yaml') as file:
+        config = yaml.load(file, Loader=auth.SafeLoader)
+    
     # User registration
     st.header("Register")
+    new_name = st.text_input("Enter your name:")
     new_username = st.text_input("Enter a new username:")
     new_password = st.text_input("Enter a new password:", type="password")
     if st.button("Register"):
-        result = register_user(new_username, new_password)
+        result = register_user(new_name, new_username, new_password)
         st.success(result)
 
     # User login
