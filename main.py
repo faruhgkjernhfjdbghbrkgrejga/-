@@ -11,20 +11,24 @@ st.set_page_config(page_title="AI 퀴즈 생성기")
 
 # 메인 함수
 def main():
-    # 페이지 상태 초기화
-    page_state = st.session_state
-
     # 사이드바 메뉴 설정
-    menu_options = ["로그인", "파일 업로드", "퀴즈 생성", "퀴즈 채점"]
+    menu_options = ["로그인", "파일 업로드", "퀴즈 생성", "퀴즈 풀이"]
     selected_page = st.sidebar.radio("메뉴", menu_options)
+    if 'selected_page' not in st.session_state:
+        st.session_state.selected_page = "파일 업로드"
 
+    placeholder = st.empty()
     # 선택된 페이지 표시
     if selected_page == "파일 업로드":
         upload_page()
-    elif selected_page == "퀴즈 생성":
-        quiz_creation_page()
-    elif selected_page == "퀴즈 채점":
-        quiz_grading_page(quiz_questions=page_state.get("quiz_questions", []), page_state=page_state)
+    elif st.session_state.selected_page == "퀴즈 생성":
+        placeholder.empty()
+        with placeholder.container():
+            quiz_creation_page()
+    elif st.session_state.selected_page == "퀴즈 풀이":
+        placeholder.empty()
+        with placeholder.container():
+            quiz_slove_page()
     elif selected_page == "로그인":
         sign()
 
