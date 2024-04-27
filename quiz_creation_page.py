@@ -172,4 +172,3 @@ def quiz_creation_page():
                     # st.session_state.gene = 1
             # if st.session_state.gene is not None:
             #     st.rerun()
-
