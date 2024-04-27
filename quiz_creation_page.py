@@ -163,6 +163,7 @@ def quiz_creation_page():
                         st.session_state['quizs'] = quiz_questions
                     st.session_state.selected_page = "퀴즈 풀이"
                     st.session_state.selected_type = quiz_type
+                    gene = 1
             if gene is not None:
                 st.rerun()
 
