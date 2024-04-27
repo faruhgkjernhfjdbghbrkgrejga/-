@@ -164,5 +164,5 @@ def quiz_creation_page():
                     st.session_state.selected_page = "퀴즈 풀이"
                     st.session_state.selected_type = quiz_type
                     st.session_state.selected_num = num_quizzes
-                    print(st.session_state.selected_page)
-                st.rerun()
+                #     print(st.session_state.selected_page)
+                # st.rerun()
