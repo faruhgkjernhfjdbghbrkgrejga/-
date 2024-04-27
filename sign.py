@@ -1,22 +1,22 @@
+import yaml
 import streamlit as st
 import streamlit_authenticator as auth
-import yaml
 
 
 # 샘플 사용자 데이터베이스 (실제로는 데이터베이스나 API 호출로 대체해야 합니다)
-authenticator = auth.Authenticate(
-    config['credentials'],
-    config['cookie']['name'],
-    config['cookie']['key'],
-    config['cookie']['expiry_days'],
-    config['preauthorized']
-)
+#authenticator = auth.Authenticate(
+ #   config['credentials'],
+  #  config['cookie']['name'],
+   # config['cookie']['key'],
+    #config['cookie']['expiry_days'],
+    #config['preauthorized']
+#)
 
-names = ["Smith Lang", "sample id"]
-usernames = ["lsmith", "samid"]
-passwords = ["123","456"] # yaml 파일 생성하고 비밀번호 지우기!
+#names = ["Smith Lang", "sample id"]
+#usernames = ["lsmith", "samid"]
+#passwords = ["123","456"] # yaml 파일 생성하고 비밀번호 지우기!
 
-def register_user(name, username, password):
+def register_user(name, username, email, password):
     """
     새로운 사용자를 등록합니다.
 
@@ -31,6 +31,7 @@ def register_user(name, username, password):
         "credentials": {
             "usernames": {
                 username: {
+                    "email": email
                     "name": name,
                     "password": auth.Hasher([password]).generate()[0]  # 비밀번호 해싱
                 }
@@ -62,7 +63,7 @@ def login_user(name, authentication_status, username, password):
         str: 성공적인 로그인 또는 오류 메시지.
     """
 
-    name, authentication_status, username = authenticator.login("Login","main")
+    name, authentication_status, username = authenticator.login(username, password)
     # authentication_status : 인증 상태 (실패=>False, 값없음=>None, 성공=>True)
     if authentication_status == False:
         st.error("잘못된 사용자 이름 또는 비밀번호입니다.")
@@ -81,16 +82,18 @@ def main():
     st.title("User Registration & Login")
     with open('config.yaml') as file:
         config = yaml.load(file, Loader=auth.SafeLoader)
+
     
     # User registration
     st.header("Register")
     new_name = st.text_input("Enter your name:")
     new_username = st.text_input("Enter a new username:")
+    new_email = st.text_input("Enter your email:")
     new_password = st.text_input("Enter a new password:", type="password")
     if st.button("Register"):
-        result = register_user(new_name, new_username, new_password)
+        result = register_user(new_name, new_username, new_email, new_password)
         st.success(result)
-
+        
     # User login
     st.header("Login")
     existing_username = st.text_input("Enter your username:")
@@ -100,4 +103,11 @@ def main():
         st.success(result)
 
 if __name__ == "__main__":
+    authenticator = auth.Authenticate(
+        config['credentials'],
+        config['cookie']['name'],
+        config['cookie']['key'],
+        config['cookie']['expiry_days'],
+        config['preauthorized']
+    )
     main()
