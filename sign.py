@@ -1,6 +1,9 @@
+#sign.py
+
 import yaml
 import streamlit as st
 import bcrypt
+import hashlib
 
 def register_user(name, username, email, password):
     """
@@ -67,7 +70,7 @@ def login_user(username, password):
     if user_info is None:
         st.error("잘못된 사용자 이름 또는 비밀번호입니다.")
         return
-    if user_info["password"] == hashlib.sha256(password.encode()).hexdigest():
+    if bcrypt.checkpw(password.encode(), user_info["password"].encode()):
         return f"'{username}' 사용자가 성공적으로 로그인되었습니다."
     else:
         st.error("잘못된 사용자 이름 또는 비밀번호입니다.")
