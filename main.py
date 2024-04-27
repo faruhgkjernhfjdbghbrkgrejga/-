@@ -18,7 +18,7 @@ def main():
     if 'selected_page' not in st.session_state:
         st.session_state.selected_page = "파일 업로드"
 
-    placeholder = st.empty()
+    # placeholder = st.empty()
     # 선택된 페이지 표시
     if selected_page == "파일 업로드":
         upload_page()
