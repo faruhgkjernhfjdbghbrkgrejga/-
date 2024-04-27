@@ -6,18 +6,6 @@ from PIL import Image
 import pytesseract
 from PyPDF2 import PdfReader
 import io
-from streamlit_modal import Modal
-
-
-modal = Modal(
-    "Demo Modal",
-    key="demo-modal",
-
-    # Optional
-    padding=20,  # default value
-    max_width=744  # default value
-)
-
 
 class CreateQuizoub(BaseModel):
     quiz: str = Field(description="만들어진 문제")
