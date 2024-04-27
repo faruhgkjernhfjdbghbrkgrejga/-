@@ -5,6 +5,7 @@ from upload_page import upload_page
 from quiz_creation_page import quiz_creation_page
 from quiz_grading_page import quiz_grading_page
 from quiz_solve_page import quiz_slove_page
+from quiz_solve_page import quiz_solve_page
 from sign import sign
 
 # 페이지 타이틀 설정
