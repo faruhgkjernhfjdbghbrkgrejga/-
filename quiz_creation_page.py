@@ -1,3 +1,5 @@
+#quiz_creation_page.py
+
 import streamlit as st
 from langchain_openai import ChatOpenAI
 from langchain_core.pydantic_v1 import BaseModel, Field
@@ -164,5 +166,4 @@ def quiz_creation_page():
                     st.session_state.selected_page = "퀴즈 풀이"
                     st.session_state.selected_type = quiz_type
                     st.session_state.selected_num = num_quizzes
-                #     print(st.session_state.selected_page)
-                # st.rerun()
+                # st.rerun()를 제거합니다.
