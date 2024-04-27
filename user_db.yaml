@@ -1,6 +1,6 @@
 credentials:
   usernames:
-    jsmith:
+    lsmith:
       email: langmith@gmail.com
       name: Smith Lang
       password: '123' # To be replaced with hashed password
