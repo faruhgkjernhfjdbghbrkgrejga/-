@@ -153,15 +153,16 @@ def quiz_creation_page():
             text_content = process_file(uploaded_file)
 
             quiz_questions = []
+            gene = None
 
             if text_content is not None:
 
                 if st.button('문제 생성 하기'):
                     for i in range(num_quizzes):
                         quiz_questions.append(generate_quiz(quiz_type, text_content))
-                        print(quiz_questions)
                         st.session_state['quizs'] = quiz_questions
                     st.session_state.selected_page = "퀴즈 풀이"
                     st.session_state.selected_type = quiz_type
-                    st.session_state.selected_num = num_quizzes
-                # st.rerun()를 제거합니다.
+            if gene is not None:
+                st.rerun()
+
