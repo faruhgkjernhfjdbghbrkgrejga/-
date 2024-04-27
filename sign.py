@@ -33,7 +33,7 @@ def register_user(name, username, email, password):
         "credentials": {
             "usernames": {
                 username: {
-                    "email": email
+                    "email": email,
                     "name": name,
                     "password": auth.Hasher([password]).generate()[0]  # 비밀번호 해싱
                 }
@@ -85,7 +85,7 @@ def sign():
     with open('config.yaml') as file:
         config = yaml.load(file, Loader=auth.SafeLoader)
      
-     authenticator = auth.Authenticate(
+    authenticator = auth.Authenticate(
         config['credentials'],
         config['cookie']['name'],
         config['cookie']['key'],
@@ -108,6 +108,9 @@ def sign():
     st.header("Login")
     existing_username = st.text_input("Enter your username:")
     existing_password = st.text_input("Enter your password:", type="password")
+    if st.button("Login"):
+        result = login_user(existing_username, existing_password)
+        st.success(result)
     if st.button("Login"):
         result = login_user(existing_username, existing_password)
         st.success(result)
