@@ -150,17 +150,14 @@ def quiz_creation_page():
             st.header("파일 업로드")
             uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
 
-            # 텍스트 입력 영역
-            st.header("텍스트 입력")
-            text_content = st.text_area("텍스트를 입력하세요.")
-
             quiz_questions = []
-            if text_content is not None:
+            if uploaded_file is not None:
                 if st.button('문제 생성 하기'):
-                    for i in range(num_quizzes):
-                        quiz_questions.append(generate_quiz(quiz_type, text_content))
-                    st.session_state.selected_page = "퀴즈 풀이"
-                    st.session_state.selected_type = quiz_type
-                    st.session_state.selected_num = num_quizzes
+                    text_content = process_file(uploaded_file)
+                    if text_content is not None:
+                        for i in range(num_quizzes):
+                            quiz_questions.append(generate_quiz(quiz_type, text_content))
+                        st.session_state.selected_page = "퀴즈 풀이"
+                        st.session_state.selected_type = quiz_type
+                        st.session_state.selected_num = num_quizzes
     return quiz_questions
-
