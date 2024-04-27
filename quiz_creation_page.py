@@ -152,7 +152,9 @@ def quiz_creation_page():
             st.header("파일 업로드")
             uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
 
-            text_content = process_file(uploaded_file)
+            # 텍스트 입력 영역
+            st.header("텍스트 입력")
+            text_content = st.text_area("텍스트를 입력하세요.")
 
             quiz_questions = []
             # if 'gene' not in st.session_state:
