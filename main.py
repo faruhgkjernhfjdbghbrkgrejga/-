@@ -23,13 +23,15 @@ def main():
     if selected_page == "파일 업로드":
         upload_page()
     elif st.session_state.selected_page == "퀴즈 생성":
-        placeholder.empty()
-        with placeholder.container():
-            quiz_creation_page()
+        quiz_creation_page()
+        # placeholder.empty()
+        # with placeholder.container():
+        #     quiz_creation_page()
     elif st.session_state.selected_page == "퀴즈 풀이":
-        placeholder.empty()
-        with placeholder.container():
-            quiz_solve_page()  # 수정된 부분
+        quiz_solve_page()
+        # placeholder.empty()
+        # with placeholder.container():
+        #     quiz_solve_page()  # 수정된 부분
     elif selected_page == "로그인":
         sign()
 
