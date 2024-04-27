@@ -86,7 +86,7 @@ def grade_quiz_answer(user_answer, quiz_answer):
     return grade
 
 
-def quiz_slove_page():
+def quiz_solve_page():
     placeholder = st.empty()
     if 'number' not in st.session_state:
         st.session_state.number = 0
