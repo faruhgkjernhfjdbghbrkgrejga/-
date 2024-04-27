@@ -4,7 +4,7 @@ credentials:
       email: langmith@gmail.com
       name: Smith Lang
       password: '123' # To be replaced with hashed password
-    acm41th:
+    samid:
       email: acm41th@gmail.com
       name: sample id
       password: '456' # To be replaced with hashed password
