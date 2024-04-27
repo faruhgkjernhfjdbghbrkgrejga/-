@@ -1,5 +1,3 @@
-#quiz_creation_page.py
-
 import streamlit as st
 from langchain_openai import ChatOpenAI
 from langchain_core.pydantic_v1 import BaseModel, Field
@@ -157,18 +155,12 @@ def quiz_creation_page():
             text_content = st.text_area("텍스트를 입력하세요.")
 
             quiz_questions = []
-            # if 'gene' not in st.session_state:
-            #     st.session_state.gene = None
-
             if text_content is not None:
-
                 if st.button('문제 생성 하기'):
                     for i in range(num_quizzes):
                         quiz_questions.append(generate_quiz(quiz_type, text_content))
-                        st.session_state['quizs'] = quiz_questions
                     st.session_state.selected_page = "퀴즈 풀이"
                     st.session_state.selected_type = quiz_type
                     st.session_state.selected_num = num_quizzes
-                    # st.session_state.gene = 1
-            # if st.session_state.gene is not None:
-            #     st.rerun()
+    return quiz_questions
+
