@@ -4,6 +4,7 @@ import streamlit as st
 from upload_page import upload_page
 from quiz_creation_page import quiz_creation_page
 from quiz_grading_page import quiz_grading_page
+from sign import sign
 
 # 페이지 타이틀 설정
 st.set_page_config(page_title="AI 퀴즈 생성기")
