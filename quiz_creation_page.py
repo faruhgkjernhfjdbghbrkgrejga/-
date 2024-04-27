@@ -152,14 +152,22 @@ def quiz_creation_page():
             st.header("파일 업로드")
             uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
 
+            text_content = process_file(uploaded_file)
+
             quiz_questions = []
-            if uploaded_file is not None:
+            # if 'gene' not in st.session_state:
+            #     st.session_state.gene = None
+
+            if text_content is not None:
+
                 if st.button('문제 생성 하기'):
-                    text_content = process_file(uploaded_file)
-                    if text_content is not None:
-                        for i in range(num_quizzes):
-                            quiz_questions.append(generate_quiz(quiz_type, text_content))
-                        st.session_state.selected_page = "퀴즈 풀이"
-                        st.session_state.selected_type = quiz_type
-                        st.session_state.selected_num = num_quizzes
-    return quiz_questions
+                    for i in range(num_quizzes):
+                        quiz_questions.append(generate_quiz(quiz_type, text_content))
+                        st.session_state['quizs'] = quiz_questions
+                    st.session_state.selected_page = "퀴즈 풀이"
+                    st.session_state.selected_type = quiz_type
+                    st.session_state.selected_num = num_quizzes
+                    # st.session_state.gene = 1
+            # if st.session_state.gene is not None:
+            #     st.rerun()
+
