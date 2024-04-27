@@ -18,7 +18,7 @@ def main():
     if 'selected_page' not in st.session_state:
         st.session_state.selected_page = "파일 업로드"
 
-    placeholder = st.empty()
+    # placeholder = st.empty()
     # 선택된 페이지 표시
     if selected_page == "파일 업로드":
         upload_page()
@@ -27,13 +27,15 @@ def main():
         with placeholder.container():
             quiz_creation_page()
     elif selected_page == "퀴즈 풀이":
-        placeholder.empty()
-        with placeholder.container():
-            quiz_solve_page()
+        quiz_solve_page()
+        # placeholder.empty()
+        # with placeholder.container():
+        #     quiz_solve_page()
     elif selected_page == "퀴즈 채점":  # 퀴즈 채점 페이지 추가
-        placeholder.empty()
-        with placeholder.container():
-            quiz_grading_page()
+        quiz_grading_page()
+        # placeholder.empty()
+        # with placeholder.container():
+        #     quiz_grading_page()
     elif selected_page == "로그인":
         sign()
 
