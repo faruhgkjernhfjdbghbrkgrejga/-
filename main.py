@@ -23,19 +23,19 @@ def main():
     if selected_page == "파일 업로드":
         upload_page()
     elif selected_page == "퀴즈 생성":
-        placeholder.empty()
-        with placeholder.container():
-            quiz_creation_page()
+        quiz_creation_page()
+        # placeholder.empty()
+        # with placeholder.container():
+        #     quiz_creation_page()
     elif selected_page == "퀴즈 풀이":
         quiz_solve_page()
         # placeholder.empty()
         # with placeholder.container():
         #     quiz_solve_page()
     elif selected_page == "퀴즈 채점":  # 퀴즈 채점 페이지 추가
-        quiz_grading_page()
-        # placeholder.empty()
-        # with placeholder.container():
-        #     quiz_grading_page()
+        placeholder.empty()
+        with placeholder.container():
+            quiz_grading_page()
     elif selected_page == "로그인":
         sign()
 
