@@ -4,7 +4,7 @@ import streamlit as st
 from upload_page import upload_page
 from quiz_creation_page import quiz_creation_page
 from quiz_grading_page import quiz_grading_page
-from quiz_solve_page import quiz_solve_page  # 수정된 부분
+from quiz_solve_page import quiz_slove_page  # 수정된 부분
 from sign import sign
 
 # 페이지 타이틀 설정
@@ -18,20 +18,18 @@ def main():
     if 'selected_page' not in st.session_state:
         st.session_state.selected_page = "파일 업로드"
 
-    # placeholder = st.empty()
+    placeholder = st.empty()
     # 선택된 페이지 표시
     if selected_page == "파일 업로드":
         upload_page()
     elif st.session_state.selected_page == "퀴즈 생성":
-        quiz_creation_page()
-        # placeholder.empty()
-        # with placeholder.container():
-        #     quiz_creation_page()
+        placeholder.empty()
+        with placeholder.container():
+            quiz_creation_page()
     elif st.session_state.selected_page == "퀴즈 풀이":
-        quiz_solve_page()
-        # placeholder.empty()
-        # with placeholder.container():
-        #     quiz_solve_page()  # 수정된 부분
+        placeholder.empty()
+        with placeholder.container():
+            quiz_slove_page()  # 수정된 부분
     elif selected_page == "로그인":
         sign()
 
