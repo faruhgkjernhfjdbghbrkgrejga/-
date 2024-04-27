@@ -153,8 +153,8 @@ def quiz_creation_page():
             text_content = process_file(uploaded_file)
 
             quiz_questions = []
-            if 'gene' not in st.session_state:
-                st.session_state.gene = None
+            # if 'gene' not in st.session_state:
+            #     st.session_state.gene = None
 
             if text_content is not None:
 
@@ -165,6 +165,6 @@ def quiz_creation_page():
                     st.session_state.selected_page = "퀴즈 풀이"
                     st.session_state.selected_type = quiz_type
                     st.session_state.gene = 1
-            if st.session_state.gene is not None:
-                st.rerun()
+            # if st.session_state.gene is not None:
+            #     st.rerun()
 
