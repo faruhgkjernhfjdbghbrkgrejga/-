@@ -12,6 +12,10 @@ authenticator = auth.Authenticate(
     config['preauthorized']
 )
 
+names = ["Smith Lang", "sample id"]
+usernames = ["lsmith", "samid"]
+passwords = ["123","456"] # yaml 파일 생성하고 비밀번호 지우기!
+
 def register_user(name, username, password):
     """
     새로운 사용자를 등록합니다.
@@ -34,14 +38,14 @@ def register_user(name, username, password):
         }
     }
     # 기존 데이터 읽기
-    with open('user_db.yaml', 'r') as file:
+    with open('config.yaml', 'r') as file:
         existing_data = yaml.safe_load(file)
     
     # 새로운 계정 정보 추가
     existing_data['credentials']['usernames'].update(new_data['credentials']['usernames'])
     
     # YAML 파일에 쓰기
-    with open('user_db.yaml', 'w') as file:
+    with open('config.yaml', 'w') as file:
         yaml.dump(existing_data, file, default_flow_style=False)
     
     st.success("계정이 성공적으로 생성되었습니다!")
