@@ -105,12 +105,16 @@ def quiz_solve_page():
                 elif st.session_state.selected_type == '다중 선택 (객관식)':
                     if st.button(f"1.{question.options1}", key=f"{j}1"):
                         st.session_state.canswer = "options1"
+                        st.session_state.canswer123 = question.options1
                     if st.button(f"2.{question.options2}", key=f"{j}2"):
                         st.session_state.canswer = "options2"
+                        st.session_state.canswer123 = question.options2
                     if st.button(f"3.{question.options3}", key=f"{j}3"):
                         st.session_state.canswer = "options3"
+                        st.session_state.canswer123 = question.options3
                     if st.button(f"4.{question.options4}", key=f"{j}4"):
                         st.session_state.canswer = "options4"
+                        st.session_state.canswer123 = question.options4
                 elif st.session_state.selected_type == 'OX 퀴즈':
                     if st.button(f"1.{question.options1}", key=f"{j}1"):
                         st.session_state.canswer = question.options1
@@ -119,7 +123,7 @@ def quiz_solve_page():
                 st.write("-----------------------------------------")
                 st.write("\n")
                 if st.button("next", key= f"next{j}"):
-                    if question.correct_answer == st.session_state.canswer:
+                    if (question.correct_answer == st.session_state.canswer)||(question.correct_answer == st.session_state.canswer123):
                         st.write("Correct")
                         st.session_state.number += 1
                     else:
