@@ -22,8 +22,7 @@ import pytesseract
 from PyPDF2 import PdfReader
 import io
 
-chat_model = ChatOpenAI(model="gpt-3.5-turbo-0125")
-embeddings = OpenAIEmbeddings()
+
 # db = Chroma.from_documents(pages, embeddings)
 
 
@@ -49,6 +48,9 @@ class CreateQuizTF(BaseModel):
     correct_answer: str = Field(description="만들어진 보기중 하나")
 
 def make_model(pages):
+    llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
+    embeddings = OpenAIEmbeddings()
+    
     # Rag
     text_splitter = RecursiveCharacterTextSplitter()
     documents = text_splitter.split_documents(pages)
