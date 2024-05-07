@@ -21,12 +21,12 @@ import io
 
 
 class CreateQuizoub(BaseModel):
-    quiz: str = Field(description="만들어진 문제")
-    options1: str = Field(description="만들어진 문제의 첫 번째 보기")
-    options2: str = Field(description="만들어진 문제의 두 번째 보기")
-    options3: str = Field(description="만들어진 문제의 세 번째 보기")
-    options4: str = Field(description="만들어진 문제의 네 번째 보기")
-    correct_answer: str = Field(description="options1, options2, options3, options4중 하나")
+    quiz = ("만들어진 문제")
+    options1 = ("만들어진 문제의 첫 번째 보기")
+    options2 = ("만들어진 문제의 두 번째 보기")
+    options3 = ("만들어진 문제의 세 번째 보기")
+    options4 = ("만들어진 문제의 네 번째 보기")
+    correct_answer = ("options1 or options2 or options3 or options4")
 
 
 class CreateQuizsub(BaseModel):
@@ -225,6 +225,6 @@ def quiz_creation_page():
                     st.session_state.selected_page = "퀴즈 풀이"
                     st.session_state.selected_type = quiz_type
                     st.session_state.selected_num = num_quizzes
-                    # st.session_state.gene = 1
+                    st.session_state.gene = 1
             # if st.session_state.gene is not None:
             #     st.rerun()
