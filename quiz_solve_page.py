@@ -103,19 +103,19 @@ def quiz_solve_page():
                     st.write("\n")
                     st.session_state.canswer = st.text_input(f"질문{j + 1}에 대한 답변 입력", key=f"{j}1")
                 elif st.session_state.selected_type == '다중 선택 (객관식)':
-                    if st.button(f"1.{question.options1}", key=f"{j}1"):
+                    if st.button(f"1.{question.answer.options1}", key=f"{j}1"):
                         st.session_state.canswer = "options1"
-                    if st.button(f"2.{question.options2}", key=f"{j}2"):
+                    if st.button(f"2.{question.answer.options2}", key=f"{j}2"):
                         st.session_state.canswer = "options2"
-                    if st.button(f"3.{question.options3}", key=f"{j}3"):
+                    if st.button(f"3.{question.answer.options3}", key=f"{j}3"):
                         st.session_state.canswer = "options3"
-                    if st.button(f"4.{question.options4}", key=f"{j}4"):
+                    if st.button(f"4.{question.answer.options4}", key=f"{j}4"):
                         st.session_state.canswer = "options4"
                 elif st.session_state.selected_type == 'OX 퀴즈':
-                    if st.button(f"1.{question.options1}", key=f"{j}1"):
-                        st.session_state.canswer = question.options1
-                    if st.button(f"2.{question.options2}", key=f"{j}2"):
-                        st.session_state.canswer = question.options2
+                    if st.button(f"1.{question.answer.options1}", key=f"{j}1"):
+                        st.session_state.canswer = question.answer.options1
+                    if st.button(f"2.{question.answer.options2}", key=f"{j}2"):
+                        st.session_state.canswer = question.answer.options2
                 st.write("-----------------------------------------")
                 st.write("\n")
                 if st.button("next", key= f"next{j}"):
