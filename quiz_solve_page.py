@@ -102,39 +102,46 @@ def quiz_solve_page():
                 st.write(type(res))
                 st.write("\n")
                 st.write(f"{question}")
-                # st.write(f"{j+1}.{question.answer.quiz}")
+                # st.write(f"{j+1}.{res['answer.q']uiz}")
                 st.write(f"{j+1}.{res}")
                 st.write(f"{j+1}.{res['quiz']}")
                 st.write("\n")
                 if st.session_state.selected_type == "주관식":
                     st.write("\n")
                     st.session_state.canswer = st.text_input(f"질문{j + 1}에 대한 답변 입력", key=f"{j}1")
+                    st.session_state.uanswer = st.session_state.canswer
                 elif st.session_state.selected_type == '다중 선택 (객관식)':
-                    # if st.button(f"1.{question.answer.options1}", key=f"{j}1"):
                     if st.button(f"1.{res['options1']}", key=f"{j}1"):
                         st.session_state.canswer = "options1"
-                    # if st.button(f"2.{question.answer.options2}", key=f"{j}2"):
+                        st.session_state.uanswer = res['options1']
+                        st.session_state.number += 1  # 다음 문제로 이동
                     if st.button(f"2.{res['options2']}", key=f"{j}2"):
                         st.session_state.canswer = "options2"
-                    # if st.button(f"3.{question.answer.options3}", key=f"{j}3"):
+                        st.session_state.uanswer = res['options2']
+                        st.session_state.number += 1  # 다음 문제로 이동
                     if st.button(f"3.{res['options3']}", key=f"{j}3"):
                         st.session_state.canswer = "options3"
-                    # if st.button(f"4.{question.answer.options4}", key=f"{j}4"):
+                        st.session_state.uanswer = res['options3']
+                        st.session_state.number += 1  # 다음 문제로 이동
                     if st.button(f"4.{res['options4']}", key=f"{j}4"):
                         st.session_state.canswer = "options4"
+                        st.session_state.uanswer = res['options4']
+                        st.session_state.number += 1  # 다음 문제로 이동
                 elif st.session_state.selected_type == 'OX 퀴즈':
-                    # if st.button(f"1.{question.answer.options1}", key=f"{j}1"):
-                    #     st.session_state.canswer = question.answer.options1
-                    # if st.button(f"2.{question.answer.options2}", key=f"{j}2"):
-                    #     st.session_state.canswer = question.answer.options2
-                    if st.button(f"1.{question['options1']}", key=f"{j}1"):
-                        st.session_state.canswer = question.options1
-                    if st.button(f"2.{question['options2']}", key=f"{j}2"):
-                        st.session_state.canswer = question.options2
+                    if st.button(f"1.{res['options1']}", key=f"{j}1"):
+                        st.session_state.canswer = res['options1']
+                        st.session_state.uanswer = res['options1']
+                        st.session_state.number += 1  # 다음 문제로 이동
+                    if st.button(f"2.{res['options2']}", key=f"{j}2"):
+                        st.session_state.canswer = res['options2']
+                        st.session_state.uanswer = res['options2']
                 st.write("-----------------------------------------")
                 st.write("\n")
                 if st.button("next", key= f"next{j}"):
                     if res['correct_answer'] == st.session_state.canswer:
+                        st.write("Correct")
+                        st.session_state.number += 1
+                    elif res['correct_answer'] == st.session_state.uanswer:
                         st.write("Correct")
                         st.session_state.number += 1
                     else:
