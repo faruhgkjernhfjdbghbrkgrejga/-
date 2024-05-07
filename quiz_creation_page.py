@@ -1,16 +1,31 @@
 #quiz_creation_page.py
 
 import streamlit as st
-from langchain_openai import ChatOpenAI
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain.prompts.prompt import PromptTemplate
 from langchain.output_parsers import PydanticOutputParser
+from langchain import hub
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.vectorstores import Chroma
+from langchain_openai import OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.document_loaders.image import UnstructuredImageLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import FAISS
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain.chains import create_retrieval_chain
+import streamlit as st
+import tempfile
 from PIL import Image
 import pytesseract
 from PyPDF2 import PdfReader
 import io
 
 chat_model = ChatOpenAI(model="gpt-3.5-turbo-0125")
+embeddings = OpenAIEmbeddings()
+db = Chroma.from_documents(pages, embeddings)
+
 
 
 class CreateQuizoub(BaseModel):
@@ -34,6 +49,11 @@ class CreateQuizTF(BaseModel):
     correct_answer: str = Field(description="만들어진 보기중 하나")
 
 
+# Rag
+text_splitter = RecursiveCharacterTextSplitter()
+documents = text_splitter.split_documents(pages)
+vector = FAISS.from_documents(documents, embeddings)
+
 # PydanticOutputParser 생성
 parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
 parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
@@ -52,22 +72,19 @@ promptoub = prompt.partial(format=parseroub.get_format_instructions())
 promptsub = prompt.partial(format=parsersub.get_format_instructions())
 prompttf = prompt.partial(format=parsertf.get_format_instructions())
 
-chainoub = promptoub | chat_model | parseroub
-chainsub = promptsub | chat_model | parsersub
-chaintf = prompttf | chat_model | parsertf
+document_chainoub = create_stuff_documents_chain(llm, promptoub)
+document_chainsub = create_stuff_documents_chain(llm, promptsub)
+document_chaintf = create_stuff_documents_chain(llm, prompttf)
+
+retriever = vector.as_retriever()
+retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
+retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
+retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
 
 
-# 퀴즈 채점 함수
-@st.experimental_fragment
-def grade_quiz_answers(user_answers, quiz_answers):
-    graded_answers = []
-    for user_answer, quiz_answer in zip(user_answers, quiz_answers):
-        if user_answer.lower() == quiz_answer.lower():
-            graded_answers.append("정답")
-        else:
-            graded_answers.append("오답")
-    st.session_state['ganswer'] = graded_answers
-    return graded_answers
+# chainoub = promptoub | chat_model | parseroub
+# chainsub = promptsub | chat_model | parsersub
+# chaintf = prompttf | chat_model | parsertf
 
 
 # 파일 처리 함수
@@ -90,8 +107,17 @@ def process_file(uploaded_file):
     else:
         st.error("지원하지 않는 파일 형식입니다.")
         return None
+    text_splitter = RecursiveCharacterTextSplitter(
+        # Set a really small chunk size, just to show.
+        chunk_size=100,
+        chunk_overlap=20,
+        length_function=len,
+        is_separator_regex=False,
+    )
+    texts = text_splitter.create_documents([text_content])
+    return texts
 
-    return text_content
+    return texts
 
 
 # 퀴즈 생성 함수
@@ -99,21 +125,21 @@ def process_file(uploaded_file):
 def generate_quiz(quiz_type, text_content):
     # Generate quiz prompt based on selected quiz type
     if quiz_type == "다중 선택 (객관식)":
-        response = chainoub.invoke(
+        response = retrieval_chainoub.invoke(
             {
                 "instruction": "다음 글을 이용해 객관식 퀴즈를 1개 만들어 주세요",
                 "input": str({text_content}),
             }
         )
     elif quiz_type == "주관식":
-        response = chainsub.invoke(
+        response = retrieval_chainsub.invoke(
             {
                 "instruction": "다음 글을 이용해 주관식 퀴즈를 1개 만들어 주세요",
                 "input": str({text_content}),
             }
         )
     elif quiz_type == "OX 퀴즈":
-        response = chaintf.invoke(
+        response = retrieval_chaintf.invoke(
             {
                 "instruction": "다음 글을 이용해 참과 거짓, 2개의 보기를 가지는 퀴즈를 1개 만들어 주세요",
                 "input": str({text_content}),
