@@ -13,4 +13,3 @@ PyYAML
 streamlit
 streamlit-authenticator
 bcrypt
-json
