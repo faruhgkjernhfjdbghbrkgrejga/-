@@ -21,12 +21,12 @@ import io
 
 
 class CreateQuizoub(BaseModel):
-    quiz = ("quiz : The created problem")
-    options1 = ("options1 : The first option of the created problem")
-    options2 = ("options2 : The second option of the created problem")
-    options3 = ("options3 : The third option of the created problem")
-    options4 = ("options4 : The fourth option of the created problem")
-    correct_answer = ("correct_answer : One of the options1 or options2 or options3 or options4")
+    quiz: str = Field(description="The created problem")
+    options1: str = Field(description="The first option of the created problem")
+    options2: str = Field(description="The second option of the created problem")
+    options3: str = Field(description="The third option of the created problem")
+    options4: str = Field(description="The fourth option of the created problem")
+    correct_answer: str = Field(description="One of the options1 or options2 or options3 or options4")
 
 
 class CreateQuizsub(BaseModel):
