@@ -187,7 +187,42 @@ def quiz_creation_page():
             if text_content is not None:
 
                 if st.button('문제 생성 하기'):
-                    make_model(text_content)
+                    llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
+                    embeddings = OpenAIEmbeddings()
+                    
+                    # Rag
+                    text_splitter = RecursiveCharacterTextSplitter()
+                    documents = text_splitter.split_documents(text_content)
+                    vector = FAISS.from_documents(documents, embeddings)
+                    
+                    # PydanticOutputParser 생성
+                    parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
+                    parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
+                    parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
+                    
+                    prompt = PromptTemplate.from_template(
+                        "{instruction}, Please answer in KOREAN."
+                    
+                        "CONTEXT:"
+                        "{context}."
+                    
+                        "FORMAT:"
+                        "{format}"
+                    )
+                    promptoub = prompt.partial(format=parseroub.get_format_instructions())
+                    promptsub = prompt.partial(format=parsersub.get_format_instructions())
+                    prompttf = prompt.partial(format=parsertf.get_format_instructions())
+                    
+                    document_chainoub = create_stuff_documents_chain(llm, promptoub)
+                    document_chainsub = create_stuff_documents_chain(llm, promptsub)
+                    document_chaintf = create_stuff_documents_chain(llm, prompttf)
+                    
+                    retriever = vector.as_retriever()
+                    
+                    retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
+                    retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
+                    retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
+                    
                     for i in range(num_quizzes):
                         quiz_questions.append(generate_quiz(quiz_type, text_content))
                         st.session_state['quizs'] = quiz_questions
