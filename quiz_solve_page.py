@@ -97,7 +97,7 @@ def quiz_solve_page():
                 st.write(st.session_state.selected_page)
                 st.write(st.session_state.number)
                 st.write(f"{question}")
-                st.write(f"{j+1}.{question.quiz}")
+                st.write(f"{j+1}.{question.answer}")
                 st.write("\n")
                 if st.session_state.selected_type == "주관식":
                     st.write("\n")
