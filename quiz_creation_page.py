@@ -125,7 +125,7 @@ def process_file(uploaded_file):
 
 # 퀴즈 생성 함수
 @st.experimental_fragment
-def generate_quiz(quiz_type, text_content):
+def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf):
     # Generate quiz prompt based on selected quiz type
     if quiz_type == "다중 선택 (객관식)":
         response = retrieval_chainoub.invoke(
@@ -224,7 +224,7 @@ def quiz_creation_page():
                     retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
                     
                     for i in range(num_quizzes):
-                        quiz_questions.append(generate_quiz(quiz_type, text_content))
+                        quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf))
                         st.session_state['quizs'] = quiz_questions
                     st.session_state.selected_page = "퀴즈 풀이"
                     st.session_state.selected_type = quiz_type
