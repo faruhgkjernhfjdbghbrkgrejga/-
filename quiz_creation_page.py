@@ -24,7 +24,7 @@ import io
 
 chat_model = ChatOpenAI(model="gpt-3.5-turbo-0125")
 embeddings = OpenAIEmbeddings()
-db = Chroma.from_documents(pages, embeddings)
+# db = Chroma.from_documents(pages, embeddings)
 
 
 
