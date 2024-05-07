@@ -63,9 +63,12 @@ def make_model(pages):
     
     prompt = PromptTemplate.from_template(
         "{instruction}, Please answer in KOREAN."
+        
+        "USER INPUT:"
+        "{input}."
     
         "CONTEXT:"
-        "{input}."
+        "{context}."
     
         "FORMAT:"
         "{format}"
