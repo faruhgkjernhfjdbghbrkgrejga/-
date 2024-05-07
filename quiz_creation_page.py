@@ -63,9 +63,6 @@ def make_model(pages):
     
     prompt = PromptTemplate.from_template(
         "{instruction}, Please answer in KOREAN."
-        
-        "USER INPUT:"
-        "{input}."
     
         "CONTEXT:"
         "{context}."
@@ -133,22 +130,19 @@ def generate_quiz(quiz_type, text_content):
     if quiz_type == "다중 선택 (객관식)":
         response = retrieval_chainoub.invoke(
             {
-                "instruction": "다음 글을 이용해 객관식 퀴즈를 1개 만들어 주세요",
-                "input": str({text_content}),
+                "instruction": "다음 글을 이용해 객관식 퀴즈를 1개 만들어 주세요"
             }
         )
     elif quiz_type == "주관식":
         response = retrieval_chainsub.invoke(
             {
-                "instruction": "다음 글을 이용해 주관식 퀴즈를 1개 만들어 주세요",
-                "input": str({text_content}),
+                "instruction": "다음 글을 이용해 주관식 퀴즈를 1개 만들어 주세요"
             }
         )
     elif quiz_type == "OX 퀴즈":
         response = retrieval_chaintf.invoke(
             {
-                "instruction": "다음 글을 이용해 참과 거짓, 2개의 보기를 가지는 퀴즈를 1개 만들어 주세요",
-                "input": str({text_content}),
+                "instruction": "다음 글을 이용해 참과 거짓, 2개의 보기를 가지는 퀴즈를 1개 만들어 주세요"
             }
         )
     quiz_questions = response
