@@ -21,12 +21,12 @@ import io
 
 
 class CreateQuizoub(BaseModel):
-    quiz = ("quiz =The created problem")
-    options1 = ("options1 =The first option of the created problem")
-    options2 = ("options2The second option of the created problem")
-    options3 = ("options3The third option of the created problem")
-    options4 = ("options4The fourth option of the created problem")
-    correct_answer = ("correct_answerOne of the options1, options2, options3 or options4")
+    quiz = ("quiz : The created problem")
+    options1 = ("options1 : The first option of the created problem")
+    options2 = ("options2 : The second option of the created problem")
+    options3 = ("options3 : The third option of the created problem")
+    options4 = ("options4 : The fourth option of the created problem")
+    correct_answer = ("correct_answer : One of the options1 or options2 or options3 or options4")
 
 
 class CreateQuizsub(BaseModel):
@@ -125,19 +125,19 @@ def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsu
     if quiz_type == "다중 선택 (객관식)":
         response = retrieval_chainoub.invoke(
             {
-                "input": "Create one multiple-choice question focusing on important concepts, referring to the following context"
+                "input": "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context"
             }
         )
     elif quiz_type == "주관식":
         response = retrieval_chainsub.invoke(
             {
-                "input": "Create one open-ended question focusing on important concepts, referring to the following context"
+                "input": "Create one open-ended question focusing on important concepts, following the given format, referring to the following context"
             }
         )
     elif quiz_type == "OX 퀴즈":
         response = retrieval_chaintf.invoke(
             {
-                "input": "Create one true or false question focusing on important concepts, referring to the following context"
+                "input": "Create one true or false question focusing on important concepts, following the given format, referring to the following context"
             }
         )
     quiz_questions = response
@@ -221,7 +221,6 @@ def quiz_creation_page():
                     for i in range(num_quizzes):
                         quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
                         st.session_state['quizs'] = quiz_questions
-                        # print(quiz_questions)
                     st.session_state.selected_page = "퀴즈 풀이"
                     st.session_state.selected_type = quiz_type
                     st.session_state.selected_num = num_quizzes
