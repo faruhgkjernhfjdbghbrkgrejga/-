@@ -3,6 +3,7 @@ PyPDF2
 langchain
 openai
 langchain_openai
+langchain_core
 pytesseract
 pillow
 langchain_community
