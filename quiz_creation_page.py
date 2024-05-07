@@ -139,7 +139,7 @@ def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsu
                 "input": "다음 글을 이용해 참과 거짓, 2개의 보기를 가지는 퀴즈를 1개 만들어 주세요"
             }
         )
-    quiz_questions = response["answer"]
+    quiz_questions = response
 
     return quiz_questions
 
