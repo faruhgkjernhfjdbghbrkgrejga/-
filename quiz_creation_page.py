@@ -21,25 +21,25 @@ import io
 
 
 class CreateQuizoub(BaseModel):
-    quiz = ("The created problem")
-    options1 = ("The first option of the created problem")
-    options2 = ("The second option of the created problem")
-    options3 = ("The third option of the created problem")
-    options4 = ("The fourth option of the created problem")
-    correct_answer = ("One of the options1, options2, options3 or options4")
+    quiz : "The created problem"
+    options1 : "The first option of the created problem"
+    options2 : "The second option of the created problem"
+    options3 : "The third option of the created problem"
+    options4 : "The fourth option of the created problem"
+    correct_answer : "One of the options1, options2, options3 or options4"
 
 
 class CreateQuizsub(BaseModel):
-    quiz = ("The created problem")
-    correct_answer = ("The answer to the problem")
+    quiz : "The created problem"
+    correct_answer : "The answer to the problem"
 
 
 
 class CreateQuizTF(BaseModel):
-    quiz = ("The created problem")
-    options1 = ("The true or false option of the created problem")
-    options2 = ("The true or false option of the created problem")
-    correct_answer = ("One of the options1 or options2")
+    quiz : "The created problem"
+    options1 : "The true or false option of the created problem"
+    options2 : "The true or false option of the created problem"
+    correct_answer : "One of the options1 or options2"
 
 
 def make_model(pages):
@@ -219,10 +219,9 @@ def quiz_creation_page():
                     retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
 
                     for i in range(num_quizzes):
-                        quiz_questions.append(
-                            generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,
-                                          retrieval_chaintf))
+                        quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
                         st.session_state['quizs'] = quiz_questions
+                        # print(quiz_questions)
                     st.session_state.selected_page = "퀴즈 풀이"
                     st.session_state.selected_type = quiz_type
                     st.session_state.selected_num = num_quizzes
