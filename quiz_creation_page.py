@@ -21,25 +21,25 @@ import io
 
 
 class CreateQuizoub(BaseModel):
-    quiz : "The created problem"
-    options1 : "The first option of the created problem"
-    options2 : "The second option of the created problem"
-    options3 : "The third option of the created problem"
-    options4 : "The fourth option of the created problem"
-    correct_answer : "One of the options1, options2, options3 or options4"
+    quiz = ("quiz =The created problem")
+    options1 = ("options1 =The first option of the created problem")
+    options2 = ("options2The second option of the created problem")
+    options3 = ("options3The third option of the created problem")
+    options4 = ("options4The fourth option of the created problem")
+    correct_answer = ("correct_answerOne of the options1, options2, options3 or options4")
 
 
 class CreateQuizsub(BaseModel):
-    quiz : "The created problem"
-    correct_answer : "The answer to the problem"
+    quiz = ("quiz =The created problem")
+    correct_answer = ("correct_answer =The answer to the problem")
 
 
 
 class CreateQuizTF(BaseModel):
-    quiz : "The created problem"
-    options1 : "The true or false option of the created problem"
-    options2 : "The true or false option of the created problem"
-    correct_answer : "One of the options1 or options2"
+    quiz = ("The created problem")
+    options1 = ("The true or false option of the created problem")
+    options2 = ("The true or false option of the created problem")
+    correct_answer = ("One of the options1 or options2")
 
 
 def make_model(pages):
