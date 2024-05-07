@@ -21,24 +21,25 @@ import io
 
 
 class CreateQuizoub(BaseModel):
-    quiz = ("만들어진 문제")
-    options1 = ("만들어진 문제의 첫 번째 보기")
-    options2 = ("만들어진 문제의 두 번째 보기")
-    options3 = ("만들어진 문제의 세 번째 보기")
-    options4 = ("만들어진 문제의 네 번째 보기")
-    correct_answer = ("options1 or options2 or options3 or options4")
+    quiz = ("The created problem")
+    options1 = ("The first option of the created problem")
+    options2 = ("The second option of the created problem")
+    options3 = ("The third option of the created problem")
+    options4 = ("The fourth option of the created problem")
+    correct_answer = ("One of the options1, options2, options3 or options4")
 
 
 class CreateQuizsub(BaseModel):
-    quiz: str = Field(description="만들어진 문제")
-    correct_answer: str = Field(description="만들어진 문제의 답")
+    quiz = ("The created problem")
+    correct_answer = ("The answer to the problem")
+
 
 
 class CreateQuizTF(BaseModel):
-    quiz: str = Field(description="만들어진 문제")
-    options1: str = Field(description="만들어진 문제의 참 또는 거짓인 보기")
-    options2: str = Field(description="만들어진 문제의 참 또는 거짓인 보기")
-    correct_answer: str = Field(description="options1, options2")
+    quiz = ("The created problem")
+    options1 = ("The true or false option of the created problem")
+    options2 = ("The true or false option of the created problem")
+    correct_answer = ("One of the options1 or options2")
 
 
 def make_model(pages):
@@ -124,19 +125,19 @@ def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsu
     if quiz_type == "다중 선택 (객관식)":
         response = retrieval_chainoub.invoke(
             {
-                "input": "다음 글을 이용해 객관식 퀴즈를 1개 만들어 주세요"
+                "input": "Create one multiple-choice question focusing on important concepts, referring to the following context"
             }
         )
     elif quiz_type == "주관식":
         response = retrieval_chainsub.invoke(
             {
-                "input": "다음 글을 이용해 주관식 퀴즈를 1개 만들어 주세요"
+                "input": "Create one open-ended question focusing on important concepts, referring to the following context"
             }
         )
     elif quiz_type == "OX 퀴즈":
         response = retrieval_chaintf.invoke(
             {
-                "input": "다음 글을 이용해 참과 거짓, 2개의 보기를 가지는 퀴즈를 1개 만들어 주세요"
+                "input": "Create one true or false question focusing on important concepts, referring to the following context"
             }
         )
     quiz_questions = response
@@ -225,6 +226,6 @@ def quiz_creation_page():
                     st.session_state.selected_page = "퀴즈 풀이"
                     st.session_state.selected_type = quiz_type
                     st.session_state.selected_num = num_quizzes
-                    st.session_state.gene = 1
+            #         st.session_state.gene = 1
             # if st.session_state.gene is not None:
             #     st.rerun()
