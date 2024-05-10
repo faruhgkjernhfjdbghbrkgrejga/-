@@ -1,4 +1,4 @@
-#upload_page.py
+# upload_page.py
 
 import streamlit as st
 from PIL import Image
@@ -70,6 +70,3 @@ def upload_page():
 if __name__ == "__main__":
     upload_page()
 
-# 메인 함수 실행
-if __name__ == "__main__":
-    upload_page()
