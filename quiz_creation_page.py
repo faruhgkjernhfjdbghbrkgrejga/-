@@ -161,15 +161,22 @@ def quiz_creation_page(text_content):
             qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, output_parser=PydanticOutputParser(pydantic_object=CreateQuizoub))
             retrieval_chainoub = qa
 
+            parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
+            parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
+            
             retrieval_chainsub = create_retrieval_chain(retriever, create_stuff_documents_chain(llm, PromptTemplate.from_template(
                 "{input}, Please answer in KOREAN."
+                "CONTEXT: {context}."
+                "FORMAT: {format}"
+            ).partial(format=parsersub.get_format_instructions())))
+            
+            retrieval_chaintf = create_retrieval_chain(retriever, create_stuff_documents_chain(llm, PromptTemplate.from_template(
+                "{input}, Please answer in KOREAN."
+                "CONTEXT: {context}."
+                "FORMAT: {format}"
+            ).partial(format=parsertf.get_format_instructions())))
 
-                "CONTEXT:"
-                "{context}."
 
-                "FORMAT:"
-                "{format}"
-            ).partial(format=PydanticOutputParser(pydantic_object=CreateQuizsub).get_format_instructions())))
             retrieval_chaintf = create_retrieval_chain(retriever, create_stuff_documents_chain(llm, PromptTemplate.from_template(
                 "{input}, Please answer in KOREAN."
 
@@ -179,6 +186,8 @@ def quiz_creation_page(text_content):
                 "FORMAT:"
                 "{format}"
             ).partial(format=PydanticOutputParser(pydantic_object=CreateQuizTF).get_format_instructions())))
+
+            
 
             quiz_query = "중요한 개념에 집중한 객관식 문제 하나를 작성하고, 주어진 형식을 따르며 다음 맥락을 참조하세요"
 
