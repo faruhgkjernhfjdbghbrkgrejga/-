@@ -13,4 +13,3 @@ pytesseract
 scikit-learn
 streamlit
 streamlit-authenticator
-langchain_document
