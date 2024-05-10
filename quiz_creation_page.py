@@ -192,8 +192,12 @@ def quiz_creation_page(text_content):
                     if isinstance(text_content, str):
                         text_splitter = RecursiveCharacterTextSplitter()
                         documents = text_splitter.split_documents(text_content)
+                    elif isinstance(text_content, list):
+                        documents = text_content
                     else:
-                        documents = [str(text_content)]
+                        st.error("지원하지 않는 데이터 형식입니다.")
+                        return
+
                     vector = FAISS.from_documents(documents, embeddings)
 
                     # PydanticOutputParser 생성
