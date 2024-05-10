@@ -26,6 +26,7 @@ from langchain.schema import Document
 from langchain.chains import RetrievalQA
 
 
+
 class CreateQuizoub(BaseModel):
     quiz: str = Field(description="The created problem")
     options1: str = Field(description="The first option of the created problem")
@@ -140,30 +141,29 @@ def quiz_creation_page(text_content):
                     embeddings = OpenAIEmbeddings()
 
                     # Rag
-                    if text_content is not None:
-                        if isinstance(text_content, str):
-                            text_splitter = RecursiveCharacterTextSplitter()
-                            if text_splitter is None:
-                                st.error("text_splitter 객체 초기화 실패")
-                                return
-                            documents = [Document(page_content=text_content)]
-                        elif isinstance(text_content, list):
-                            if all(isinstance(doc, Document) for doc in text_content):
-                                documents = text_content
-                            else:
-                                st.error("리스트 내부의 요소가 Document 객체가 아닙니다.")
-                                return
-                        else:
-                            st.error("지원하지 않는 데이터 형식입니다.")
-                            return
-
+                    if isinstance(text_content, str):
+                        text_splitter = RecursiveCharacterTextSplitter()
                         if text_splitter is None:
                             st.error("text_splitter 객체 초기화 실패")
                             return
+                        documents = [Document(page_content=text_content)]
+                    elif isinstance(text_content, list):
+                        if all(isinstance(doc, Document) for doc in text_content):
+                            documents = text_content
+                        else:
+                            st.error("리스트 내부의 요소가 Document 객체가 아닙니다.")
+                            return
+                    else:
+                        st.error("지원하지 않는 데이터 형식입니다.")
+                        return
 
-                        documents = text_splitter.split_documents(documents)
+                    if text_splitter is None:
+                        st.error("text_splitter 객체 초기화 실패")
+                        return
 
-                        vector = FAISS.from_documents(documents, embeddings)
+                    documents = text_splitter.split_documents(documents)
+
+                    vector = FAISS.from_documents(documents, embeddings)
 
 
                     # PydanticOutputParser 생성
