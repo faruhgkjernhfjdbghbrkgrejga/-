@@ -28,7 +28,7 @@ from PIL import Image
 import pytesseract
 from PyPDF2 import PdfReader
 import io
-
+from langchain.document import Document
 
 class CreateQuizoub(BaseModel):
     quiz: str = Field(description="The created problem")
