@@ -83,19 +83,19 @@ def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsu
     if quiz_type == "다중 선택 (객관식)":
         response = retrieval_chainoub.run(
             {
-                "input": "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context"
+                "input": "중요한 개념에 집중한 객관식 문제 하나를 작성하고, 주어진 형식을 따르며 다음 맥락을 참조하세요"
             }
         )
     elif quiz_type == "주관식":
         response = retrieval_chainsub.run(
             {
-                "input": "Create one open-ended question focusing on important concepts, following the given format, referring to the following context"
+                "input": "중요한 개념에 집중한 주관식 문제 하나를 작성하고, 주어진 형식을 따르며 다음 맥락을 참조하세요"
             }
         )
     elif quiz_type == "OX 퀴즈":
         response = retrieval_chaintf.run(
             {
-                "input": "Create one true or false question focusing on important concepts, following the given format, referring to the following context"
+                "input": "중요한 개념에 집중한 참/거짓 문제 하나를 작성하고, 주어진 형식을 따르며 다음 맥락을 참조하세요"
             }
         )
     quiz_questions = response
@@ -129,94 +129,72 @@ def quiz_creation_page(text_content):
 
             quiz_questions = []
 
+            llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
+            embeddings = OpenAIEmbeddings()
+
+            # Rag
+            if isinstance(text_content, str):
+                text_splitter = RecursiveCharacterTextSplitter()
+                if text_splitter is None:
+                    st.error("text_splitter 객체 초기화 실패")
+                    return
+                documents = [Document(page_content=text_content)]
+            elif isinstance(text_content, list):
+                if all(isinstance(doc, Document) for doc in text_content):
+                    documents = text_content
+                else:
+                    st.error("리스트 내부의 요소가 Document 객체가 아닙니다.")
+                    return
+            else:
+                st.error("지원하지 않는 데이터 형식입니다.")
+                return
+
+            if text_splitter is None:
+                st.error("text_splitter 객체 초기화 실패")
+                return
+
+            documents = text_splitter.split_documents(documents)
+
+            vector = FAISS.from_documents(documents, embeddings)
             retriever = vector.as_retriever()
-            qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, output_parser=parseroub)
-            retrieval_chainoub = qa.run
 
-            if text_content is not None:
-                if st.button('문제 생성 하기', disabled=button_disabled):
-                    button_disabled = True  # 버튼 비활성화
-                    progress_bar = st.progress(0)  # 진행 상황 표시 초기화
-                    llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
-                    embeddings = OpenAIEmbeddings()
+            qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, output_parser=PydanticOutputParser(pydantic_object=CreateQuizoub))
+            retrieval_chainoub = qa
 
-                    # Rag
-                    if isinstance(text_content, str):
-                        text_splitter = RecursiveCharacterTextSplitter()
-                        if text_splitter is None:
-                            st.error("text_splitter 객체 초기화 실패")
-                            return
-                        documents = [Document(page_content=text_content)]
-                    elif isinstance(text_content, list):
-                        if all(isinstance(doc, Document) for doc in text_content):
-                            documents = text_content
-                        else:
-                            st.error("리스트 내부의 요소가 Document 객체가 아닙니다.")
-                            return
-                    else:
-                        st.error("지원하지 않는 데이터 형식입니다.")
-                        return
+            retrieval_chainsub = create_retrieval_chain(retriever, create_stuff_documents_chain(llm, PromptTemplate.from_template(
+                "{input}, Please answer in KOREAN."
 
-                    if text_splitter is None:
-                        st.error("text_splitter 객체 초기화 실패")
-                        return
+                "CONTEXT:"
+                "{context}."
 
-                    documents = text_splitter.split_documents(documents)
+                "FORMAT:"
+                "{format}"
+            ).partial(format=PydanticOutputParser(pydantic_object=CreateQuizsub).get_format_instructions())))
+            retrieval_chaintf = create_retrieval_chain(retriever, create_stuff_documents_chain(llm, PromptTemplate.from_template(
+                "{input}, Please answer in KOREAN."
 
-                    vector = FAISS.from_documents(documents, embeddings)
-                    retriever = vector.as_retriever()
+                "CONTEXT:"
+                "{context}."
 
-                    qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, output_parser=parseroub)
-                    retrieval_chainoub = qa  # 수정: retrieval_chainoub = qa (qa.run이 아님)
+                "FORMAT:"
+                "{format}"
+            ).partial(format=PydanticOutputParser(pydantic_object=CreateQuizTF).get_format_instructions())))
 
-                    retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
-                    retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
+            quiz_query = "중요한 개념에 집중한 객관식 문제 하나를 작성하고, 주어진 형식을 따르며 다음 맥락을 참조하세요"
 
-                    quiz_query = "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context"
+            for i in range(num_quizzes):
+                relevant_docs = qa.get_relevant_documents(quiz_query)
+                response = qa.run(relevant_docs)
+                quiz_questions.append(response)
+                progress = (i + 1) / num_quizzes
+                progress_bar.progress(progress)
 
-                    # PydanticOutputParser 생성
-                    parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
-                    parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
-                    parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
+            # 퀴즈 생성 완료 알림 메시지 표시
+            st.success(f"{num_quizzes}개의 퀴즈가 생성되었습니다.")
 
-                    prompt = PromptTemplate.from_template(
-                        "{input}, Please answer in KOREAN."
-
-                        "CONTEXT:"
-                        "{context}."
-
-                        "FORMAT:"
-                        "{format}"
-                    )
-                    
-                    promptoub = prompt.partial(format=parseroub.get_format_instructions())
-                    promptsub = prompt.partial(format=parsersub.get_format_instructions())
-                    prompttf = prompt.partial(format=parsertf.get_format_instructions())
-
-                    document_chainoub = create_stuff_documents_chain(llm, promptoub)
-                    document_chainsub = create_stuff_documents_chain(llm, promptsub)
-                    document_chaintf = create_stuff_documents_chain(llm, prompttf)
-
-                    retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
-                    retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
-
-                    for i in range(num_quizzes):
-                        relevant_docs = qa.get_relevant_documents(quiz_query)
-                        response = qa.run(relevant_docs)
-                        quiz_questions.append(response)
-                        progress = (i + 1) / num_quizzes
-                        progress_bar.progress(progress)
-
-                    # 퀴즈 생성 완료 알림 메시지 표시
-                    st.success(f"{num_quizzes}개의 퀴즈가 생성되었습니다.")
-
-                    # quiz_solve_page.py로 이동
-                    st.session_state['quizzes'] = quiz_questions
-                    st.session_state.selected_page = "퀴즈 풀이"
-                    st.session_state.selected_type = quiz_type
-                    st.session_state.selected_num = num_quizzes
-                    st.experimental_rerun()
-
-            #         st.session_state.gene = 1
-            # if st.session_state.gene is not None:
-            #     st.rerun()
+            # quiz_solve_page.py로 이동
+            st.session_state['quizzes'] = quiz_questions
+            st.session_state.selected_page = "퀴즈 풀이"
+            st.session_state.selected_type = quiz_type
+            st.session_state.selected_num = num_quizzes
+            st.experimental_rerun()
