@@ -164,7 +164,15 @@ def quiz_creation_page(text_content):
                     documents = text_splitter.split_documents(documents)
 
                     vector = FAISS.from_documents(documents, embeddings)
+                    retriever = vector.as_retriever()
 
+                    qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, output_parser=parseroub)
+                    retrieval_chainoub = qa  # 수정: retrieval_chainoub = qa (qa.run이 아님)
+
+                    retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
+                    retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
+
+                    quiz_query = "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context"
 
                     # PydanticOutputParser 생성
                     parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
@@ -189,13 +197,8 @@ def quiz_creation_page(text_content):
                     document_chainsub = create_stuff_documents_chain(llm, promptsub)
                     document_chaintf = create_stuff_documents_chain(llm, prompttf)
 
-                    qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, output_parser=parseroub)
-                    retrieval_chainoub = qa
-                    
                     retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
                     retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
-
-                    quiz_query = "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context"
 
                     for i in range(num_quizzes):
                         relevant_docs = qa.get_relevant_documents(quiz_query)
