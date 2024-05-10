@@ -135,19 +135,31 @@ def quiz_creation_page(text_content):
                     embeddings = OpenAIEmbeddings()
 
                     # Rag
-                    if isinstance(text_content, str):
-                        text_splitter = RecursiveCharacterTextSplitter()
-                        documents = text_splitter.split_documents(text_content)
-                    elif isinstance(text_content, list):
-                        if all(isinstance(doc, Document) for doc in text_content):
-                            documents = text_content
+                    if text_content is not None:
+                        if isinstance(text_content, str):
+                            text_splitter = RecursiveCharacterTextSplitter()
+                            if text_splitter is None:
+                                st.error("text_splitter 객체 초기화 실패")
+                                return
+                            documents = [Document(page_content=text_content)]
+                        elif isinstance(text_content, list):
+                            if all(isinstance(doc, Document) for doc in text_content):
+                                documents = text_content
+                            else:
+                                st.error("리스트 내부의 요소가 Document 객체가 아닙니다.")
+                                return
                         else:
-                            documents = [Document(page_content=str(doc)) for doc in text_content]
-                    else:
-                        st.error("지원하지 않는 데이터 형식입니다.")
-                        return
+                            st.error("지원하지 않는 데이터 형식입니다.")
+                            return
 
-                    vector = FAISS.from_documents(documents, embeddings)
+                        if text_splitter is None:
+                            st.error("text_splitter 객체 초기화 실패")
+                            return
+
+                        documents = text_splitter.split_documents(documents)
+
+                        vector = FAISS.from_documents(documents, embeddings)
+
 
                     # PydanticOutputParser 생성
                     parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
