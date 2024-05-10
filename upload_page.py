@@ -69,4 +69,3 @@ def upload_page():
 # 메인 함수 실행
 if __name__ == "__main__":
     upload_page()
-
