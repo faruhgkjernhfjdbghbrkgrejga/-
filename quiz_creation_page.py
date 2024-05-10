@@ -20,6 +20,14 @@ from PIL import Image
 import pytesseract
 from PyPDF2 import PdfReader
 import io
+from langchain_community.vectorstores import FAISS
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain.chains import create_retrieval_chain
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from PIL import Image
+import pytesseract
+from PyPDF2 import PdfReader
+import io
 
 
 class CreateQuizoub(BaseModel):
