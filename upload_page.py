@@ -1,11 +1,10 @@
-# upload_page.py
+#upload_page.py
 
 import streamlit as st
 from PIL import Image
 import pytesseract
 from PyPDF2 import PdfReader
 import io
-import quiz_creation_page
 
 @st.cache(allow_output_mutation=True)
 def process_file(uploaded_file, text_area_content):
@@ -60,11 +59,6 @@ def upload_page():
         st.success("파일 처리 완료!")
         st.text("파일 내용:")
         st.write(text_content)
-
-        # 퀴즈 생성 페이지로 이동
-        quiz_creation_page.quiz_creation_page(text_content)
-
-    return text_content
 
 # 메인 함수 실행
 if __name__ == "__main__":

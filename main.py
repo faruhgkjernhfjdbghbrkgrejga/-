@@ -1,4 +1,5 @@
 # main.py
+
 import streamlit as st
 from upload_page import upload_page
 from quiz_creation_page import quiz_creation_page
@@ -12,27 +13,29 @@ st.set_page_config(page_title="AI 퀴즈 생성기")
 # 메인 함수
 def main():
     # 사이드바 메뉴 설정
-    menu_options = ["로그인", "파일 업로드", "퀴즈 생성", "퀴즈 풀이", "퀴즈 채점"]
+    menu_options = ["로그인", "파일 업로드", "퀴즈 생성", "퀴즈 풀이", "퀴즈 채점"]  # 퀴즈 채점 메뉴 추가
     selected_page = st.sidebar.radio("메뉴", menu_options)
-
-    # st.session_state 초기화
     if 'selected_page' not in st.session_state:
         st.session_state.selected_page = "파일 업로드"
 
+    # placeholder = st.empty()
     # 선택된 페이지 표시
     if selected_page == "파일 업로드":
-        text_content = upload_page()
-        st.session_state.text_content = text_content
+        upload_page()
     elif selected_page == "퀴즈 생성":
-        text_content = st.session_state.get("text_content", None)
-        if text_content:
-            quiz_creation_page(text_content)
-        else:
-            st.warning("먼저 파일을 업로드하세요.")
+        quiz_creation_page()
+        # placeholder.empty()
+        # with placeholder.container():
+        #     quiz_creation_page()
     elif selected_page == "퀴즈 풀이":
         quiz_solve_page()
-    elif selected_page == "퀴즈 채점":
-        quiz_grading_page()
+        # placeholder.empty()
+        # with placeholder.container():
+        #     quiz_solve_page()
+    elif selected_page == "퀴즈 채점":  # 퀴즈 채점 페이지 추가
+        placeholder.empty()
+        with placeholder.container():
+            quiz_grading_page()
     elif selected_page == "로그인":
         sign()
 
