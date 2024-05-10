@@ -13,4 +13,4 @@ PyYAML
 streamlit
 streamlit-authenticator
 bcrypt
-faiss-cpu
+chromadb
