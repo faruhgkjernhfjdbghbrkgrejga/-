@@ -179,16 +179,9 @@ def quiz_creation_page(text_content):
             # 퀴즈 개수 선택
             num_quizzes = st.number_input("생성할 퀴즈의 개수를 입력하세요:", min_value=1, value=5, step=1)
 
-            # 파일 업로드 옵션
-            #st.header("파일 업로드")
-            #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
-
-            #text_content = process_file(uploaded_file)
-
             quiz_questions = []
 
             if text_content is not None:
-
                 if st.button('문제 생성 하기', disabled=button_disabled):
                     button_disabled = True  # 버튼 비활성화
                     progress_bar = st.progress(0)  # 진행 상황 표시 초기화
@@ -196,8 +189,11 @@ def quiz_creation_page(text_content):
                     embeddings = OpenAIEmbeddings()
 
                     # Rag
-                    text_splitter = RecursiveCharacterTextSplitter()
-                    documents = text_splitter.split_documents(text_content)
+                    if isinstance(text_content, str):
+                        text_splitter = RecursiveCharacterTextSplitter()
+                        documents = text_splitter.split_documents(text_content)
+                    else:
+                        documents = [str(text_content)]
                     vector = FAISS.from_documents(documents, embeddings)
 
                     # PydanticOutputParser 생성
