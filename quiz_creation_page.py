@@ -22,7 +22,6 @@ from PyPDF2 import PdfReader
 import io
 from quiz_creation_page import quiz_creation_page
 
-
 class CreateQuizoub(BaseModel):
     quiz: str = Field(description="The created problem")
     options1: str = Field(description="The first option of the created problem")
@@ -31,19 +30,15 @@ class CreateQuizoub(BaseModel):
     options4: str = Field(description="The fourth option of the created problem")
     correct_answer: str = Field(description="One of the options1 or options2 or options3 or options4")
 
-
 class CreateQuizsub(BaseModel):
     quiz = ("quiz =The created problem")
     correct_answer = ("correct_answer =The answer to the problem")
-
-
 
 class CreateQuizTF(BaseModel):
     quiz = ("The created problem")
     options1 = ("The true or false option of the created problem")
     options2 = ("The true or false option of the created problem")
     correct_answer = ("One of the options1 or options2")
-
 
 def make_model(pages):
     llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
@@ -87,7 +82,6 @@ def make_model(pages):
     # chaintf = prompttf | chat_model | parsertf
     return 0
 
-
 # 파일 처리 함수
 def process_file(uploaded_file):
     if uploaded_file is None:
@@ -120,7 +114,6 @@ def process_file(uploaded_file):
 
     return texts
 
-
 # 퀴즈 생성 함수
 @st.experimental_fragment
 def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf):
@@ -147,7 +140,6 @@ def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsu
 
     return quiz_questions
 
-
 @st.experimental_fragment
 def grade_quiz_answer(user_answer, quiz_answer):
     if user_answer.lower() == quiz_answer.lower():
@@ -155,7 +147,6 @@ def grade_quiz_answer(user_answer, quiz_answer):
     else:
         grade = "오답"
     return grade
-
 
 # 메인 함수
 def quiz_creation_page():
@@ -179,62 +170,56 @@ def quiz_creation_page():
             text_content = process_file(uploaded_file)
 
             quiz_questions = []
-            # if 'gene' not in st.session_state:
-            #     st.session_state.gene = None
 
             if text_content is not None:
 
                 if st.button('문제 생성 하기'):
                     with st.spinner('퀴즈를 생성 중입니다...'):
-                    llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
-                    embeddings = OpenAIEmbeddings()
+                        llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
+                        embeddings = OpenAIEmbeddings()
 
-                    # Rag
-                    text_splitter = RecursiveCharacterTextSplitter()
-                    documents = text_splitter.split_documents(text_content)
-                    vector = FAISS.from_documents(documents, embeddings)
+                        # Rag
+                        text_splitter = RecursiveCharacterTextSplitter()
+                        documents = text_splitter.split_documents(text_content)
+                        vector = FAISS.from_documents(documents, embeddings)
 
-                    # PydanticOutputParser 생성
-                    parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
-                    parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
-                    parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
+                        # PydanticOutputParser 생성
+                        parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
+                        parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
+                        parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
 
-                    prompt = PromptTemplate.from_template(
-                        "{input}, Please answer in KOREAN."
+                        prompt = PromptTemplate.from_template(
+                            "{input}, Please answer in KOREAN."
 
-                        "CONTEXT:"
-                        "{context}."
+                            "CONTEXT:"
+                            "{context}."
 
-                        "FORMAT:"
-                        "{format}"
-                    )
-                    promptoub = prompt.partial(format=parseroub.get_format_instructions())
-                    promptsub = prompt.partial(format=parsersub.get_format_instructions())
-                    prompttf = prompt.partial(format=parsertf.get_format_instructions())
+                            "FORMAT:"
+                            "{format}"
+                        )
+                        promptoub = prompt.partial(format=parseroub.get_format_instructions())
+                        promptsub = prompt.partial(format=parsersub.get_format_instructions())
+                        prompttf = prompt.partial(format=parsertf.get_format_instructions())
 
-                    document_chainoub = create_stuff_documents_chain(llm, promptoub)
-                    document_chainsub = create_stuff_documents_chain(llm, promptsub)
-                    document_chaintf = create_stuff_documents_chain(llm, prompttf)
+                        document_chainoub = create_stuff_documents_chain(llm, promptoub)
+                        document_chainsub = create_stuff_documents_chain(llm, promptsub)
+                        document_chaintf = create_stuff_documents_chain(llm, prompttf)
 
-                    retriever = vector.as_retriever()
+                        retriever = vector.as_retriever()
 
-                    retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
-                    retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
-                    retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
+                        retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
+                        retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
+                        retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
 
-                    for i in range(num_quizzes):
-                        quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
-                        st.session_state['quizs'] = quiz_questions
-                    st.session_state.selected_page = "퀴즈 풀이"
-                    st.session_state.selected_type = quiz_type
-                    st.session_state.selected_num = num_quizzes
-                    
-                    st.success('퀴즈 생성이 완료되었습니다!')
-                    st.write(quiz_questions)
-                    
-            #         st.session_state.gene = 1
-            # if st.session_state.gene is not None:
-            #     st.rerun()
+                        for i in range(num_quizzes):
+                            quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
+                            st.session_state['quizs'] = quiz_questions
+                        st.session_state.selected_page = "퀴즈 풀이"
+                        st.session_state.selected_type = quiz_type
+                        st.session_state.selected_num = num_quizzes
+
+                        st.success('퀴즈 생성이 완료되었습니다!')
+                        st.write(quiz_questions)
 
             if st.button('퀴즈 풀기'):
                 st.session_state.quiz_questions = quiz_questions
