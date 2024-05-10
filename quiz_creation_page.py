@@ -164,7 +164,7 @@ def grade_quiz_answer(user_answer, quiz_answer):
     return grade
 
 # 메인 함수
-def quiz_creation_page():
+def quiz_creation_page(text_content):
     button_disabled = False
     placeholder = st.empty()
     st.session_state.page = 0
@@ -180,10 +180,10 @@ def quiz_creation_page():
             num_quizzes = st.number_input("생성할 퀴즈의 개수를 입력하세요:", min_value=1, value=5, step=1)
 
             # 파일 업로드 옵션
-            st.header("파일 업로드")
-            uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
+            #st.header("파일 업로드")
+            #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
 
-            text_content = process_file(uploaded_file)
+            #text_content = process_file(uploaded_file)
 
             quiz_questions = []
 
