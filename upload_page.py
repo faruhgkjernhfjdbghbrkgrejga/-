@@ -5,6 +5,7 @@ from PIL import Image
 import pytesseract
 from PyPDF2 import PdfReader
 import io
+import quiz_creation_page
 
 @st.cache(allow_output_mutation=True)
 def process_file(uploaded_file, text_area_content):
