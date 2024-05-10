@@ -184,7 +184,6 @@ def quiz_creation_page():
                 if st.button('문제 생성 하기'):
                     llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
                     embeddings = OpenAIEmbeddings()
-                    st.switch_page("quiz_solve_page.py")
 
                     # Rag
                     text_splitter = RecursiveCharacterTextSplitter()
