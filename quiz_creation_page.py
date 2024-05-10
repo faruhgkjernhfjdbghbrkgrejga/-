@@ -155,9 +155,9 @@ def grade_quiz_answer(user_answer, quiz_answer):
         grade = "오답"
     return grade
 
-
 # 메인 함수
 def quiz_creation_page():
+    button_disabled = False
     placeholder = st.empty()
     st.session_state.page = 0
     if st.session_state.page == 0:
@@ -178,12 +178,12 @@ def quiz_creation_page():
             text_content = process_file(uploaded_file)
 
             quiz_questions = []
-            # if 'gene' not in st.session_state:
-            #     st.session_state.gene = None
 
             if text_content is not None:
 
-                if st.button('문제 생성 하기'):
+                if st.button('문제 생성 하기', disabled=button_disabled):
+                    button_disabled = True  # 버튼 비활성화
+                    progress_bar = st.progress(0)  # 진행 상황 표시 초기화
                     llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
                     embeddings = OpenAIEmbeddings()
 
@@ -221,11 +221,31 @@ def quiz_creation_page():
                     retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
 
                     for i in range(num_quizzes):
-                        quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
-                        st.session_state['quizs'] = quiz_questions
+                        quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf))
+                        progress = (i + 1) / num_quizzes
+                        progress_bar.progress(progress)
+
+                    # 퀴즈 생성 완료 알림 메시지 표시
+                    st.success(f"{num_quizzes}개의 퀴즈가 생성되었습니다.")
+
+                    # quiz_solve_page.py로 이동
+                    st.session_state['quizzes'] = quiz_questions
                     st.session_state.selected_page = "퀴즈 풀이"
                     st.session_state.selected_type = quiz_type
                     st.session_state.selected_num = num_quizzes
+                    st.experimental_rerun()
+
+                    
+
+
+
+
+
+
+
+
+
+
             #         st.session_state.gene = 1
             # if st.session_state.gene is not None:
             #     st.rerun()
