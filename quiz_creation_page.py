@@ -221,4 +221,4 @@ def quiz_creation_page():
                         st.write(quiz_questions)
 
             if st.button('퀴즈 풀기'):
-                st.switch_page("pages/quiz_solve_page.py")
+                st.switch_page("quiz_solve_page.py")
