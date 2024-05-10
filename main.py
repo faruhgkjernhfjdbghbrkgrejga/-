@@ -12,13 +12,10 @@ def main():
         st.session_state.selected_page = "파일 업로드"
     selected_page = st.sidebar.radio("메뉴", menu_options, index=menu_options.index(st.session_state.selected_page))
 
-    st.page_link("pages/quiz_creation_page.py", label="quiz_creation_page", icon="🏠")
-    st.page_link("pages/page_1.py", label="Page 1", icon="1️⃣")
-    st.page_link("pages/page_2.py", label="Page 2", icon="2️⃣", disabled=True)
+    st.page_link("quiz_creation_page", label="퀴즈 생성", icon="🏠")
+    st.page_link("page_1", label="Page 1", icon="1️⃣")
+    st.page_link("page_2", label="Page 2", icon="2️⃣", disabled=True)
     st.page_link("http://www.google.com", label="Google", icon="🌎")
-
-
-    
 
     # 선택된 페이지 표시
     if selected_page == "파일 업로드":
