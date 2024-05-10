@@ -22,7 +22,7 @@ from PyPDF2 import PdfReader
 import io
 from langchain_community.vectorstores import FAISS
 from PyPDF2 import PdfReader
-from langchain.document import Document
+from langchain.schema import Document
 
 
 class CreateQuizoub(BaseModel):
