@@ -164,6 +164,17 @@ def quiz_creation_page(text_content):
             parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
             parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
             
+            def create_retrieval_chain_with_parser(retriever, parser):
+                return create_retrieval_chain(retriever, create_stuff_documents_chain(llm, PromptTemplate.from_template(
+                    "{input}, Please answer in KOREAN."
+                    "CONTEXT: {context}."
+                    "FORMAT: {format}"
+                ).partial(format=parser.get_format_instructions())))
+            
+            retrieval_chainsub = create_retrieval_chain_with_parser(retriever, parsersub)
+            retrieval_chaintf = create_retrieval_chain_with_parser(retriever, parsertf)
+
+            
             retrieval_chainsub = create_retrieval_chain(retriever, create_stuff_documents_chain(llm, PromptTemplate.from_template(
                 "{input}, Please answer in KOREAN."
                 "CONTEXT: {context}."
@@ -177,15 +188,14 @@ def quiz_creation_page(text_content):
             ).partial(format=parsertf.get_format_instructions())))
 
 
+            parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
+
             retrieval_chaintf = create_retrieval_chain(retriever, create_stuff_documents_chain(llm, PromptTemplate.from_template(
                 "{input}, Please answer in KOREAN."
+                "CONTEXT: {context}."
+                "FORMAT: {format}"
+            ).partial(format=parsertf.get_format_instructions())))
 
-                "CONTEXT:"
-                "{context}."
-
-                "FORMAT:"
-                "{format}"
-            ).partial(format=PydanticOutputParser(pydantic_object=CreateQuizTF).get_format_instructions())))
 
             
 
