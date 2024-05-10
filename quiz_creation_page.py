@@ -24,6 +24,7 @@ from langchain_community.vectorstores import FAISS
 from PyPDF2 import PdfReader
 from langchain.document import Document
 
+
 class CreateQuizoub(BaseModel):
     quiz: str = Field(description="The created problem")
     options1: str = Field(description="The first option of the created problem")
@@ -32,62 +33,15 @@ class CreateQuizoub(BaseModel):
     options4: str = Field(description="The fourth option of the created problem")
     correct_answer: str = Field(description="One of the options1 or options2 or options3 or options4")
 
-
 class CreateQuizsub(BaseModel):
     quiz = ("quiz =The created problem")
     correct_answer = ("correct_answer =The answer to the problem")
-
-
 
 class CreateQuizTF(BaseModel):
     quiz = ("The created problem")
     options1 = ("The true or false option of the created problem")
     options2 = ("The true or false option of the created problem")
     correct_answer = ("One of the options1 or options2")
-
-
-def make_model(pages):
-    llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
-    embeddings = OpenAIEmbeddings()
-
-    # Rag
-    text_splitter = RecursiveCharacterTextSplitter()
-    documents = text_splitter.split_documents(pages)
-    vector = FAISS.from_documents(documents, embeddings)
-
-    # PydanticOutputParser 생성
-    parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
-    parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
-    parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
-
-    prompt = PromptTemplate.from_template(
-        "Question: {input}, Please answer in KOREAN."
-
-        "CONTEXT:"
-        "{context}."
-
-        "FORMAT:"
-        "{format}"
-    )
-    promptoub = prompt.partial(format=parseroub.get_format_instructions())
-    promptsub = prompt.partial(format=parsersub.get_format_instructions())
-    prompttf = prompt.partial(format=parsertf.get_format_instructions())
-
-    document_chainoub = create_stuff_documents_chain(llm, promptoub)
-    document_chainsub = create_stuff_documents_chain(llm, promptsub)
-    document_chaintf = create_stuff_documents_chain(llm, prompttf)
-
-    retriever = vector.as_retriever()
-
-    retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
-    retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
-    retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
-
-    # chainoub = promptoub | chat_model | parseroub
-    # chainsub = promptsub | chat_model | parsersub
-    # chaintf = prompttf | chat_model | parsertf
-    return 0
-
 
 # 파일 처리 함수
 def process_file(uploaded_file):
@@ -109,8 +63,8 @@ def process_file(uploaded_file):
     else:
         st.error("지원하지 않는 파일 형식입니다.")
         return None
+
     text_splitter = RecursiveCharacterTextSplitter(
-        # Set a really small chunk size, just to show.
         chunk_size=100,
         chunk_overlap=20,
         length_function=len,
@@ -119,27 +73,25 @@ def process_file(uploaded_file):
     texts = text_splitter.create_documents([text_content])
     return texts
 
-    return texts
-
 
 # 퀴즈 생성 함수
 @st.experimental_fragment
 def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf):
     # Generate quiz prompt based on selected quiz type
     if quiz_type == "다중 선택 (객관식)":
-        response = retrieval_chainoub.invoke(
+        response = retrieval_chainoub.run(
             {
                 "input": "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context"
             }
         )
     elif quiz_type == "주관식":
-        response = retrieval_chainsub.invoke(
+        response = retrieval_chainsub.run(
             {
                 "input": "Create one open-ended question focusing on important concepts, following the given format, referring to the following context"
             }
         )
     elif quiz_type == "OX 퀴즈":
-        response = retrieval_chaintf.invoke(
+        response = retrieval_chaintf.run(
             {
                 "input": "Create one true or false question focusing on important concepts, following the given format, referring to the following context"
             }
@@ -211,6 +163,7 @@ def quiz_creation_page(text_content):
                         "FORMAT:"
                         "{format}"
                     )
+                    
                     promptoub = prompt.partial(format=parseroub.get_format_instructions())
                     promptsub = prompt.partial(format=parsersub.get_format_instructions())
                     prompttf = prompt.partial(format=parsertf.get_format_instructions())
