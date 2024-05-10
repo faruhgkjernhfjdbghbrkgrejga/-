@@ -63,6 +63,8 @@ def upload_page():
         # 퀴즈 생성 페이지로 이동
         quiz_creation_page.quiz_creation_page(text_content)
 
+    return text_content
+
 # 메인 함수 실행
 if __name__ == "__main__":
     upload_page()
