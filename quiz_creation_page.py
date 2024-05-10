@@ -20,7 +20,6 @@ from PIL import Image
 import pytesseract
 from PyPDF2 import PdfReader
 import io
-from quiz_creation_page import quiz_creation_page
 
 class CreateQuizoub(BaseModel):
     quiz: str = Field(description="The created problem")
