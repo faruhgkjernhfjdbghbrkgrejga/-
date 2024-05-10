@@ -235,17 +235,6 @@ def quiz_creation_page():
                     st.session_state.selected_num = num_quizzes
                     st.experimental_rerun()
 
-                    
-
-
-
-
-
-
-
-
-
-
             #         st.session_state.gene = 1
             # if st.session_state.gene is not None:
             #     st.rerun()
