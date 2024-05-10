@@ -7,9 +7,8 @@ from quiz_grading_page import quiz_grading_page
 from sign import sign
 
 def main():
-    # 사이드바 메뉴 설정
-    menu_options = ["로그인", "파일 업로드", "퀴즈 생성", "퀴즈 풀이", "퀴즈 채점"]
-    selected_page = st.sidebar.radio("메뉴", menu_options)
+    if 'selected_page' not in st.session_state:
+        st.session_state.selected_page = "파일 업로드"
 
     # 선택된 페이지 표시
     if selected_page == "파일 업로드":
