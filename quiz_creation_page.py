@@ -235,7 +235,3 @@ def quiz_creation_page():
             #         st.session_state.gene = 1
             # if st.session_state.gene is not None:
             #     st.rerun()
-
-            if st.button('퀴즈 풀기'):
-                st.session_state.quiz_questions = quiz_questions
-                st.session_state.selected_page = "퀴즈 풀이"
