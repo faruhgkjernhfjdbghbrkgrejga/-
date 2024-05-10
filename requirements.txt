@@ -13,3 +13,4 @@ pytesseract
 scikit-learn
 streamlit
 streamlit-authenticator
+schema
