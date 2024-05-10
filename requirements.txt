@@ -1,7 +1,7 @@
 bcrypt
 chromadb
 faiss-cpu
-langchain==0.0.123
+langchain
 langchain_community
 langchain_core
 langchain_openai
