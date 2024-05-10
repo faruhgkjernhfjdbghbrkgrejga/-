@@ -235,6 +235,6 @@ def quiz_creation_page():
                     st.success('퀴즈 생성이 완료되었습니다!')
                         st.write(quiz_questions)
 
-                if st.button('퀴즈 풀기'):
-                    st.session_state.quiz_questions = quiz_questions
-                    st.session_state.selected_page = "퀴즈 풀이"
+            if st.button('퀴즈 풀기'):
+                st.session_state.quiz_questions = quiz_questions
+                st.session_state.selected_page = "퀴즈 풀이"
