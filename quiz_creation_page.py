@@ -193,7 +193,7 @@ def quiz_creation_page(text_content):
                         text_splitter = RecursiveCharacterTextSplitter()
                         documents = text_splitter.split_documents(text_content)
                     elif isinstance(text_content, list):
-                        documents = text_content
+                        documents = [doc.page_content for doc in text_content]
                     else:
                         st.error("지원하지 않는 데이터 형식입니다.")
                         return
