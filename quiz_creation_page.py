@@ -23,6 +23,7 @@ import io
 from langchain_community.vectorstores import FAISS
 from PyPDF2 import PdfReader
 from langchain.schema import Document
+from langchain.chains import RetrievalQA
 
 
 class CreateQuizoub(BaseModel):
@@ -127,6 +128,10 @@ def quiz_creation_page(text_content):
 
             quiz_questions = []
 
+            retriever = vector.as_retriever()
+            qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, output_parser=parseroub)
+            retrieval_chainoub = qa.run
+
             if text_content is not None:
                 if st.button('문제 생성 하기', disabled=button_disabled):
                     button_disabled = True  # 버튼 비활성화
@@ -185,13 +190,18 @@ def quiz_creation_page(text_content):
                     document_chaintf = create_stuff_documents_chain(llm, prompttf)
 
                     retriever = vector.as_retriever()
-
+                    
                     retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
                     retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
                     retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
+                    
 
                     for i in range(num_quizzes):
-                        quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf))
+                        relevant_docs = qa.get_relevant_documents(
+                            "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context"
+                        )
+                        response = qa.run(relevant_docs)
+                        quiz_questions.append(response)
                         progress = (i + 1) / num_quizzes
                         progress_bar.progress(progress)
 
