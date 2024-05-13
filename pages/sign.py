@@ -4,6 +4,10 @@ import yaml
 import streamlit as st
 import bcrypt
 import hashlib
+from PIL import Image
+import pytesseract
+from PyPDF2 import PdfReader
+import io
 
 def register_user(name, username, email, password):
     """
