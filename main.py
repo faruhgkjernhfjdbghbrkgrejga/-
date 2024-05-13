@@ -14,7 +14,7 @@ def main():
 
     # 선택된 페이지 표시
     if selected_page == "파일 업로드":
-        upload_page()
+        upload_page.upload_page()
     elif selected_page == "퀴즈 생성":
         quiz_creation_page.quiz_creation_page()
     elif selected_page == "퀴즈 풀이":
