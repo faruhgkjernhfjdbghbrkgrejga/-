@@ -12,22 +12,17 @@ def main():
         st.session_state.selected_page = "파일 업로드"
     selected_page = st.sidebar.radio("메뉴", menu_options, index=menu_options.index(st.session_state.selected_page))
 
-    st.page_link("main.py", label="퀴즈 생성", icon="🏠")
-    st.page_link("pages/quiz_creation_page.py", label="퀴즈 생성", icon="1️⃣")
-    st.page_link("pages/quiz_solve_page.py", label="Page 2", icon="2️⃣")
-
-
     # 선택된 페이지 표시
     if selected_page == "파일 업로드":
-        upload_page()
+        upload_page.upload_page()
     elif selected_page == "퀴즈 생성":
         quiz_creation_page.quiz_creation_page()
     elif selected_page == "퀴즈 풀이":
-        quiz_solve_page()
+        quiz_solve_page.quiz_solve_page()
     elif selected_page == "퀴즈 채점":
-        quiz_grading_page()
+        quiz_grading_page.quiz_grading_page()
     elif selected_page == "로그인":
-        sign()
+        sign.sign()
 
 if __name__ == "__main__":
     main()
