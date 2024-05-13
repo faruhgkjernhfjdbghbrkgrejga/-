@@ -97,3 +97,6 @@ def sign():
         result = login_user(existing_username, existing_password)
         if result:
             st.success(result)
+
+if __name__ == "__main__":
+    sign()
