@@ -150,3 +150,4 @@ def quiz_solve_page():
         j += 1
     if st.session_state.number == st.session_state.selected_num:
         st.switch_page("quiz_grading_page.py")
+        st.rerun()
