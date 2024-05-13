@@ -221,8 +221,8 @@ def quiz_creation_page():
                         st.success('퀴즈 생성이 완료되었습니다!')
                         st.write(quiz_questions)
 
-                    if st.button('퀴즈 풀기'):
-                        st.switch_page("pages/quiz_solve_page.py")
+                if st.button('퀴즈 풀기'):
+                    st.switch_page("pages/quiz_solve_page.py")
 
 
 if __name__ == "__main__":
