@@ -154,7 +154,8 @@ def quiz_creation_page():
     if st.session_state.page == 0:
         with placeholder.container():
             st.title("AI 퀴즈 생성기")
-            st.write(st.session_state.selected_page)
+            if 'selected_page' not in st.session_state:
+                st.session_state.selected_page = ""
 
             # 퀴즈 유형 선택
             quiz_type = st.radio("생성할 퀴즈 유형을 선택하세요:", ["다중 선택 (객관식)", "주관식", "OX 퀴즈"])
