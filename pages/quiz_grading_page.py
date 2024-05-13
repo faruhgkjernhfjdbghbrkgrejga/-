@@ -49,3 +49,6 @@ def quiz_grading_page(quiz_questions, page_state):
         if st.button("퀴즈 생성 페이지로 이동"):
             page_state["page"] = 0
             st.experimental_rerun()
+
+if __name__ == "__main__":
+    quiz_grading_page()
