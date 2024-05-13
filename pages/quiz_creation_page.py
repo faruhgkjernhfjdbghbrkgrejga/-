@@ -21,7 +21,6 @@ import pytesseract
 from PyPDF2 import PdfReader
 import io
 
-@st.cache(allow_output_mutation=True)
 class CreateQuizoub(BaseModel):
     quiz: str = Field(description="The created problem")
     options1: str = Field(description="The first option of the created problem")
