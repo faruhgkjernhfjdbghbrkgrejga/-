@@ -9,7 +9,7 @@ def main():
     # 사이드바 메뉴 설정
     menu_options = ["로그인", "파일 업로드", "퀴즈 생성", "퀴즈 풀이", "퀴즈 채점"]
     if 'selected_page' not in st.session_state:
-        st.session_state.selected_page = "파일 업로드"
+        st.session_state.selected_page = "퀴즈 생성"
     selected_page = st.sidebar.radio("메뉴", menu_options, index=menu_options.index(st.session_state.selected_page))
 
     # 선택된 페이지 표시
