@@ -152,5 +152,6 @@ def quiz_solve_page():
         if st.button('퀴즈 채점'):
             st.switch_page("pages/quiz_grading_page.py")
             #st.rerun()
+
 if __name__ == "__main__":
     quiz_solve_page()
