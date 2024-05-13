@@ -149,5 +149,4 @@ def quiz_solve_page():
 
         j += 1
     if st.session_state.number == st.session_state.selected_num:
-        st.session_state.selected_page = "퀴즈 생성"
-        st.rerun()
+        st.switch_page("quiz_grading_page.py")
