@@ -105,47 +105,37 @@ def extract_text(uploaded_file, text_input):
     
     return text_content
 
-def process_file():
-    upload_option = st.radio("입력 유형을 선택하세요:", ("텍스트 파일", "이미지 파일", "PDF 파일", "텍스트 직접 입력"))
-
-    if upload_option == "텍스트 파일":
-        uploaded_file = st.file_uploader("텍스트 파일을 업로드하세요.", type=["txt"])
-    elif upload_option == "이미지 파일":
-        uploaded_file = st.file_uploader("이미지 파일을 업로드하세요.", type=["jpg", "jpeg", "png"]) 
-    elif upload_option == "PDF 파일":
-        uploaded_file = st.file_uploader("PDF 파일을 업로드하세요.", type=["pdf"])
-    else:
-        uploaded_file = None
-
-    if upload_option == "텍스트 직접 입력":
-        text_input = st.text_area("텍스트를 입력하세요.")
-    else:
-        text_input = None
-        
-    if uploaded_file is None and text_input is None:
-        st.warning("파일 또는 텍스트를 입력해주세요.")
+# 파일 처리 함수
+def process_file(uploaded_file):
+    if uploaded_file is None:
+        st.warning("파일을 업로드하세요.")
         return None
 
-    text_content = extract_text(uploaded_file, text_input)
-
-    if text_content is not None:
-        st.success("파일 처리 완료!") 
-        st.text("파일 내용:")
-        st.write(text_content)
-
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=100,
-            chunk_overlap=20, 
-            length_function=len,
-            is_separator_regex=False,
-        )
-        texts = text_splitter.create_documents([text_content])
-        return texts
+    # 업로드된 파일 처리
+    if uploaded_file.type == "text/plain":
+        text_content = uploaded_file.read().decode("utf-8")
+    elif uploaded_file.type.startswith("image/"):
+        image = Image.open(uploaded_file)
+        text_content = pytesseract.image_to_string(image)
+    elif uploaded_file.type == "application/pdf":
+        pdf_reader = PdfReader(io.BytesIO(uploaded_file.read()))
+        text_content = ""
+        for page in pdf_reader.pages:
+            text_content += page.extract_text()
     else:
+        st.error("지원하지 않는 파일 형식입니다.")
         return None
+    text_splitter = RecursiveCharacterTextSplitter(
+        # Set a really small chunk size, just to show.
+        chunk_size=100,
+        chunk_overlap=20,
+        length_function=len,
+        is_separator_regex=False,
+    )
+    texts = text_splitter.create_documents([text_content])
+    return texts
 
-
-
+    return texts
 
 
 # 퀴즈 생성 함수
