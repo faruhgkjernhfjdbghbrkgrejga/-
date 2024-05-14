@@ -121,6 +121,10 @@ def process_file():
         text_input = st.text_area("텍스트를 입력하세요.")
     else:
         text_input = None
+        
+    if uploaded_file is None and text_input is None:
+        st.warning("파일 또는 텍스트를 입력해주세요.")
+        return None
 
     text_content = extract_text(uploaded_file, text_input)
 
@@ -139,6 +143,7 @@ def process_file():
         return texts
     else:
         return None
+
 
 
 
