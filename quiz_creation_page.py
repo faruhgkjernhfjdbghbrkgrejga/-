@@ -83,10 +83,6 @@ def make_model(pages):
 
 # 파일 처리 함수
 def process_file(uploaded_file):
-    if uploaded_file is None:
-        st.warning("파일을 업로드하세요.")
-        return None
-
     upload_option = st.radio("입력 유형을 선택하세요:", ("텍스트 파일", "이미지 파일", "PDF 파일", "텍스트 직접 입력"))
 
     # 선택된 옵션에 따라 입력 방식 제공
