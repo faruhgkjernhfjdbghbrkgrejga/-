@@ -111,7 +111,7 @@ def process_file():
     if upload_option == "텍스트 파일":
         uploaded_file = st.file_uploader("텍스트 파일을 업로드하세요.", type=["txt"])
     elif upload_option == "이미지 파일":
-        uploaded_file = st.file_uploader("이미지 파일을 업로드하세요.", type=["jpg", "jpeg", "png"])
+        uploaded_file = st.file_uploader("이미지 파일을 업로드하세요.", type=["jpg", "jpeg", "png"]) 
     elif upload_option == "PDF 파일":
         uploaded_file = st.file_uploader("PDF 파일을 업로드하세요.", type=["pdf"])
     else:
@@ -125,13 +125,13 @@ def process_file():
     text_content = extract_text(uploaded_file, text_input)
 
     if text_content is not None:
-        st.success("파일 처리 완료!")
+        st.success("파일 처리 완료!") 
         st.text("파일 내용:")
         st.write(text_content)
 
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=100,
-            chunk_overlap=20,
+            chunk_overlap=20, 
             length_function=len,
             is_separator_regex=False,
         )
@@ -139,6 +139,7 @@ def process_file():
         return texts
     else:
         return None
+
 
 
 
