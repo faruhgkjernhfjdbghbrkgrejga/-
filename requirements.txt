@@ -13,3 +13,11 @@ PyYAML
 streamlit
 streamlit-authenticator
 bcrypt
+boto3
+traceback
+dotenv
+pgvector
+vectorstoreme
+memory
+chains
+htmltemplate
