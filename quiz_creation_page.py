@@ -137,6 +137,9 @@ def process_file():
         )
         texts = text_splitter.create_documents([text_content])
         return texts
+    else:
+        return None
+
 
 
 # 퀴즈 생성 함수
