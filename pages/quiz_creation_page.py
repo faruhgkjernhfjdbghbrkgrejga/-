@@ -117,8 +117,10 @@ def process_file(uploaded_file, text_area_content):
 # 파일 처리 함수
 def process_file(uploaded_file):
 
-    url_area_content = ''
-    text_area_content = ''
+    uploaded_file = None
+    text_area_content = None
+    url_area_content = None
+    selected_topic = None
     
     # 파일 업로드 옵션 선택
     upload_option = st.radio("입력 유형을 선택하세요", ("텍스트 파일", "이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"))
