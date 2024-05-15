@@ -102,11 +102,11 @@ def process_file(uploaded_file, text_area_content):
             st.error("지원하지 않는 파일 형식입니다.")
             return None
             
-        elif text_area_content is not None:
-            text_content = text_area_content
+    elif text_area_content is not None:
+        text_content = text_area_content
 
-        elif url_area_content is not None:
-            text_content = url_area_content
+    elif url_area_content is not None:
+        text_content = url_area_content
         
     else:
         st.warning("파일 또는 텍스트를 입하세요.")
