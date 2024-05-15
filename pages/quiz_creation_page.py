@@ -131,7 +131,7 @@ def process_file(uploaded_file):
         text_area_content = None
 
     # URL 입력 영역
-    if upload_option == "URL 입력":
+    if upload_option == "URL":
         URL_area_content = st.text_area("URL을 입력하세요.")
     else:
         URL_area_content = None
