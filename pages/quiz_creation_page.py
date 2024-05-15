@@ -82,11 +82,11 @@ def make_model(pages):
     # chaintf = prompttf | chat_model | parsertf
     return 0
 
-@st.cache(allow_output_mutation=True)
-def process_file(uploaded_file, text_area_content):
+@st.cache_data
+def process_file(uploaded_file, text_area_content, url_area_content):
+    text_content = None
 
     if uploaded_file is not None:
-        # 업로드된 파일 처리
         if uploaded_file.type == "text/plain":
             text_content = uploaded_file.read().decode("utf-8")
         elif uploaded_file.type.startswith("image/"):
@@ -100,18 +100,20 @@ def process_file(uploaded_file, text_area_content):
         else:
             st.error("지원하지 않는 파일 형식입니다.")
             return None
-            
-    elif text_area_content is not None:
+    elif text_area_content:
         text_content = text_area_content
+    elif url_area_content:
+        loader = RecursiveUrlLoader(url=url_area_content)
+        text_content = loader.load()
 
-    elif url_area_content is not None:
-        text_content = url_area_content
-        
+    if text_content:
+        documents = [{"page_content": text_content}]
+        text_splitter = RecursiveCharacterTextSplitter()
+        documents = text_splitter.split_documents(documents)
+        return documents
     else:
-        st.warning("파일 또는 텍스트를 입하세요.")
+        st.warning("입력이 필요합니다.")
         return None
-
-    return text_content
 
 
 # 파일 처리 함수
@@ -199,30 +201,15 @@ def process_file(uploaded_file):
     return texts
 
 # 퀴즈 생성 함수
-@st.experimental_fragment
 def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf):
-    # Generate quiz prompt based on selected quiz type
     if quiz_type == "다중 선택 (객관식)":
-        response = retrieval_chainoub.invoke(
-            {
-                "input": "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context"
-            }
-        )
+        response = retrieval_chainoub.invoke({"input": "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context"})
     elif quiz_type == "주관식":
-        response = retrieval_chainsub.invoke(
-            {
-                "input": "Create one open-ended question focusing on important concepts, following the given format, referring to the following context"
-            }
-        )
+        response = retrieval_chainsub.invoke({"input": "Create one open-ended question focusing on important concepts, following the given format, referring to the following context"})
     elif quiz_type == "OX 퀴즈":
-        response = retrieval_chaintf.invoke(
-            {
-                "input": "Create one true or false question focusing on important concepts, following the given format, referring to the following context"
-            }
-        )
-    quiz_questions = response
-
-    return quiz_questions
+        response = retrieval_chaintf.invoke({"input": "Create one true or false question focusing on important concepts, following the given format, referring to the following context"})
+    
+    return response
 
 @st.experimental_fragment
 def grade_quiz_answer(user_answer, quiz_answer):
@@ -242,17 +229,28 @@ def quiz_creation_page():
             if 'selected_page' not in st.session_state:
                 st.session_state.selected_page = ""
 
-            # 퀴즈 유형 선택
             quiz_type = st.radio("생성할 퀴즈 유형을 선택하세요:", ["다중 선택 (객관식)", "주관식", "OX 퀴즈"])
-
-            # 퀴즈 개수 선택
             num_quizzes = st.number_input("생성할 퀴즈의 개수를 입력하세요:", min_value=1, value=5, step=1)
-
-            # 파일 업로드 옵션
+            
             st.header("파일 업로드")
+            upload_option = st.radio("입력 유형을 선택하세요", ("텍스트 파일", "이미지 파일", "PDF 파일", "직접 입력", "URL"))
+            
             uploaded_file = None
-            #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
-            text_content = process_file(uploaded_file)
+            text_area_content = None
+            url_area_content = None
+            
+            if upload_option == "텍스트 파일":
+                uploaded_file = st.file_uploader("텍스트 파일을 업로드하세요.", type=["txt"])
+            elif upload_option == "이미지 파일":
+                uploaded_file = st.file_uploader("이미지 파일을 업로드하세요.", type=["jpg", "jpeg", "png"])
+            elif upload_option == "PDF 파일":
+                uploaded_file = st.file_uploader("PDF 파일을 업로드하세요.", type=["pdf"])
+            elif upload_option == "직접 입력":
+                text_area_content = st.text_area("텍스트를 입력하세요.")
+            elif upload_option == "URL":
+                url_area_content = st.text_area("URL을 입력하세요.")
+            
+            text_content = process_file(uploaded_file, text_area_content, url_area_content)
 
             quiz_questions = []
 
@@ -306,8 +304,8 @@ def quiz_creation_page():
                         st.success('퀴즈 생성이 완료되었습니다!')
                         st.write(quiz_questions)
 
-                if st.button('퀴즈 풀기'):
-                    st.switch_page("pages/quiz_solve_page.py")
+                    if st.button('퀴즈 풀기'):
+                        st.switch_page("pages/quiz_solve_page.py")
 
 
 if __name__ == "__main__":
