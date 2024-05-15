@@ -9,7 +9,7 @@ def main():
     showSidebarNavigation = "false"
     # 선택된 페이지 표시
     if selected_page == "퀴즈 생성":
-        pages/quiz_creation_page.quiz_creation_page()
+        quiz_creation_page.pages/quiz_creation_page()
     elif selected_page == "퀴즈 풀이":
         quiz_solve_page.quiz_solve_page()
     elif selected_page == "퀴즈 채점":
