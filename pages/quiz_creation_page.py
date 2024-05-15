@@ -83,7 +83,8 @@ def make_model(pages):
     return 0
 
 @st.cache_data
-def process_file(uploaded_file, text_area_content):
+def process_file(uploaded_file, text_area_content, url_area_content):
+    text_content = None
 
     if uploaded_file is not None:
         if uploaded_file.type == "text/plain":
@@ -99,15 +100,19 @@ def process_file(uploaded_file, text_area_content):
         else:
             st.error("지원하지 않는 파일 형식입니다.")
             return None
-            
-    elif text_area_content is not None:
+    elif text_area_content:
         text_content = text_area_content
+    elif url_area_content:
+        loader = RecursiveUrlLoader(url=url_area_content)
+        text_content = loader.load()
 
-    elif url_area_content is not None:
-        text_content = url_area_content
-        
+    if text_content:
+        documents = [{"page_content": text_content}]
+        text_splitter = RecursiveCharacterTextSplitter()
+        documents = text_splitter.split_documents(documents)
+        return documents
     else:
-        st.warning("파일 또는 텍스트를 입하세요.")
+        st.warning("파일, 텍스트 또는 URL을 입력하세요.")
         return None
 
     return text_content
