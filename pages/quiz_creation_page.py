@@ -156,7 +156,7 @@ def process_file(uploaded_file):
     if uploaded_file is None:
         if url_area_content is None:
             if text_area_content is None:
-                if selected_topic = "토픽 선택":
+                if selected_topic == "토픽 선택":
                     st.warning("입력이 필요합니다.")
                     return None
 
