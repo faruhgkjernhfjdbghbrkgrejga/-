@@ -149,15 +149,16 @@ def process_file(uploaded_file):
     if upload_option == "토픽 선택":
         selected_topic = st.selectbox(
             "토픽을 선택하세요.",
-            ("수학", "물리학", "역사", "화학"))
+            ("토픽 선택", "수학", "물리학", "역사", "화학"))
     else:
         url_area_content = None
     
     if uploaded_file is None:
         if url_area_content is None:
             if text_area_content is None:
-                st.warning("입력이 필요합니다.")
-                return None
+                if selected_topic = "토픽 선택":
+                    st.warning("입력이 필요합니다.")
+                    return None
 
     # 업로드된 파일 처리
     if uploaded_file.type == "text/plain":
