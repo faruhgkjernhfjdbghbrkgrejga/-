@@ -6,7 +6,8 @@ import sign
 
 def main():
     selected_page = "퀴즈 생성"
-    #showSidebarNavigation = false
+    [client]
+    showSidebarNavigation = false
     # 선택된 페이지 표시
     if selected_page == "퀴즈 생성":
         quiz_creation_page.quiz_creation_page()
