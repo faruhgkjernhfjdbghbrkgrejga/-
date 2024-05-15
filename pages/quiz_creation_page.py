@@ -122,7 +122,7 @@ def process_file(uploaded_file):
     text_area_content = ''
     
     # 파일 업로드 옵션 선택
-    upload_option = st.radio("입력 유형을 선택하세요", ("텍스트 파일", "이미지 파일", "PDF 파일", "직접 입력", "URL"))
+    upload_option = st.radio("입력 유형을 선택하세요", ("텍스트 파일", "이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"))
 
     # 선택된 옵션에 따라 입력 방식 제공
     if upload_option == "텍스트 파일":
@@ -145,6 +145,15 @@ def process_file(uploaded_file):
         url_area_content = st.text_area("URL을 입력하세요.")
     else:
         url_area_content = None
+
+    # 토픽 선택 영역
+    if upload_option == "토픽 선택":
+        url_area_content = st.text_area("토픽을 선하세요.")
+        option = st.selectbox(
+            "",
+            ("수학", "물리학", "역사", "화학", "추가가능"))
+    else:
+        url_area_content = None
     
     if uploaded_file is None:
         if text_area_content is None:
@@ -163,7 +172,7 @@ def process_file(uploaded_file):
         text_content = ""
         for page in pdf_reader.pages:
             text_content += page.extract_text()
-    elif text_area_content:
+    elif text_area_content.type == "txt":
         text_content = text_area_content
     elif url_area_content:
         url = url_area_content
