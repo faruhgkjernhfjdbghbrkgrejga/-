@@ -5,10 +5,6 @@ import quiz_grading_page
 import sign
 
 def main():
-    if 'selected_page' not in st.session_state:
-        st.session_state.selected_page = "퀴즈 생성"
-    selected_page = st.sidebar.radio("메뉴", menu_options, index=menu_options.index(st.session_state.selected_page))
-
     # 선택된 페이지 표시
     if selected_page == "퀴즈 생성":
         quiz_creation_page.quiz_creation_page()
