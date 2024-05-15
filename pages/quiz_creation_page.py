@@ -159,12 +159,11 @@ def process_file(uploaded_file):
         for page in pdf_reader.pages:
             text_content += page.extract_text()
     elif text_area_content.type == "text/plain":
-        text_content = text_area_content.read().decode("utf-8")
+        text_content = text_area_content
     elif url_area_content.type == "text/plain":
-        url = url_area_content.read().decode("utf-8")
+        url = url_area_content
         loader = RecursiveUrlLoader(url=url)
-        text_content = loader.load()
-        
+        text_content = loader.load()        
     else:
         st.error("지원하지 않는 파일 형식입니다.")
         return None
