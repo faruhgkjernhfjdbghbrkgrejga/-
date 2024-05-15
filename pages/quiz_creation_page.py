@@ -124,11 +124,17 @@ def process_file(uploaded_file):
     else:
         uploaded_file = None
 
-        # 텍스트 입력 영역
+    # 텍스트 입력 영역
     if upload_option == "직접 입력":
         text_area_content = st.text_area("텍스트를 입력하세요.")
     else:
         text_area_content = None
+
+    # URL 입력 영역
+    if upload_option == "URL 입력":
+        URL_area_content = st.text_area("URL을 입력하세요.")
+    else:
+        URL_area_content = None
     
     if uploaded_file is None:
         st.warning("파일을 업로드하세요.")
