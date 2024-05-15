@@ -150,14 +150,14 @@ def process_file(uploaded_file):
     if upload_option == "토픽 선택":
         selected_topic = st.selectbox(
             "토픽을 선택하세요.",
-            ("수학", "물리학", "역사", "화학", "추가가능"))
+            ("토픽 선택", "수학", "물리학", "역사", "화학"))
     else:
         url_area_content = None
     
     if uploaded_file is None:
         if text_area_content is None:
             if url_area_content is None:
-                if selected_topic is None:
+                if selected_topic == "토픽 선택":
                     st.warning("입력이 필요합니다.")
                     return None
 
@@ -173,10 +173,10 @@ def process_file(uploaded_file):
         for page in pdf_reader.pages:
             text_content += page.extract_text()
     elif url_area_content:
-        url = url_area_content
+        url = url_area_content.type == "text/plain"
         loader = RecursiveUrlLoader(url=url)
         text_content = loader.load()  
-    elif text_area_content:
+    elif text_area_content.type == "text/plain":
         text_content = text_area_content
     else:
         st.error("지원하지 않는 파일 형식입니다.")
