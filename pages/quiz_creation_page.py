@@ -162,9 +162,7 @@ def process_file(uploaded_file):
                     return None
 
     # 업로드된 파일 처리
-    if uploaded_file.type == "text/plain":
-        text_content = uploaded_file.read().decode("utf-8")
-    elif uploaded_file.type.startswith("image/"):
+    if uploaded_file.type.startswith("image/"):
         image = Image.open(uploaded_file)
         text_content = pytesseract.image_to_string(image)
     elif uploaded_file.type == "application/pdf":
