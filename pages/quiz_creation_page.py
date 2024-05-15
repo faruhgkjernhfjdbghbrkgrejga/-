@@ -154,7 +154,7 @@ def process_file(uploaded_file):
     else:
         url_area_content = None
     
-    if uploaded_file or text_area_content or url_area_content is None:
+    if uploaded_file and text_area_content and url_area_content is None:
         st.warning("입력이 필요합니다.")
         return None
 
