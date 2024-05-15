@@ -158,9 +158,9 @@ def process_file(uploaded_file):
         text_content = ""
         for page in pdf_reader.pages:
             text_content += page.extract_text()
-    elif text_area_content.type == "text/plain":
+    elif text_area_content:
         text_content = text_area_content
-    elif url_area_content.type == "text/plain":
+    elif url_area_content:
         url = url_area_content
         loader = RecursiveUrlLoader(url=url)
         text_content = loader.load()        
