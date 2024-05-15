@@ -201,6 +201,7 @@ def process_file(uploaded_file):
     else:
         st.error("지원하지 않는 파일 형식입니다.")
         return None
+        
     text_splitter = RecursiveCharacterTextSplitter(
         # Set a really small chunk size, just to show.
         chunk_size=100,
@@ -209,9 +210,10 @@ def process_file(uploaded_file):
         is_separator_regex=False,
     )
     texts = text_splitter.create_documents([text_content])
+    
     return texts
 
-    return texts
+    #return texts
 
 
 # 퀴즈 생성 함수
