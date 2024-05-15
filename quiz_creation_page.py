@@ -213,6 +213,7 @@ def process_file(uploaded_file):
     
     return texts
 
+
     #return texts
 
 
