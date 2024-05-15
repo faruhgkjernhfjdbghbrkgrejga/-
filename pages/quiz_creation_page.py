@@ -82,12 +82,13 @@ def make_model(pages):
     # chaintf = prompttf | chat_model | parsertf
     return 0
 
-@st.cache(allow_output_mutation=True)
+@st.cache_data
 def process_file(uploaded_file, text_area_content):
 
     if uploaded_file is not None:
-        # 업로드된 파일 처리
-        if uploaded_file.type.startswith("image/"):
+        if uploaded_file.type == "text/plain":
+            text_content = uploaded_file.read().decode("utf-8")
+        elif uploaded_file.type.startswith("image/"):
             image = Image.open(uploaded_file)
             text_content = pytesseract.image_to_string(image)
         elif uploaded_file.type == "application/pdf":
