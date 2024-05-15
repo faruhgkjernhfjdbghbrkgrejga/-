@@ -132,13 +132,15 @@ def process_file(uploaded_file):
 
     # URL 입력 영역
     if upload_option == "URL":
-        URL_area_content = st.text_area("URL을 입력하세요.")
+        url_area_content = st.text_area("URL을 입력하세요.")
     else:
         URL_area_content = None
     
     if uploaded_file is None:
-        st.warning("파일을 업로드하세요.")
-        return None
+        if text_area_content is None:
+            if url_area_content is None:
+                st.warning("입력이 필요합니다.")
+                return None
 
     # 업로드된 파일 처리
     if uploaded_file.type == "text/plain":
