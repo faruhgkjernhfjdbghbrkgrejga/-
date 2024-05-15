@@ -83,6 +83,8 @@ def make_model(pages):
 
 @st.cache(allow_output_mutation=True)
 def process_file(uploaded_file, text_area_content):
+
+    
     if uploaded_file is not None:
         # 업로드된 파일 처리
         if uploaded_file.type == "text/plain":
@@ -110,7 +112,23 @@ def process_file(uploaded_file, text_area_content):
 # 파일 처리 함수
 def process_file(uploaded_file):
     # 파일 업로드 옵션 선택
-    upload_option = st.radio("입력 유형을 선택하세요", ("텍스트 파일", "이미지 파일", "PDF 파일", "텍스트 직접 입력"))
+    upload_option = st.radio("입력 유형을 선택하세요", ("텍스트 파일", "이미지 파일", "PDF 파일", "직접 입력", "URL"))
+
+    # 선택된 옵션에 따라 입력 방식 제공
+    if upload_option == "텍스트 파일":
+        uploaded_file = st.file_uploader("텍스트 파일을 업로드하세요.", type=["txt"])
+    elif upload_option == "이미지 파일":
+        uploaded_file = st.file_uploader("이미지 파일을 업로드하세요.", type=["jpg", "jpeg", "png"])
+    elif upload_option == "PDF 파일":
+        uploaded_file = st.file_uploader("PDF 파일을 업로드하세요.", type=["pdf"])
+    else:
+        uploaded_file = None
+
+        # 텍스트 입력 영역
+    if upload_option == "텍스트 직접 입력":
+        text_area_content = st.text_area("텍스트를 입력하세요.")
+    else:
+        text_area_content = None
     
     if uploaded_file is None:
         st.warning("파일을 업로드하세요.")
@@ -137,6 +155,8 @@ def process_file(uploaded_file):
         length_function=len,
         is_separator_regex=False,
     )
+    
+    text_content = process_file(uploaded_file, text_area_content)
     texts = text_splitter.create_documents([text_content])
     return texts
 
