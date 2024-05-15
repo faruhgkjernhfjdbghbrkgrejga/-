@@ -21,6 +21,7 @@ import pytesseract
 from PyPDF2 import PdfReader
 import io
 import upload_page
+from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
 
 class CreateQuizoub(BaseModel):
     quiz: str = Field(description="The created problem")
@@ -138,7 +139,7 @@ def process_file(uploaded_file):
     if upload_option == "URL":
         url_area_content = st.text_area("URL을 입력하세요.")
     else:
-        URL_area_content = None
+        url_area_content = None
     
     if uploaded_file is None:
         if text_area_content is None:
@@ -157,9 +158,17 @@ def process_file(uploaded_file):
         text_content = ""
         for page in pdf_reader.pages:
             text_content += page.extract_text()
+    elif text_area_content.type == "text/plain":
+        text_content = text_area_content.read().decode("utf-8")
+    elif url_area_content.type == "text/plain":
+        url = url_area_content.read().decode("utf-8")
+        loader = RecursiveUrlLoader(url=url)
+        text_content = loader.load()
+        
     else:
         st.error("지원하지 않는 파일 형식입니다.")
         return None
+        
     text_splitter = RecursiveCharacterTextSplitter(
         # Set a really small chunk size, just to show.
         chunk_size=100,
