@@ -84,7 +84,6 @@ def make_model(pages):
 @st.cache(allow_output_mutation=True)
 def process_file(uploaded_file, text_area_content):
 
-    
     if uploaded_file is not None:
         # 업로드된 파일 처리
         if uploaded_file.type == "text/plain":
@@ -103,7 +102,7 @@ def process_file(uploaded_file, text_area_content):
     elif text_area_content is not None:
         text_content = text_area_content
     else:
-        st.warning("파일 또는 텍스트를 업로드하세요.")
+        st.warning("파일 또는 텍스트를 입하세요.")
         return None
 
     return text_content
@@ -155,8 +154,8 @@ def process_file(uploaded_file):
         length_function=len,
         is_separator_regex=False,
     )
-    
-    text_content = process_file(uploaded_file, text_area_content)
+    if text_area_content is not None:
+        text_content = process_file(uploaded_file, text_area_content)
     texts = text_splitter.create_documents([text_content])
     return texts
 
