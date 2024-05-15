@@ -148,9 +148,8 @@ def process_file(uploaded_file):
 
     # 토픽 선택 영역
     if upload_option == "토픽 선택":
-        url_area_content = st.text_area("토픽을 선하세요.")
-        option = st.selectbox(
-            "",
+        selected_topic = st.selectbox(
+            "토픽을 선택하세요.",
             ("수학", "물리학", "역사", "화학", "추가가능"))
     else:
         url_area_content = None
