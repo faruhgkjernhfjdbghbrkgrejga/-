@@ -1,5 +1,4 @@
 import streamlit as st
-import upload_page
 import quiz_creation_page
 import quiz_solve_page
 import quiz_grading_page
