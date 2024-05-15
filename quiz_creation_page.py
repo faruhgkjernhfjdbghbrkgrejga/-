@@ -299,11 +299,20 @@ def quiz_creation_page():
                             """{format}"""
                         )
 
-                        prompt = FewShotPromptTemplate(
-                            examples=examples,
-                            example_prompt=example_prompt,
-                            suffix="Question: {question}",
-                            input_variables=["question"],
+                        # prompt = FewShotPromptTemplate(
+                        #     examples=examples,
+                        #     example_prompt=example_prompt,
+                        #     suffix="Question: {question}",
+                        #     input_variables=["question"],
+                        # )
+                        prompt = PromptTemplate.from_template(
+                            "Question: {input}, Please answer in KOREAN."
+                    
+                            "CONTEXT:"
+                            "{context}."
+                    
+                            "FORMAT:"
+                            "{format}"
                         )
                         promptoub = prompt.partial(format=parseroub.get_format_instructions())
                         promptsub = prompt.partial(format=parsersub.get_format_instructions())
