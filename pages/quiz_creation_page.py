@@ -20,7 +20,6 @@ from PIL import Image
 import pytesseract
 from PyPDF2 import PdfReader
 import io
-import upload_page
 from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
 
 class CreateQuizoub(BaseModel):
@@ -172,11 +171,11 @@ def process_file(uploaded_file):
         text_content = ""
         for page in pdf_reader.pages:
             text_content += page.extract_text()
-    elif url_area_content :
-        url = url_area_content:
+    elif url_area_content.type == "txt":
+        url = url_area_content
         loader = RecursiveUrlLoader(url=url)
         text_content = loader.load()  
-    elif text_area_content :
+    elif text_area_content.type == "txt":
         text_content = text_area_content
     else:
         st.error("지원하지 않는 파일 형식입니다.")
