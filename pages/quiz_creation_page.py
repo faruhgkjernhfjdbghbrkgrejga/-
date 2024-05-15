@@ -127,12 +127,10 @@ def process_file(uploaded_file):
     selected_topic = None
     
     # 파일 업로드 옵션 선택
-    upload_option = st.radio("입력 유형을 선택하세요", ("텍스트 파일", "이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"))
+    upload_option = st.radio("입력 유형을 선택하세요", ("이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"))
 
     # 선택된 옵션에 따라 입력 방식 제공
-    if upload_option == "텍스트 파일":
-        uploaded_file = st.file_uploader("텍스트 파일을 업로드하세요.", type=["txt"])
-    elif upload_option == "이미지 파일":
+    if upload_option == "이미지 파일":
         uploaded_file = st.file_uploader("이미지 파일을 업로드하세요.", type=["jpg", "jpeg", "png"])
     elif upload_option == "PDF 파일":
         uploaded_file = st.file_uploader("PDF 파일을 업로드하세요.", type=["pdf"])
@@ -168,9 +166,7 @@ def process_file(uploaded_file):
                     return None
 
     # 업로드된 파일 처리
-    if uploaded_file.type == "text/plain":
-        text_content = uploaded_file.read().decode("utf-8")
-    elif uploaded_file.type.startswith("image/"):
+    if uploaded_file.type.startswith("image/"):
         image = Image.open(uploaded_file)
         text_content = pytesseract.image_to_string(image)
     elif uploaded_file.type == "application/pdf":
@@ -178,6 +174,13 @@ def process_file(uploaded_file):
         text_content = ""
         for page in pdf_reader.pages:
             text_content += page.extract_text()
+    elif url_area_content.type == "text/plain":
+        url = url_area_content.read().decode("utf-8")
+        loader = RecursiveUrlLoader(url=url)
+        text_content = loader.load()
+    elif text_area_content.type == "text/plain":
+        text_content = text_area_content.read().decode("utf-8")
+        
     else:
         st.error("지원하지 않는 파일 형식입니다.")
         return None
