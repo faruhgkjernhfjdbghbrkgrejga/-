@@ -109,6 +109,9 @@ def process_file(uploaded_file, text_area_content):
 
 # 파일 처리 함수
 def process_file(uploaded_file):
+    # 파일 업로드 옵션 선택
+    upload_option = st.radio("입력 유형을 선택하세요:", ("텍스트 파일", "이미지 파일", "PDF 파일", "텍스트 직접 입력"))
+    
     if uploaded_file is None:
         st.warning("파일을 업로드하세요.")
         return None
