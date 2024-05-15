@@ -3,6 +3,7 @@
 import streamlit as st
 from langchain_openai import ChatOpenAI
 from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain.prompts.few_shot import FewShotPromptTemplate
 from langchain.prompts.prompt import PromptTemplate
 from langchain.output_parsers import PydanticOutputParser
 from langchain import hub
@@ -20,6 +21,81 @@ from PIL import Image
 import pytesseract
 from PyPDF2 import PdfReader
 import io
+
+examples = [
+    {
+        "Question": "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context, Please answer in KOREAN.",
+
+        "CONTEXT": """
+        {context}
+        """,
+
+        "FORMAT": """
+        {
+            quiz: str = Field(description="The created problem")
+            options1: str = Field(description="The first option of the created problem")
+            options2: str = Field(description="The second option of the created problem")
+            options3: str = Field(description="The third option of the created problem")
+            options4: str = Field(description="The fourth option of the created problem")
+            correct_answer: str = Field(description="One of the options1 or options2 or options3 or options4")
+        }
+        """,
+        "answer": """
+추가 질문: 이 자료는 수학, 문학, 비문학, 과학 중 어느 종류야?
+중간 답변: 이 자료는 수학, 분야는 미적분입니다.
+추가 질문: 미적분에 관한 format에 맞는 다양한 multiple-choice 문제를 생성합니다.
+{"quiz": "실수 전체의 집합에서 연속인 함수 f(x)가 모든 실수 x 대하여 f(x) ≥ 이고, x  일 때 f(x)  (x)*(np.exp((x)^))이다.
+모든 양수 t에 대하여 x에 대한 방정식 f(x)  t의 서로 다른
+실근의 개수는 이고, 이 방정식의 두 실근 중 작은 값을 gt,
+큰 값을 ht라 하자.
+두 함수 gt, ht는 모든 양수 t에 대하여
+gt  ht  k (k는 상수)
+를 만족시킨다. integrate.quad(lambda x: f(x), 0, 7)  np.exp()  1일 때,f(9)/f(8) 의 값은?",\n"options1": "1.) 3/2*np.exp(5)",\n"options2": "2.) 3/4*np.exp(7)",\n"options3": "3.) 5/4*np.exp(9)",\n"options4": "4.) 6/5*np.exp(11)",\n"correct_answer": "options4"}
+""",
+    },
+    {
+        "Question": "Create one open-ended question focusing on important concepts, following the given format, referring to the following context",
+
+        "CONTEXT": """
+        {context}
+        """,
+
+        "FORMAT": """
+        {
+            quiz: str = Field(description="The created problem")
+            correct_answer: str = Field(description="correct_answer =The answer to the problem")
+        }
+        """,
+        "answer": """
+추가 질문: 이 자료는 수학, 문학, 비문학, 과학 중 어느 종류야?
+중간 답변: 이 자료는 수학, 분야는 기하 입니다.
+추가 질문: 미적분에 관한 format에 맞는 다양한 open-ended 문제를 생성합니다.
+{"quiz": " 좌표평면에 한 변의 길이가 인 정삼각형 ABC가 있다. 선분 AB를   으로 내분하는 점을 D , 선분 BC를   으로 내분하는 점을 E, 선분 CA 를   으로 내분하는 점을 F라 하자. 네 점 P , Q , R, X가 다음 조건을 만족시킨다. (가)  |[D,P]| |[E,Q]| |[F,R]|  1 (나) [A,X]  [P,B] + [Q,C] + [R,A]" |[A,X]| 의 값이 최대일 때, 삼각형 PQR의 넓이를 S라 하자. S^2 의 값을 구하시오,\n"correct_answer": "147"}
+""",
+    },
+    {
+        "Question": "Create one true or false question focusing on important concepts, following the given format, referring to the following context",
+
+        "CONTEXT": """
+        {context}
+        """,
+
+        "FORMAT": """
+        {
+            quiz: str = Field(description="The created problem")
+            options1: str = Field(description="The true or false option of the created problem")
+            options2: str = Field(description="The true or false option of the created problem")
+            correct_answer: str = Field(description="One of the options1 or options2")
+        }
+        """,
+        "answer": """
+추가 질문: 이 자료는 수학, 문학, 비문학, 과학 중 어느 종류야?
+중간 답변: 이 자료는 수학, 분야는 다항식입니다.
+추가 질문: 미적분에 관한 format에 맞는 다양한 true or false 문제를 생성합니다.
+{"quiz": " 다항식의 덧셈이나 뺄셈을 계산할 때에는 계수가 같은 문자의 차수를 더하거나 뺀 후 정리하면 된다. 이 문장은 참인가 거짓인가?",\n"options1": "1.) 참",\n"options2": "2.) 거짓",\n"correct_answer": "거짓"}
+""",
+    },
+]
 
 class CreateQuizoub(BaseModel):
     quiz: str = Field(description="The created problem")
@@ -212,14 +288,22 @@ def quiz_creation_page():
                         parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
                         parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
 
-                        prompt = PromptTemplate.from_template(
+                        example_prompt = PromptTemplate(
+                        input_variables=["question", "answer"], template=
                             "{input}, Please answer in KOREAN."
 
                             "CONTEXT:"
-                            "{context}."
+                            """{context}."""
 
                             "FORMAT:"
-                            "{format}"
+                            """{format}"""
+                        )
+
+                        prompt = FewShotPromptTemplate(
+                            examples=examples,
+                            example_prompt=example_prompt,
+                            suffix="Question: {question}",
+                            input_variables=["question"],
                         )
                         promptoub = prompt.partial(format=parseroub.get_format_instructions())
                         promptsub = prompt.partial(format=parsersub.get_format_instructions())
