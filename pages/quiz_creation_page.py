@@ -173,10 +173,10 @@ def process_file(uploaded_file):
         for page in pdf_reader.pages:
             text_content += page.extract_text()
     elif url_area_content:
-        url = url_area_content.type == "text/plain"
+        url = url_area_content.type == "txt":
         loader = RecursiveUrlLoader(url=url)
         text_content = loader.load()  
-    elif text_area_content.type == "text/plain":
+    elif text_area_content.type == "txt":
         text_content = text_area_content
     else:
         st.error("지원하지 않는 파일 형식입니다.")
