@@ -266,6 +266,85 @@ def quiz_creation_page():
             # 퀴즈 개수 선택
             num_quizzes = st.number_input("생성할 퀴즈의 개수를 입력하세요:", min_value=1, value=5, step=1)
 
+            # 퀴즈 주제 선택
+            language = "언어"
+            english = "영어"
+            korean = "한국어"
+            language_topic = [english, korean]
+            
+            mathematic = "수리"
+            algebra = "대수학"
+            geometry = "기하학"
+            calculus = "미적분학"
+            statistics = "통계학"
+            mathematic_topic = [algebra, geometry, calculus, statistics]
+            
+            social_science = "사회과학"
+            psychology = "심리학"
+            sociology = "사회학"
+            economics = "경제학"
+            political_science = "정치학"
+            social_science_topic = [psychology, sociology, economics, political_science]
+            
+            natural_science = "자연과학"
+            physics = "물리학"
+            chemistry = "화학"
+            biology = "생물학"
+            astronomy = "천문학"
+            natural_science_topic = [physics, chemistry, biology, astronomy]
+            
+            humanity = "인문학"
+            philosophy = "철학"
+            history = "역사학"
+            literature = "문학"
+            art_history = "미술사"
+            humanity_topic = [philosophy, history, literature, art_history]
+            
+            engineering = "공학"
+            computer_engineering = "컴퓨터 공학"
+            architectural_engineering = "건축공학"
+            engineering_topic = [computer_engineering, architectural_engineering]
+            
+            art = "예술"
+            film = "영화"
+            novel = "소설"
+            art_topic = [film, novel]
+            
+            topic = [language + "(미지원)", mathematic + "(미지원)",
+             social_science + "(미지원)", natural_science + "(미지원)",
+             humanity + "(미지원)", engineering + "(미지원)",
+             art + "(영화 분야 지원)"]
+
+            selected_topics = st.multiselect("생성할 퀴즈의 주제를 선택하세요. (중복 선택 가능)", topic)
+
+            # 주제 직접 입력
+            def subtopic_select(selected_topics):
+                sub_topics = []
+                for now_topic in selected_topics:
+                    if now_topic.startswith(language):
+                        sub_topics.extend(language_topic)
+                    elif now_topic.startswith(mathematic):
+                        sub_topics.extend(mathematic_topic)
+                    elif now_topic.startswith(social_science):
+                        sub_topics.extend(social_science_topic)
+                    elif now_topic.startswith(natural_science):
+                        sub_topics.extend(natural_science_topic)
+                    elif now_topic.startswith(humanity):
+                        sub_topics.extend(humanity_topic)
+                    elif now_topic.startswith(engineering):
+                        sub_topics.extend(engineering_topic)
+                    elif now_topic.startswith(art):
+                        sub_topics.extend(art_topic)
+                return sub_topics
+
+            sub_topics = subtopic_select(selected_topics)
+
+            selected_sub_topics = st.multiselect("선택한 주제의 하위 분류를 선택하세요. (중복 선택 가능)", sub_topics)
+
+            st.write("선택한 주제:", selected_topics)
+            st.write("선택한 하위 분류:", selected_sub_topics)
+            st.write("데이터베이스 연결이 되지 않아 주제 선택 기능은 아직 구현 중입니다")
+
             # 파일 업로드 옵션
             st.header("파일 업로드")
             uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
