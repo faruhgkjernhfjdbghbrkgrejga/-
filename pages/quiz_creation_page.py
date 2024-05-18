@@ -237,27 +237,78 @@ def quiz_creation_page():
     if st.session_state.page == 0:
         with placeholder.container():
             st.title("AI 퀴즈 생성기")
-
-            # 입력 유형 선택
-            input_type = st.radio("입력 유형을 선택하세요", ["이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"])
+            if 'selected_page' not in st.session_state:
+                st.session_state.selected_page = ""
 
             # 퀴즈 유형 선택
             quiz_type = st.radio("생성할 퀴즈 유형을 선택하세요:", ["다중 선택 (객관식)", "주관식", "OX 퀴즈"])
 
-            # 텍스트 입력 영역
-            if input_type == "직접 입력":
-                text_area_content = st.text_area("텍스트를 입력하세요.")
+            # 퀴즈 개수 선택
+            num_quizzes = st.number_input("생성할 퀴즈의 개수를 입력하세요:", min_value=1, value=5, step=1)
 
-                # "문제 생성" 버튼 항상 보이기
+            # 파일 업로드 옵션
+            st.header("파일 업로드")
+            uploaded_file = None
+            #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
+            text_content = process_file(uploaded_file)
+
+            quiz_questions = []
+
+            if text_content is not None:
+
                 if st.button('문제 생성 하기'):
                     with st.spinner('퀴즈를 생성 중입니다...'):
-                        # 퀴즈 생성 로직
-                        quiz_questions = generate_quiz(quiz_type, text_area_content)
+                        llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
+                        embeddings = OpenAIEmbeddings()
+
+                        # Rag
+                        text_splitter = RecursiveCharacterTextSplitter()
+                        documents = text_splitter.split_documents(text_content)
+                        vector = FAISS.from_documents(documents, embeddings)
+
+                        # PydanticOutputParser 생성
+                        parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
+                        parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
+                        parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
+
+                        prompt = PromptTemplate.from_template(
+                            "{input}, Please answer in KOREAN."
+
+                            "CONTEXT:"
+                            "{context}."
+
+                            "FORMAT:"
+                            "{format}"
+                        )
+                        promptoub = prompt.partial(format=parseroub.get_format_instructions())
+                        promptsub = prompt.partial(format=parsersub.get_format_instructions())
+                        prompttf = prompt.partial(format=parsertf.get_format_instructions())
+
+                        document_chainoub = create_stuff_documents_chain(llm, promptoub)
+                        document_chainsub = create_stuff_documents_chain(llm, promptsub)
+                        document_chaintf = create_stuff_documents_chain(llm, prompttf)
+
+                        retriever = vector.as_retriever()
+
+                        retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
+                        retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
+                        retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
+
+                        for i in range(num_quizzes):
+                            quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
+                            st.session_state['quizs'] = quiz_questions
+                        st.session_state.selected_page = "퀴즈 풀이"
+                        st.session_state.selected_type = quiz_type
+                        st.session_state.selected_num = num_quizzes
+
                         st.success('퀴즈 생성이 완료되었습니다!')
                         st.write(quiz_questions)
-            else:
-                st.write("다른 입력 유형을 선택하세요.")
+                        st.session_state['quiz_created'] = True
+
+                if st.session_state.get('quiz_created', False):
+                    if st.button('퀴즈 풀기'):
+                        st.switch_page("pages/quiz_solve_page.py")
+
 
 if __name__ == "__main__":
     quiz_creation_page()
-
