@@ -15,4 +15,5 @@ bcrypt
 pillow
 requests
 numpy
-
+chromadb
+schema
