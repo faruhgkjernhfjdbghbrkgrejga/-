@@ -9,13 +9,12 @@ pytesseract
 langchain_community
 scikit-learn
 PyYAML
+streamlit
 streamlit-authenticator
 bcrypt
+langchain-prompts
+langchain-output-parsers
+langchain-hub
 pillow
 requests
 numpy
-
-# Custom GitHub-hosted packages
-git+ssh://git@github.com/langchain/langchain-prompts.git#egg=langchain-prompts
-git+ssh://git@github.com/langchain/langchain-output-parsers.git#egg=langchain-output-parsers
-git+ssh://git@github.com/langchain/langchain-hub.git#egg=langchain-hub
