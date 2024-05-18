@@ -1,5 +1,3 @@
-#quiz_creation_page.py
-
 import streamlit as st
 from langchain_openai import ChatOpenAI
 from langchain_core.pydantic_v1 import BaseModel, Field
@@ -9,7 +7,6 @@ from langchain import hub
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
-from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.document_loaders.image import UnstructuredImageLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -39,6 +36,10 @@ class CreateQuizTF(BaseModel):
     options1: str = Field(description="The true or false option of the created problem")
     options2: str = Field(description="The true or false option of the created problem")
     correct_answer: str = Field(description="One of the options1 or options2")
+
+class Document:
+    def __init__(self, page_content):
+        self.page_content = page_content
 
 def make_model(pages):
     llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
@@ -100,13 +101,11 @@ def process_file(uploaded_file, text_area_content, url_area_content):
         text_content = loader.load()
 
     if text_content:
-        documents = [{"page_content": text_content}]
+        documents = [Document(page_content=text_content)]
         return documents
     else:
         st.warning("파일, 텍스트 또는 URL을 입력하세요.")
         return None
-        
-    return text_content
 
 def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf):
     # Generate quiz prompt based on selected quiz type
