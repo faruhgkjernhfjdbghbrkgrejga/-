@@ -15,6 +15,6 @@ bcrypt
 langchain-prompts
 langchain-output-parsers
 langchain-hub
-Pillow
+pillow
 requests
 numpy
