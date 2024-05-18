@@ -46,9 +46,9 @@ def process_file(uploaded_file=None, text_area_content=None, url_area_content=No
         else:
             st.error("지원하지 않는 파일 형식입니다.")
             return None
-    elif text_area_content:
+    elif text_area_content is not None:
         text_content = text_area_content
-    elif url_area_content:
+    elif url_area_content is not None:
         loader = RecursiveUrlLoader(url=url_area_content)
         text_content = loader.load()
     
