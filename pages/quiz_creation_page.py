@@ -233,8 +233,12 @@ def grade_quiz_answer(user_answer, quiz_answer):
 # 메인 함수
 def quiz_creation_page():
     placeholder = st.empty()
+    # 'selected_page'와 'page' 초기화
     if 'selected_page' not in st.session_state:
         st.session_state.selected_page = ""
+    if 'page' not in st.session_state:
+        st.session_state.page = 0  # 예를 들어, 초기 페이지를 0으로 설정
+
     if st.session_state.page == 0:
         with placeholder.container():
             st.title("AI 퀴즈 생성기")
@@ -247,7 +251,6 @@ def quiz_creation_page():
 
             # 파일 업로드 옵션
             st.header("파일 업로드")
-            uploaded_file = None
             upload_option = st.radio("입력 유형을 선택하세요", ("이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"))
 
             text_content = None
@@ -313,4 +316,3 @@ def quiz_creation_page():
 
 if __name__ == "__main__":
     quiz_creation_page()
-
