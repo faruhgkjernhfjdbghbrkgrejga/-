@@ -6,11 +6,15 @@ langchain_openai
 langchain_core
 faiss-cpu
 pytesseract
-pillow
 langchain_community
 scikit-learn
 PyYAML
 streamlit
 streamlit-authenticator
 bcrypt
-
+langchain-prompts
+langchain-output-parsers
+langchain-hub
+Pillow
+requests
+numpy
