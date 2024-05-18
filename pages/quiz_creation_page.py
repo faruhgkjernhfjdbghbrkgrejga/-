@@ -98,8 +98,6 @@ def process_file(uploaded_file, text_area_content, url_area_content):
 
     if text_content:
         documents = [{"page_content": text_content}]
-        text_splitter = RecursiveCharacterTextSplitter()
-        documents = text_splitter.split_documents(documents)
         return documents
     else:
         st.warning("파일, 텍스트 또는 URL을 입력하세요.")
@@ -168,23 +166,32 @@ def quiz_creation_page():
 
             text_content = process_file(uploaded_file, text_area_content, url_area_content)
 
-            quiz_questions = []
-
             if text_content is not None:
+                st.write("Text content processed successfully:")
+                st.write(text_content)
+                st.write("Creating document structure for text splitting:")
+                documents = [{"page_content": text_content}]
+                st.write(documents)
+
                 if st.button('문제 생성 하기'):
                     with st.spinner('퀴즈를 생성 중입니다...'):
-                        retrieval_chainoub, retrieval_chainsub, retrieval_chaintf = make_model(text_content)
+                        try:
+                            retrieval_chainoub, retrieval_chainsub, retrieval_chaintf = make_model(documents)
 
-                        for i in range(num_quizzes):
-                            quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf))
-                        st.session_state['quizs'] = quiz_questions
-                        st.session_state.selected_page = "퀴즈 풀이"
-                        st.session_state.selected_type = quiz_type
-                        st.session_state.selected_num = num_quizzes
+                            quiz_questions = []
+                            for i in range(num_quizzes):
+                                quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf))
+                            st.session_state['quizs'] = quiz_questions
+                            st.session_state.selected_page = "퀴즈 풀이"
+                            st.session_state.selected_type = quiz_type
+                            st.session_state.selected_num = num_quizzes
 
-                        st.success('퀴즈 생성이 완료되었습니다!')
-                        st.write(quiz_questions)
-                        st.session_state.quiz_created = True
+                            st.success('퀴즈 생성이 완료되었습니다!')
+                            st.write(quiz_questions)
+                            st.session_state.quiz_created = True
+
+                        except Exception as e:
+                            st.error(f"Error during quiz generation: {e}")
 
                 if st.session_state.quiz_created:
                     if st.button('퀴즈 풀기'):
