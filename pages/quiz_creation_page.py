@@ -73,7 +73,7 @@ def make_model(pages):
     retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
     retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
 
-    return retrieval_chainoub, retrieval_chainsub, retrieval_chaintf
+    return 0
 
 @st.cache_data
 def process_file(uploaded_file, text_area_content, url_area_content):
@@ -101,10 +101,15 @@ def process_file(uploaded_file, text_area_content, url_area_content):
 
     if text_content:
         documents = [{"page_content": text_content}]
+        text_splitter = RecursiveCharacterTextSplitter()
+        documents = text_splitter.split_documents(documents)
         return documents
     else:
         st.warning("파일, 텍스트 또는 URL을 입력하세요.")
         return None
+
+    return text_content
+
 
 def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf):
     # Generate quiz prompt based on selected quiz type
