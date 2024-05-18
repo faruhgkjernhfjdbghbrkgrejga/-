@@ -234,11 +234,13 @@ def grade_quiz_answer(user_answer, quiz_answer):
 def quiz_creation_page():
     placeholder = st.empty()
     st.session_state.page = 0
+    if 'selected_page' not in st.session_state:
+        st.session_state.selected_page = ""  # 초기값 설정
+
     if st.session_state.page == 0:
         with placeholder.container():
             st.title("AI 퀴즈 생성기")
-            if 'selected_page' not in st.session_state:
-                st.session_state.selected_page = ""
+            st.write(st.session_state.selected_page)  # 이제 에러 없이 실행될 것입니다.
 
             # 퀴즈 유형 선택
             quiz_type = st.radio("생성할 퀴즈 유형을 선택하세요:", ["다중 선택 (객관식)", "주관식", "OX 퀴즈"])
