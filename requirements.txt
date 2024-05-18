@@ -16,7 +16,3 @@ pillow
 requests
 numpy
 
-langchain-core==0.0.6
-langchain-prompts==0.0.6
-langchain-output-parsers==0.0.6
-langchain-hub==0.0.6
