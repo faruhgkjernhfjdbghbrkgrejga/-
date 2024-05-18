@@ -273,9 +273,9 @@ def quiz_creation_page():
                 text_content = process_file(uploaded_file)
 
             if text_content:
-                documents = [{"page_content": text_content}]  # text_content를 딕셔너리 리스트로 변환
-                text_splitter = RecursiveCharacterTextSplitter()
-                documents = text_splitter.split_documents(documents)  # 수정된 documents 사용
+                # documents = [{"page_content": text_content}]  # text_content를 딕셔너리 리스트로 변환
+                # text_splitter = RecursiveCharacterTextSplitter()
+                # documents = text_splitter.split_documents(documents)  # 수정된 documents 사용
 
                 if st.button('문제 생성 하기'):
                     with st.spinner('퀴즈를 생성 중입니다...'):
