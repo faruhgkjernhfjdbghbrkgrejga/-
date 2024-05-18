@@ -7,7 +7,6 @@ from langchain import hub
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
-from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_community.document_loaders.image import UnstructuredImageLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -143,14 +142,18 @@ def grade_quiz_answer(user_answer, quiz_answer):
 
 # 메인 함수
 def quiz_creation_page():
+    # Initialize session state
+    if 'selected_page' not in st.session_state:
+        st.session_state.selected_page = ""
+    if 'quiz_created' not in st.session_state:
+        st.session_state.quiz_created = False
+
     placeholder = st.empty()
     st.session_state.page = 0
     if st.session_state.page == 0:
         with placeholder.container():
             st.title("AI 퀴즈 생성기")
-            if 'selected_page' not in st.session_state:
-                st.session_state.selected_page = ""
-
+            
             # 퀴즈 유형 선택
             quiz_type = st.radio("생성할 퀴즈 유형을 선택하세요:", ["다중 선택 (객관식)", "주관식", "OX 퀴즈"])
 
@@ -174,16 +177,16 @@ def quiz_creation_page():
 
                         for i in range(num_quizzes):
                             quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf))
-                            st.session_state['quizs'] = quiz_questions
+                        st.session_state['quizs'] = quiz_questions
                         st.session_state.selected_page = "퀴즈 풀이"
                         st.session_state.selected_type = quiz_type
                         st.session_state.selected_num = num_quizzes
 
                         st.success('퀴즈 생성이 완료되었습니다!')
                         st.write(quiz_questions)
-                        st.session_state['quiz_created'] = True
+                        st.session_state.quiz_created = True
 
-                if st.session_state.get('quiz_created', False):
+                if st.session_state.quiz_created:
                     if st.button('퀴즈 풀기'):
                         st.switch_page("pages/quiz_solve_page.py")
 
