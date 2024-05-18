@@ -233,12 +233,11 @@ def grade_quiz_answer(user_answer, quiz_answer):
 # 메인 함수
 def quiz_creation_page():
     placeholder = st.empty()
-    st.session_state.page = 0
+    if 'selected_page' not in st.session_state:
+        st.session_state.selected_page = ""
     if st.session_state.page == 0:
         with placeholder.container():
             st.title("AI 퀴즈 생성기")
-            if 'selected_page' not in st.session_state:
-                st.session_state.selected_page = ""
 
             # 퀴즈 유형 선택
             quiz_type = st.radio("생성할 퀴즈 유형을 선택하세요:", ["다중 선택 (객관식)", "주관식", "OX 퀴즈"])
@@ -249,13 +248,15 @@ def quiz_creation_page():
             # 파일 업로드 옵션
             st.header("파일 업로드")
             uploaded_file = None
-            #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
-            text_content = process_file(uploaded_file)
+            upload_option = st.radio("입력 유형을 선택하세요", ("이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"))
 
-            quiz_questions = []
+            text_content = None
+            if upload_option == "직접 입력":
+                text_area_content = st.text_area("텍스트를 입력하세요.")
+                if text_area_content:
+                    text_content = text_area_content
 
             if text_content is not None:
-
                 if st.button('문제 생성 하기'):
                     with st.spinner('퀴즈를 생성 중입니다...'):
                         llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
@@ -311,4 +312,5 @@ def quiz_creation_page():
 
 
 if __name__ == "__main__":
+    quiz_creation_page()
     quiz_creation_page()
