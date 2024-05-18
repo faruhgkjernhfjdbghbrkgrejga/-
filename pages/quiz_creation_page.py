@@ -118,7 +118,7 @@ def process_file(uploaded_file, text_area_content, url_area_content):
     return text_content
 
 
-# 파 처리 함수
+# 파일 처리 함수
 def process_file(uploaded_file):
 
     uploaded_file = None
@@ -198,7 +198,7 @@ def process_file(uploaded_file):
 
 # 퀴즈 생성 함수
 @st.experimental_fragment
-def generate_quiz(quiz_type, documents, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf):
+def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf):
     # Generate quiz prompt based on selected quiz type
     if quiz_type == "다중 선택 (객관식)":
         response = retrieval_chainoub.invoke(
@@ -234,13 +234,11 @@ def grade_quiz_answer(user_answer, quiz_answer):
 def quiz_creation_page():
     placeholder = st.empty()
     st.session_state.page = 0
-    if 'selected_page' not in st.session_state:
-        st.session_state.selected_page = ""  # 초기값 설정
-
     if st.session_state.page == 0:
         with placeholder.container():
             st.title("AI 퀴즈 생성기")
-            st.write(st.session_state.selected_page)  # 이제 에러 없이 실행될 것입니다.
+            if 'selected_page' not in st.session_state:
+                st.session_state.selected_page = ""
 
             # 퀴즈 유형 선택
             quiz_type = st.radio("생성할 퀴즈 유형을 선택하세요:", ["다중 선택 (객관식)", "주관식", "OX 퀴즈"])
@@ -254,7 +252,7 @@ def quiz_creation_page():
             text_content = None  # 텍스트 내용을 저장할 변수 초기화
 
             # 업로드 옵션 선택
-            upload_option = st.radio("입력 유형을 선택하세요", ("이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"), key="unique_upload_option_key")  # 고유한 키 추가
+            upload_option = st.radio("입력 유형을 선택하세요", ("이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"))
 
             if upload_option == "이미지 파일":
                 uploaded_file = st.file_uploader("이미지 파일을 업로드하세요.", type=["jpg", "jpeg", "png"])
@@ -275,7 +273,6 @@ def quiz_creation_page():
                 text_content = process_file(uploaded_file)
 
             if text_content:
-                documents = text_splitter.split_documents([{"page_content": text_content}])  # text_content를 올바르게 처리
                 if st.button('문제 생성 하기'):
                     with st.spinner('퀴즈를 생성 중입니다...'):
                         llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
@@ -283,6 +280,7 @@ def quiz_creation_page():
 
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
+                        documents = text_splitter.split_documents(text_content)
                         vector = FAISS.from_documents(documents, embeddings)
 
                         # PydanticOutputParser 생성
@@ -313,12 +311,11 @@ def quiz_creation_page():
                         retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
                         retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
 
-                        quiz_questions = generate_quiz(quiz_type, documents, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf)
+                        quiz_questions = generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf)
                         st.success('퀴즈 생성이 완료되었습니다!')
                         st.write(quiz_questions)
                         st.session_state['quiz_created'] = True
-            else:
-                st.error("텍스트 내용이 없거나 처리할 수 없습니다.")
+
             if st.session_state.get('quiz_created', False):
                 if st.button('퀴즈 풀기'):
                     st.switch_page("pages/quiz_solve_page.py")
