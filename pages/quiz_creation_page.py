@@ -118,7 +118,7 @@ def process_file(uploaded_file, text_area_content, url_area_content):
     return text_content
 
 
-# 파일 처리 함수
+# 파 처리 함수
 def process_file(uploaded_file):
 
     uploaded_file = None
@@ -259,7 +259,7 @@ def quiz_creation_page():
             if upload_option == "이미지 파일":
                 uploaded_file = st.file_uploader("이미지 파일을 업로드하세요.", type=["jpg", "jpeg", "png"])
             elif upload_option == "PDF 파일":
-                uploaded_file = st.file_uploader("PDF 파일을 업로드하요.", type=["pdf"])
+                uploaded_file = st.file_uploader("PDF 파일을 업로드하세요.", type=["pdf"])
             elif upload_option == "직접 입력":
                 text_content = st.text_area("텍스트를 입력하세요.")
             elif upload_option == "URL":
