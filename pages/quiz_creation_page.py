@@ -118,7 +118,7 @@ def process_file(uploaded_file, text_area_content, url_area_content):
     return text_content
 
 
-# 파일 처리 함수
+# 파�� 처리 함수
 def process_file(uploaded_file):
 
     uploaded_file = None
@@ -259,7 +259,7 @@ def quiz_creation_page():
             if upload_option == "이미지 파일":
                 uploaded_file = st.file_uploader("이미지 파일을 업로드하세요.", type=["jpg", "jpeg", "png"])
             elif upload_option == "PDF 파일":
-                uploaded_file = st.file_uploader("PDF 파일을 업로드하세요.", type=["pdf"])
+                uploaded_file = st.file_uploader("PDF 파일을 업로드하요.", type=["pdf"])
             elif upload_option == "직접 입력":
                 text_content = st.text_area("텍스트를 입력하세요.")
             elif upload_option == "URL":
@@ -275,10 +275,7 @@ def quiz_creation_page():
                 text_content = process_file(uploaded_file)
 
             if text_content:
-                # documents = [{"page_content": text_content}]  # text_content를 딕셔너리 리스트로 변환
-                # text_splitter = RecursiveCharacterTextSplitter()
-                # documents = text_splitter.split_documents(documents)  # 수정된 documents 사용
-
+                documents = text_splitter.split_documents([{"page_content": text_content}])  # text_content를 올바르게 처리
                 if st.button('문제 생성 하기'):
                     with st.spinner('퀴즈를 생성 중입니다...'):
                         llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
@@ -286,7 +283,6 @@ def quiz_creation_page():
 
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
-                        documents = text_splitter.split_documents(text_content)
                         vector = FAISS.from_documents(documents, embeddings)
 
                         # PydanticOutputParser 생성
@@ -321,7 +317,8 @@ def quiz_creation_page():
                         st.success('퀴즈 생성이 완료되었습니다!')
                         st.write(quiz_questions)
                         st.session_state['quiz_created'] = True
-
+            else:
+                st.error("텍스트 내용이 없거나 처리할 수 없습니다.")
             if st.session_state.get('quiz_created', False):
                 if st.button('퀴즈 풀기'):
                     st.switch_page("pages/quiz_solve_page.py")
