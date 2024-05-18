@@ -16,6 +16,6 @@ requests
 numpy
 
 # Custom GitHub-hosted packages
-git+https://github.com/langchain/langchain-prompts.git#egg=langchain-prompts
-git+https://github.com/langchain/langchain-output-parsers.git#egg=langchain-output-parsers
-git+https://github.com/langchain/langchain-hub.git#egg=langchain-hub
+git+ssh://git@github.com/langchain/langchain-prompts.git#egg=langchain-prompts
+git+ssh://git@github.com/langchain/langchain-output-parsers.git#egg=langchain-output-parsers
+git+ssh://git@github.com/langchain/langchain-hub.git#egg=langchain-hub
