@@ -259,7 +259,7 @@ def quiz_creation_page():
             elif upload_option == "PDF 파일":
                 uploaded_file = st.file_uploader("PDF 파일을 업로드하세요.", type=["pdf"])
             elif upload_option == "직접 입력":
-                text_content = st.text_area("텍스트를 입력하세요.")
+                text_content = st.text_area("���스트를 입력하세요.")
             elif upload_option == "URL":
                 url_area_content = st.text_area("URL을 입력하세요.")
                 loader = RecursiveUrlLoader(url=url_area_content)
@@ -273,6 +273,10 @@ def quiz_creation_page():
                 text_content = process_file(uploaded_file)
 
             if text_content:
+                documents = [{"page_content": text_content}]  # text_content를 딕셔너리 리스트로 변환
+                text_splitter = RecursiveCharacterTextSplitter()
+                documents = text_splitter.split_documents(documents)  # 수정된 documents 사용
+
                 if st.button('문제 생성 하기'):
                     with st.spinner('퀴즈를 생성 중입니다...'):
                         llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
@@ -280,7 +284,7 @@ def quiz_creation_page():
 
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
-                        documents = text_splitter.split_documents(text_content)
+                        documents = text_splitter.split_documents(documents)
                         vector = FAISS.from_documents(documents, embeddings)
 
                         # PydanticOutputParser 생성
