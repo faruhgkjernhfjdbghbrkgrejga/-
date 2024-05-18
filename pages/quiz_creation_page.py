@@ -158,14 +158,17 @@ def process_file(uploaded_file):
     else:
         url_area_content = None
     
-    if text_area_content is None:
+    if uploaded_file is None:
         if url_area_content is None:
             if selected_topic == "토픽 선택":
-                if uploaded_file is None:
+                if text_area_content is None:
                     st.warning("입력이 필요합니다.")
                     return None
 
     # 업로드된 파일 처리
+    if uploaded_file is None:
+        st.warning("파일을 업로드하세요.")
+        return None
 
     if uploaded_file.type.startswith("image/"):
         image = Image.open(uploaded_file)
@@ -187,7 +190,7 @@ def process_file(uploaded_file):
         is_separator_regex=False,
     )
     if text_area_content is not None:
-        text_content = process_file(uploaded_file, text_area_content, url_area_content)
+        text_content = process_file(uploaded_file, text_area_content)
     texts = text_splitter.create_documents([text_content])
     return texts
 
