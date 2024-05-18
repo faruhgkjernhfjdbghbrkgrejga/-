@@ -118,7 +118,7 @@ def process_file(uploaded_file, text_area_content, url_area_content):
     return text_content
 
 
-# 파�� 처리 함수
+# 파일 처리 함수
 def process_file(uploaded_file):
 
     uploaded_file = None
@@ -254,7 +254,7 @@ def quiz_creation_page():
             text_content = None  # 텍스트 내용을 저장할 변수 초기화
 
             # 업로드 옵션 선택
-            upload_option = st.radio("입력 유형을 선택하세요", ("이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"))
+            upload_option = st.radio("입력 유형을 선택하세요", ("이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"), key="unique_upload_option_key")  # 고유한 키 추가
 
             if upload_option == "이미지 파일":
                 uploaded_file = st.file_uploader("이미지 파일을 업로드하세요.", type=["jpg", "jpeg", "png"])
