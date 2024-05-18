@@ -19,6 +19,10 @@ from PyPDF2 import PdfReader
 import io
 from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
 
+class Document:
+    def __init__(self, page_content):
+        self.page_content = page_content
+
 class CreateQuizoub(BaseModel):
     quiz: str = Field(description="The created problem")
     options1: str = Field(description="The first option of the created problem")
@@ -97,11 +101,12 @@ def process_file(uploaded_file, text_area_content, url_area_content):
         text_content = loader.load()
 
     if text_content:
-        documents = [{"page_content": text_content}]
+        documents = [Document(page_content=text_content)]
         return documents
     else:
         st.warning("파일, 텍스트 또는 URL을 입력하세요.")
         return None
+
 
 def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf):
     # Generate quiz prompt based on selected quiz type
@@ -164,15 +169,13 @@ def quiz_creation_page():
             text_area_content = st.text_area("텍스트를 입력하세요.")
             url_area_content = st.text_area("URL을 입력하세요.")
 
-            text_content = process_file(uploaded_file, text_area_content, url_area_content)
+            documents = process_file(uploaded_file, text_area_content, url_area_content)
 
-            if text_content is not None:
+            if documents is not None:
                 st.write("Text content processed successfully:")
-                st.write(text_content)
-                st.write("Creating document structure for text splitting:")
-                documents = [{"page_content": text_content}]
                 st.write(documents)
-
+                st.write("Creating document structure for text splitting:")
+                
                 if st.button('문제 생성 하기'):
                     with st.spinner('퀴즈를 생성 중입니다...'):
                         llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
@@ -180,7 +183,7 @@ def quiz_creation_page():
 
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
-                        documents = text_splitter.split_documents(text_content)
+                        documents = text_splitter.split_documents(documents)  # Ensure documents are split correctly
                         vector = FAISS.from_documents(documents, embeddings)
 
                         # PydanticOutputParser 생성
@@ -190,10 +193,8 @@ def quiz_creation_page():
 
                         prompt = PromptTemplate.from_template(
                             "{input}, Please answer in KOREAN."
-
                             "CONTEXT:"
                             "{context}."
-
                             "FORMAT:"
                             "{format}"
                         )
@@ -211,9 +212,10 @@ def quiz_creation_page():
                         retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
                         retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
 
+                        quiz_questions = []
                         for i in range(num_quizzes):
-                            quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
-                            st.session_state['quizs'] = quiz_questions
+                            quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf))
+                        st.session_state['quizs'] = quiz_questions
                         st.session_state.selected_page = "퀴즈 풀이"
                         st.session_state.selected_type = quiz_type
                         st.session_state.selected_num = num_quizzes
@@ -228,3 +230,4 @@ def quiz_creation_page():
 
 if __name__ == "__main__":
     quiz_creation_page()
+
