@@ -158,12 +158,12 @@ def process_file(uploaded_file):
     else:
         url_area_content = None
     
-    if uploaded_file is None:
-        if url_area_content is None:
-            if selected_topic == "토픽 선택":
-                if text_area_content is None:
-                    st.warning("입력이 필요합니다.")
-                    return None
+    # if uploaded_file is None:
+    #     if url_area_content is None:
+    #         if selected_topic == "토픽 선택":
+    #             if text_area_content is None:
+    #                 st.warning("입력이 필요합니다.")
+    #                 return None
 
     # 업로드된 파일 처리
     if uploaded_file is None:
@@ -249,13 +249,30 @@ def quiz_creation_page():
             # 파일 업로드 옵션
             st.header("파일 업로드")
             uploaded_file = None
-            #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
-            text_content = process_file(uploaded_file)
+            text_content = None  # 텍스트 내용을 저장할 변수 초기화
 
-            quiz_questions = []
+            # 업로드 옵션 선택
+            upload_option = st.radio("입력 유형을 선택하세요", ("이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"))
 
-            if text_content is not None:
+            if upload_option == "이미지 파일":
+                uploaded_file = st.file_uploader("이미지 파일을 업로드하세요.", type=["jpg", "jpeg", "png"])
+            elif upload_option == "PDF 파일":
+                uploaded_file = st.file_uploader("PDF 파일을 업로드하세요.", type=["pdf"])
+            elif upload_option == "직접 입력":
+                text_content = st.text_area("텍스트를 입력하세요.")
+            elif upload_option == "URL":
+                url_area_content = st.text_area("URL을 입력하세요.")
+                loader = RecursiveUrlLoader(url=url_area_content)
+                text_content = loader.load()
+            elif upload_option == "토픽 선택":
+                selected_topic = st.selectbox(
+                    "토픽을 선택하세요.",
+                    ("토픽 선택", "수학", "물리학", "역사", "화학"))
 
+            if uploaded_file is not None:
+                text_content = process_file(uploaded_file)
+
+            if text_content:
                 if st.button('문제 생성 하기'):
                     with st.spinner('퀴즈를 생성 중입니다...'):
                         llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
@@ -294,20 +311,14 @@ def quiz_creation_page():
                         retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
                         retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
 
-                        for i in range(num_quizzes):
-                            quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
-                            st.session_state['quizs'] = quiz_questions
-                        st.session_state.selected_page = "퀴즈 풀이"
-                        st.session_state.selected_type = quiz_type
-                        st.session_state.selected_num = num_quizzes
-
+                        quiz_questions = generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf)
                         st.success('퀴즈 생성이 완료되었습니다!')
                         st.write(quiz_questions)
                         st.session_state['quiz_created'] = True
 
-                if st.session_state.get('quiz_created', False):
-                    if st.button('퀴즈 풀기'):
-                        st.switch_page("pages/quiz_solve_page.py")
+            if st.session_state.get('quiz_created', False):
+                if st.button('퀴즈 풀기'):
+                    st.switch_page("pages/quiz_solve_page.py")
 
 
 if __name__ == "__main__":
