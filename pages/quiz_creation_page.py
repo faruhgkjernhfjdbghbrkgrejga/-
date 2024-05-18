@@ -284,7 +284,7 @@ def quiz_creation_page():
 
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
-                        documents = text_splitter.split_documents(documents)
+                        documents = text_splitter.split_documents(text_content)
                         vector = FAISS.from_documents(documents, embeddings)
 
                         # PydanticOutputParser 생성
