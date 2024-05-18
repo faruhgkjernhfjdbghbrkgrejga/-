@@ -313,4 +313,4 @@ def quiz_creation_page():
 
 if __name__ == "__main__":
     quiz_creation_page()
-    quiz_creation_page()
+
