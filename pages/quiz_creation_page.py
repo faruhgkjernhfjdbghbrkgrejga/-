@@ -198,7 +198,7 @@ def process_file(uploaded_file):
 
 # 퀴즈 생성 함수
 @st.experimental_fragment
-def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf):
+def generate_quiz(quiz_type, documents, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf):
     # Generate quiz prompt based on selected quiz type
     if quiz_type == "다중 선택 (객관식)":
         response = retrieval_chainoub.invoke(
@@ -259,7 +259,7 @@ def quiz_creation_page():
             elif upload_option == "PDF 파일":
                 uploaded_file = st.file_uploader("PDF 파일을 업로드하세요.", type=["pdf"])
             elif upload_option == "직접 입력":
-                text_content = st.text_area("���스트를 입력하세요.")
+                text_content = st.text_area("텍스트를 입력하세요.")
             elif upload_option == "URL":
                 url_area_content = st.text_area("URL을 입력하세요.")
                 loader = RecursiveUrlLoader(url=url_area_content)
@@ -315,7 +315,7 @@ def quiz_creation_page():
                         retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
                         retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
 
-                        quiz_questions = generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf)
+                        quiz_questions = generate_quiz(quiz_type, documents, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf)
                         st.success('퀴즈 생성이 완료되었습니다!')
                         st.write(quiz_questions)
                         st.session_state['quiz_created'] = True
