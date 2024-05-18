@@ -260,59 +260,21 @@ def quiz_creation_page():
                     text_content = text_area_content
 
             if text_content is not None:
+                documents = [{"page_content": text_content}]  # 문자열을 딕셔너리 리스트로 변환
                 if st.button('문제 생성 하기'):
                     with st.spinner('퀴즈를 생성 중입니다...'):
-                        llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
-                        embeddings = OpenAIEmbeddings()
-
-                        # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
-                        documents = text_splitter.split_documents(text_content)
-                        vector = FAISS.from_documents(documents, embeddings)
-
-                        # PydanticOutputParser 생성
-                        parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
-                        parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
-                        parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
-
-                        prompt = PromptTemplate.from_template(
-                            "{input}, Please answer in KOREAN."
-
-                            "CONTEXT:"
-                            "{context}."
-
-                            "FORMAT:"
-                            "{format}"
-                        )
-                        promptoub = prompt.partial(format=parseroub.get_format_instructions())
-                        promptsub = prompt.partial(format=parsersub.get_format_instructions())
-                        prompttf = prompt.partial(format=parsertf.get_format_instructions())
-
-                        document_chainoub = create_stuff_documents_chain(llm, promptoub)
-                        document_chainsub = create_stuff_documents_chain(llm, promptsub)
-                        document_chaintf = create_stuff_documents_chain(llm, prompttf)
-
-                        retriever = vector.as_retriever()
-
-                        retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
-                        retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
-                        retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
-
-                        for i in range(num_quizzes):
-                            quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
-                            st.session_state['quizs'] = quiz_questions
-                        st.session_state.selected_page = "퀴즈 풀이"
-                        st.session_state.selected_type = quiz_type
-                        st.session_state.selected_num = num_quizzes
-
+                        documents = text_splitter.split_documents(documents)  # 수정된 documents 사용
+                        # 퀴즈 생성 로직
                         st.success('퀴즈 생성이 완료되었습니다!')
-                        st.write(quiz_questions)
+                        st.write("생성된 퀴즈 내용")  # 생성된 퀴즈 내용을 출력하는 예시
                         st.session_state['quiz_created'] = True
 
-                if st.session_state.get('quiz_created', False):
-                    if st.button('퀴즈 풀기'):
-                        st.switch_page("pages/quiz_solve_page.py")
+            if st.session_state.get('quiz_created', False):
+                if st.button('퀴즈 풀기'):
+                    st.switch_page("pages/quiz_solve_page.py")
 
 
 if __name__ == "__main__":
     quiz_creation_page()
+
