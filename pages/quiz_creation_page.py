@@ -94,7 +94,7 @@ def process_file(uploaded_file, text_area_content, url_area_content):
             st.error("지원하지 않는 파일 형식입니다.")
             return None
     elif text_area_content:
-        text_content = text_area_content.read().decode("utf-8")
+        text_content = text_area_content
     elif url_area_content:
         loader = RecursiveUrlLoader(url=url_area_content)
         text_content = loader.load()
