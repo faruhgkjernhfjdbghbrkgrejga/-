@@ -1,9 +1,17 @@
+#quiz_creation_page.py
+
 import streamlit as st
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
 from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain.prompts.prompt import PromptTemplate
 from langchain.output_parsers import PydanticOutputParser
-from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
+from langchain import hub
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.vectorstores import Chroma
+from langchain_openai import OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.document_loaders.image import UnstructuredImageLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain.chains.combine_documents import create_stuff_documents_chain
@@ -12,6 +20,7 @@ from PIL import Image
 import pytesseract
 from PyPDF2 import PdfReader
 import io
+from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
 
 class CreateQuizoub(BaseModel):
     quiz: str = Field(description="The created problem")
