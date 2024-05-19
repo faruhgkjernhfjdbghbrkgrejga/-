@@ -117,7 +117,7 @@ def make_model(pages):
 
 #     return text_content
 
-def process_text():
+def process_text(text_area_content):
     text_content = st.text_area("텍스트를 입력하세요.")
 
     text_splitter = RecursiveCharacterTextSplitter(
@@ -203,7 +203,7 @@ def process_file(uploaded_file, upload_option):
         is_separator_regex=False,
     )
     if text_area_content is not None:
-        text_content = process_file(uploaded_file, text_area_content)
+        text_content = process_file(uploaded_file, text_area_content) #?
     texts = text_splitter.create_documents([text_content])
     return texts
 
@@ -268,7 +268,9 @@ def quiz_creation_page():
             #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
 
             if upload_option == "직접 입력":
-                process_text()
+                text_area_content = st.text_area("텍스트를 입력하세요.")
+                process_text(text_area_content)
+                
 
 
             else:
