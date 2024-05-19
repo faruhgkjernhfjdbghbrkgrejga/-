@@ -165,9 +165,9 @@ def process_file(uploaded_file, text_area_content, url_area_content):
                     return None
 
     # 업로드된 파일 처리
-    if uploaded_file is None:
-        st.warning("파일을 업로드하세요.")
-        return None
+    # if uploaded_file is None:
+    #     st.warning("파일을 업로드하세요.")
+    #     return None
 
     if uploaded_file.type.startswith("image/"):
         image = Image.open(uploaded_file)
