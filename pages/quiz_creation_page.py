@@ -118,7 +118,7 @@ def make_model(pages):
 #     return text_content
 
 def process_text():
-    text_area_content = st.text_area("텍스트를 입력하세요.")
+    text_content = st.text_area("텍스트를 입력하세요.")
 
     text_splitter = RecursiveCharacterTextSplitter(
         # Set a really small chunk size, just to show.
@@ -127,8 +127,7 @@ def process_text():
         length_function=len,
         is_separator_regex=False,
     )
-    if text_area_content is not None:
-        text_content = process_file(uploaded_file, text_area_content)
+
     texts = text_splitter.create_documents([text_content])
     return texts
 
