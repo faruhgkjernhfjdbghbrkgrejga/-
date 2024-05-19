@@ -119,7 +119,7 @@ def process_file(uploaded_file, text_area_content, url_area_content):
 
 
 # 파일 처리 함수
-def process_file(uploaded_file, text_area_content, url_area_content):
+def process_file(uploaded_file):
 
     uploaded_file = None
     text_area_content = None
@@ -250,7 +250,7 @@ def quiz_creation_page():
             st.header("파일 업로드")
             uploaded_file = None
             #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
-            text_content = process_file(uploaded_file, text_area_content, url_area_content)
+            text_content = process_file(uploaded_file)
 
             quiz_questions = []
 
