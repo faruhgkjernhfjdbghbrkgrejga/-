@@ -40,47 +40,47 @@ class CreateQuizTF(BaseModel):
     options2 = ("The true or false option of the created problem")
     correct_answer = ("One of the options1 or options2")
 
-# def make_model(pages):
-#     llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
-#     embeddings = OpenAIEmbeddings()
+def make_model(pages):
+    llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
+    embeddings = OpenAIEmbeddings()
 
-#     # Rag
-#     text_splitter = RecursiveCharacterTextSplitter()
-#     documents = text_splitter.split_documents(pages)
-#     vector = FAISS.from_documents(documents, embeddings)
+    # Rag
+    text_splitter = RecursiveCharacterTextSplitter()
+    documents = text_splitter.split_documents(pages)
+    vector = FAISS.from_documents(documents, embeddings)
 
-#     # PydanticOutputParser 생성
-#     parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
-#     parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
-#     parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
+    # PydanticOutputParser 생성
+    parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
+    parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
+    parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
 
-#     prompt = PromptTemplate.from_template(
-#         "Question: {input}, Please answer in KOREAN."
+    prompt = PromptTemplate.from_template(
+        "Question: {input}, Please answer in KOREAN."
 
-#         "CONTEXT:"
-#         "{context}."
+        "CONTEXT:"
+        "{context}."
 
-#         "FORMAT:"
-#         "{format}"
-#     )
-#     promptoub = prompt.partial(format=parseroub.get_format_instructions())
-#     promptsub = prompt.partial(format=parsersub.get_format_instructions())
-#     prompttf = prompt.partial(format=parsertf.get_format_instructions())
+        "FORMAT:"
+        "{format}"
+    )
+    promptoub = prompt.partial(format=parseroub.get_format_instructions())
+    promptsub = prompt.partial(format=parsersub.get_format_instructions())
+    prompttf = prompt.partial(format=parsertf.get_format_instructions())
 
-#     document_chainoub = create_stuff_documents_chain(llm, promptoub)
-#     document_chainsub = create_stuff_documents_chain(llm, promptsub)
-#     document_chaintf = create_stuff_documents_chain(llm, prompttf)
+    document_chainoub = create_stuff_documents_chain(llm, promptoub)
+    document_chainsub = create_stuff_documents_chain(llm, promptsub)
+    document_chaintf = create_stuff_documents_chain(llm, prompttf)
 
-#     retriever = vector.as_retriever()
+    retriever = vector.as_retriever()
 
-#     retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
-#     retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
-#     retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
+    retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
+    retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
+    retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
 
-#     # chainoub = promptoub | chat_model | parseroub
-#     # chainsub = promptsub | chat_model | parsersub
-#     # chaintf = prompttf | chat_model | parsertf
-#     return 0
+    # chainoub = promptoub | chat_model | parseroub
+    # chainsub = promptsub | chat_model | parsersub
+    # chaintf = prompttf | chat_model | parsertf
+    return 0
 
 # @st.cache_data
 # def process_file(uploaded_file, text_area_content, url_area_content):
@@ -139,7 +139,8 @@ def process_file(uploaded_file, text_area_content, url_area_content):
 
     # 텍스트 입력 영역
     if upload_option == "직접 입력":
-        text_area_content = st.text_area("텍스트를 입력하세요.")
+        text_area_content = text_area_content
+        #text_area_content = st.text_area("텍스트를 입력하세요.")
     else:
         text_area_content = None
 
@@ -252,7 +253,13 @@ def quiz_creation_page():
             text_area_content = None
             url_area_content = None
             #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
-            text_content = process_file(uploaded_file, text_area_content, url_area_content)
+            if uploaded_file:
+                text_content = process_file(uploaded_file, text_area_content, url_area_content)
+
+            elif upload_option == "직접 입력":
+                text_area_content = st.text_area('퀴즈 생성에 사용될 공부내용','퀴즈 생성에 사용될 공부내용을 입력 또는 복사해서 붙여넣으세요 ...')
+                text_content = text_content = process_file(uploaded_file, text_area_content, url_area_content)
+                
 
             quiz_questions = []
 
