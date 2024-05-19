@@ -126,8 +126,8 @@ def process_file(uploaded_file):
     url_area_content = None
     selected_topic = None
     
-    # 파일 업로드 옵션 선택
-    upload_option = st.radio("입력 유형을 선택하세요", ("이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"))
+    # # 파일 업로드 옵션 선택
+    # upload_option = st.radio("입력 유형을 선택하세요", ("이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"))
 
     # 선택된 옵션에 따라 입력 방식 제공
     if upload_option == "이미지 파일":
