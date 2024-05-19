@@ -139,8 +139,8 @@ def process_file(uploaded_file, text_area_content, url_area_content):
 
     # 텍스트 입력 영역
     if upload_option == "직접 입력":
-        text_area_content = text_area_content
-        #text_area_content = st.text_area("텍스트를 입력하세요.")
+        # text_area_content = text_area_content
+        text_area_content = st.text_area("텍스트를 입력하세요.")
     else:
         text_area_content = None
 
