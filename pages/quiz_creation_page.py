@@ -260,7 +260,8 @@ def quiz_creation_page():
 
             if upload_option == "직접 입력":
                 text_content = st.text_area("텍스트를 입력하세요.")
-                documents = text_content
+                documents = [{"page_content": text_content}]
+                documents = text_splitter.split_documents(documents)
 
             elif upload_option == "URL":
                 url_area_content = st.text_area("URL을 입력하세요.")
