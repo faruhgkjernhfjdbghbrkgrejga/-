@@ -189,10 +189,9 @@ def process_file(uploaded_file, text_area_content, url_area_content):
         is_separator_regex=False,
     )
     if text_area_content is not None:
-        text_content = process_file(uploaded_file, text_area_content)
+        text_content = text_area_content
     texts = text_splitter.create_documents([text_content])
-    return texts
-
+    
     return texts
 
 # 퀴즈 생성 함수
