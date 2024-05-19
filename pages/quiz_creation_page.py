@@ -259,7 +259,8 @@ def quiz_creation_page():
             #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
 
             if upload_option == "직접 입력":
-                documents = st.text_area("텍스트를 입력하세요.")
+                text_content = st.text_area("텍스트를 입력하세요.")
+                documents = text_content
 
             elif upload_option == "URL":
                 url_area_content = st.text_area("URL을 입력하세요.")
@@ -273,7 +274,6 @@ def quiz_creation_page():
             quiz_questions = []
 
             if text_content is not None:
-
                 if st.button('문제 생성 하기'):
                     with st.spinner('퀴즈를 생성 중입니다...'):
                         llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
