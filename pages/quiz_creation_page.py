@@ -118,6 +118,18 @@ def make_model(pages):
 #     return text_content
 
 
+# def process_text(uploaded_file, text_area_content, url_area_content):
+#     text_area_content = st.text_area("텍스트를 입력하세요.")
+        
+#     return texts
+
+
+    
+
+
+    
+
+
 # 파일 처리 함수
 def process_file(uploaded_file, text_area_content, url_area_content):
 
@@ -125,9 +137,6 @@ def process_file(uploaded_file, text_area_content, url_area_content):
     text_area_content = None
     url_area_content = None
     selected_topic = None
-    
-    # 파일 업로드 옵션 선택
-    upload_option = st.radio("입력 유형을 선택하세요", ("이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"))
 
     # 선택된 옵션에 따라 입력 방식 제공
     if upload_option == "이미지 파일":
@@ -147,6 +156,8 @@ def process_file(uploaded_file, text_area_content, url_area_content):
     # URL 입력 영역
     if upload_option == "URL":
         url_area_content = st.text_area("URL을 입력하세요.")
+        loader = RecursiveUrlLoader(url=url_area_content)
+        text_content = loader.load()
     # else:
     #     url_area_content = None
 
@@ -188,10 +199,11 @@ def process_file(uploaded_file, text_area_content, url_area_content):
         length_function=len,
         is_separator_regex=False,
     )
-    if text_area_content is not None:
-        text_content = text_area_content
+    # if text_area_content is not None:
+    #     text_content = process_file(uploaded_file, text_area_content)
     texts = text_splitter.create_documents([text_content])
-    
+    return texts
+
     return texts
 
 # 퀴즈 생성 함수
@@ -249,6 +261,10 @@ def quiz_creation_page():
             uploaded_file = None
             text_area_content = None
             url_area_content = None
+            
+            # 파일 업로드 옵션 선택
+            upload_option = st.radio("입력 유형을 선택하세요", ("이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"))
+            
             #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
             text_content = process_file(uploaded_file, text_area_content, url_area_content)
 
