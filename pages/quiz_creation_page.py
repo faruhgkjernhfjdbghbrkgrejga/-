@@ -135,8 +135,6 @@ def process_file(uploaded_file, text_area_content, url_area_content):
         uploaded_file = st.file_uploader("이미지 파일을 업로드하세요.", type=["jpg", "jpeg", "png"])
     elif upload_option == "PDF 파일":
         uploaded_file = st.file_uploader("PDF 파일을 업로드하세요.", type=["pdf"])
-    else:
-        uploaded_file = None
 
     # 텍스트 입력 영역
     elif upload_option == "직접 입력":
