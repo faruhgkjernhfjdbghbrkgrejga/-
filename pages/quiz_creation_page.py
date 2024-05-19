@@ -197,7 +197,8 @@ def quiz_creation_page():
             #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
 
             if upload_option == "직접 입력":               
-                text_content = st.text_area("텍스트를 입력하세요.")
+                text_input = st.text_area("텍스트를 입력하세요.")
+                
 
             elif upload_option == "URL":
                 url_area_content = st.text_area("URL을 입력하세요.")
@@ -219,6 +220,8 @@ def quiz_creation_page():
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
                         documents = text_splitter.split_documents(text_content)
+                        if upload_option == "직접 입력":   
+                            documents = text_input
                         vector = FAISS.from_documents(documents, embeddings)
 
                         # PydanticOutputParser 생성
