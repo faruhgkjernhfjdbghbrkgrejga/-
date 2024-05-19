@@ -258,17 +258,8 @@ def quiz_creation_page():
             uploaded_file = None
             #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
 
-            if upload_option == "직접 입력":
-                text_splitter = RecursiveCharacterTextSplitter(
-                    chunk_size=100,
-                    chunk_overlap=20,
-                    length_function=len,
-                    is_separator_regex=False,
-                )
-                
+            if upload_option == "직접 입력":               
                 text_content = st.text_area("텍스트를 입력하세요.")
-                documents = [{"page_content": text_content}]
-                documents = text_splitter.split_documents(documents)
 
             elif upload_option == "URL":
                 url_area_content = st.text_area("URL을 입력하세요.")
