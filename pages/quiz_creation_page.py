@@ -191,9 +191,10 @@ def process_file(uploaded_file, text_area_content, url_area_content):
         is_separator_regex=False,
     )
     if text_area_content is not None:
-        # text_content = process_file(uploaded_file, text_area_content)
+        text_content = process_file(uploaded_file, text_area_content)
     texts = text_splitter.create_documents([text_content])
-    
+    return texts
+
     return texts
 
 # 퀴즈 생성 함수
@@ -257,7 +258,7 @@ def quiz_creation_page():
 
             elif upload_option == "직접 입력":
                 text_area_content = st.text_area('퀴즈 생성에 사용될 공부내용','퀴즈 생성에 사용될 공부내용을 입력 또는 복사해서 붙여넣으세요 ...')
-                text_content = text_content = process_file(uploaded_file, text_area_content, url_area_content)
+                text_content = process_file(uploaded_file, text_area_content, url_area_content)
                 
 
             quiz_questions = []
