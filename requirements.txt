@@ -17,3 +17,5 @@ requests
 numpy
 chromadb
 schema
+pymongo
+dnspython
