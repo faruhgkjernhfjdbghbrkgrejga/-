@@ -141,14 +141,14 @@ def process_file(uploaded_file, text_area_content, url_area_content):
     if upload_option == "직접 입력":
         # text_area_content = text_area_content
         text_area_content = st.text_area("텍스트를 입력하세요.")
-    else:
-        text_area_content = None
+    # else:
+    #     text_area_content = None
 
     # URL 입력 영역
     if upload_option == "URL":
         url_area_content = st.text_area("URL을 입력하세요.")
-    else:
-        url_area_content = None
+    # else:
+    #     url_area_content = None
 
     # 토픽 선택 영역
     if upload_option == "토픽 선택":
@@ -156,8 +156,6 @@ def process_file(uploaded_file, text_area_content, url_area_content):
         selected_topic = st.selectbox(
             "토픽을 선택하세요.",
             ("토픽 선택", "수학", "물리학", "역사", "화학"))
-    else:
-        url_area_content = None
     
     if uploaded_file is None:
         if url_area_content is None:
