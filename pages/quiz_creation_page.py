@@ -253,12 +253,11 @@ def quiz_creation_page():
             text_area_content = None
             url_area_content = None
             #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
-            if uploaded_file:
-                text_content = process_file(uploaded_file, text_area_content, url_area_content)
+            text_content = process_file(uploaded_file, text_area_content, url_area_content)
 
-            elif upload_option == "직접 입력":
-                text_area_content = st.text_area('퀴즈 생성에 사용될 공부내용','퀴즈 생성에 사용될 공부내용을 입력 또는 복사해서 붙여넣으세요 ...')
-                text_content = process_file(uploaded_file, text_area_content, url_area_content)
+            # elif upload_option == "직접 입력":
+            #     text_area_content = st.text_area('퀴즈 생성에 사용될 공부내용','퀴즈 생성에 사용될 공부내용을 입력 또는 복사해서 붙여넣으세요 ...')
+            #     text_content = process_file(uploaded_file, text_area_content, url_area_content)
                 
 
             quiz_questions = []
