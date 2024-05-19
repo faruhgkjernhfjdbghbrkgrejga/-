@@ -36,6 +36,7 @@ def retrieve_results(user_query):
     prompt = prompt_template.partial(format=parser.get_format_instructions())
 
     # Generate prompt with user input
-    response = vector_search.invoke({"input": prompt.format(input=user_query)})
+    response = results = vector_search.similarity_search_with_score(
+    query=query, k=5, pre_filter={"page": {"$eq": 1}})
 
     return response
