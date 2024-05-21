@@ -153,7 +153,7 @@ class CreateQuizTF(BaseModel):
     options2 = ("The true or false option of the created problem")
     correct_answer = ("One of the options1 or options2")
 
-@st.cache(allow_output_mutation=True)
+#@st.cache(allow_output_mutation=True)
 def make_model(documents):
     llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
     embeddings = OpenAIEmbeddings()
@@ -161,7 +161,7 @@ def make_model(documents):
     documents = text_splitter.split_documents(documents)
     vector = FAISS.from_documents(documents, embeddings)
     return llm, vector
-"""
+
     # Rag
     text_splitter = RecursiveCharacterTextSplitter()
     documents = text_splitter.split_documents(pages)
@@ -199,7 +199,7 @@ def make_model(documents):
     # chainsub = promptsub | chat_model | parsersub
     # chaintf = prompttf | chat_model | parsertf
     return 0
-    """
+    
 
 
 def process_text(text_area_content):
@@ -216,7 +216,7 @@ def process_file(uploaded_file, upload_option):
     url_area_content = None
     selected_topic = None
     
-    # # 파일 업로드 옵션 선택
+    # 파일 업로드 옵션 선택
     # upload_option = st.radio("입력 유형을 선택하세요", ("이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"))
 
     # 선택된 옵션에 따라 입력 방식 제공
@@ -262,7 +262,7 @@ def process_file(uploaded_file, upload_option):
 
     return texts
     
-@st.cache(allow_output_mutation=True)
+#@st.cache(allow_output_mutation=True)
 def retrieve_results(user_query):
     client = pymongo.MongoClient("mongodb+srv://username:password@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=YourApp")
     response = client['sample_mflix']['movies'].aggregate([
@@ -321,9 +321,9 @@ def retrieve_results(user_query):
 
 # 퀴즈 생성 함수
 @st.experimental_fragment
-@st.cache(allow_output_mutation=True)
+#@st.cache(allow_output_mutation=True)
 def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf, user_query, documents):
-    llm, other_components = make_model(documents)
+    """llm, other_components = make_model(documents)
     # Generate quiz prompt based on selected quiz type
     quiz_questions = []
     for example in examples:
@@ -344,6 +344,7 @@ def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsu
         response = retrieval_chain.invoke({"input": user_query})
         if response:
             quiz_questions.append(response)
+            """
 
     if quiz_type == "다중 선택 (객관식)":
         response = retrieval_chainoub.invoke(
@@ -366,7 +367,7 @@ def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsu
     quiz_questions = response
 
     return quiz_questions
-@st.cache(allow_output_mutation=True)
+#@st.cache(allow_output_mutation=True)
 @st.experimental_fragment
 def grade_quiz_answer(user_answer, quiz_answer):
     if user_answer.lower() == quiz_answer.lower():
@@ -425,7 +426,7 @@ def quiz_creation_page():
                    placeholder="토픽을 선택하세요",
                 )
                 # 선택된 토픽에 따라 쿼리 생성
-                if topic is not none:
+                if topic is not None:
                     user_query = topic
                 else:
                     user_query = None
