@@ -21,7 +21,6 @@ import pytesseract
 from PyPDF2 import PdfReader
 import io
 from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
-import db_connect
 
 class CreateQuizoub(BaseModel):
     quiz: str = Field(description="The created problem")
@@ -117,7 +116,6 @@ def process_file(uploaded_file, upload_option):
 
     if uploaded_file.type == "text/plain":
         text_content = uploaded_file.read().decode("utf-8")
-
     elif uploaded_file.type.startswith("image/"):
         image = Image.open(uploaded_file)
         text_content = pytesseract.image_to_string(image)
@@ -205,9 +203,15 @@ def quiz_creation_page():
             # if upload_option == "직접 입력":               
             #     text_input = st.text_area("텍스트를 입력하세요.")
             #     text_content = text_input.read().decode("utf-8")
-                
+            if upload_option == "토픽 선택":
+                topic = st.selectbox(
+                   "토픽을 선택하세요",
+                   ("토픽 선택", "토픽1", "토픽2", "토픽3" , "토픽4"),
+                   index=None,
+                   placeholder="토픽을 선택하세요",
+                ) 
 
-            if upload_option == "URL":
+            elif upload_option == "URL":
                 url_area_content = st.text_area("URL을 입력하세요.")
                 loader = RecursiveUrlLoader(url=url_area_content)
                 text_content = loader.load()
