@@ -336,8 +336,11 @@ def quiz_creation_page():
 
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
+                        st.write(text_input)
                         documents = text_splitter.split_documents(text_content)
+                        st.write(documents)
                         vector = FAISS.from_documents(documents, embeddings)
+                        st.write(vector)
 
                         # PydanticOutputParser 생성
                         parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
