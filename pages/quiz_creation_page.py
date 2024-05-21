@@ -21,6 +21,8 @@ import pytesseract
 from PyPDF2 import PdfReader
 import io
 from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
+import chardet
+
 
 
 examples = [
@@ -293,7 +295,9 @@ def quiz_creation_page():
 
             if upload_option == "직접 입력":               
                 text_input = st.text_area("텍스트를 입력하세요.")
-                text_content = text_input.decode("utf-8")
+                result = chardet.detect(text_input)
+                encoding = result['encoding']
+                text_content = text_input.decode(encoding)
             
             elif upload_option == "토픽 선택":
                 topic = st.selectbox(
