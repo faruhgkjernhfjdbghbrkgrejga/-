@@ -19,3 +19,4 @@ chromadb
 schema
 pymongo
 dnspython
+chardet
