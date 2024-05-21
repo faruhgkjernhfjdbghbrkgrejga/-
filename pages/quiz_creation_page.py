@@ -295,17 +295,17 @@ def quiz_creation_page():
 
             if upload_option == "직접 입력":               
                 text_input = st.text_area("텍스트를 입력하세요.")
-                # text_content = text_input.decode("utf-8", errors='ignore')
+                text_content = text_input.encoding("utf-8", errors='ignore')
                 
                 # result = chardet.detect(text_input)
                 # encoding = result['encoding']
                 # text_content = text_input.decode(encoding)
           
-                try:
-                    text_content = text_input.decode("utf-8")
-                except UnicodeDecodeError:
-                    # 오류 처리 코드 작성
-                    text_content = text_input.decode("cp949")
+                # try:
+                #     text_content = text_input.encoding("utf-8")
+                # except UnicodeDecodeError:
+                #     # 오류 처리 코드 작성
+                #     text_content = text_input.encoding("utf-8")
 
             
             elif upload_option == "토픽 선택":
