@@ -283,7 +283,7 @@ def quiz_creation_page():
             num_quizzes = st.number_input("생성할 퀴즈의 개수를 입력하세요:", min_value=1, value=5, step=1)
 
             # 파일 업로드 옵션 선택
-            upload_option = st.radio("입력 유형을 선택하세요", ("이미지 파일", "PDF 파일", "텍스트 파일", "URL", "토픽 선택"))
+            upload_option = st.radio("입력 유형을 선택하세요", ("직접 입력", "PDF 파일", "텍스트 파일", "URL", "토픽 선택"))
 
             # 파일 업로드 옵션
             st.header("파일 업로드")
@@ -291,10 +291,11 @@ def quiz_creation_page():
             text_content = None
             #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
 
-            # if upload_option == "직접 입력":               
-            #     text_input = st.text_area("텍스트를 입력하세요.")
-            #     text_content = text_input.read().decode("utf-8")
-            if upload_option == "토픽 선택":
+            if upload_option == "직접 입력":               
+                text_input = st.text_area("텍스트를 입력하세요.")
+                text_content = text_input.read().decode("utf-8")
+            
+            elif upload_option == "토픽 선택":
                 topic = st.selectbox(
                    "토픽을 선택하세요",
                    ("토픽1", "토픽2", "토픽3" , "토픽4"),
