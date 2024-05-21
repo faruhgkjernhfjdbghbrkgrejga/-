@@ -100,7 +100,9 @@ def process_file(uploaded_file, upload_option):
     # upload_option = st.radio("입력 유형을 선택하세요", ("이미지 파일", "PDF 파일", "직접 입력", "URL", "토픽 선택"))
 
     # 선택된 옵션에 따라 입력 방식 제공
-    if upload_option == "이미지 파일":
+    if upload_option == "텍스트 파일":
+        uploaded_file = st.file_uploader("텍스트 파일을 업로드하세요.", type=["txt"])
+    elif upload_option == "이미지 파일":
         uploaded_file = st.file_uploader("이미지 파일을 업로드하세요.", type=["jpg", "jpeg", "png"])
     elif upload_option == "PDF 파일":
         uploaded_file = st.file_uploader("PDF 파일을 업로드하세요.", type=["pdf"])
@@ -196,12 +198,12 @@ def quiz_creation_page():
             uploaded_file = None
             #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
 
-            if upload_option == "직접 입력":               
-                text_input = st.text_area("텍스트를 입력하세요.")
-                text_content = text_input.read().decode("utf-8")
+            # if upload_option == "직접 입력":               
+            #     text_input = st.text_area("텍스트를 입력하세요.")
+            #     text_content = text_input.read().decode("utf-8")
                 
 
-            elif upload_option == "URL":
+            if upload_option == "URL":
                 url_area_content = st.text_area("URL을 입력하세요.")
                 loader = RecursiveUrlLoader(url=url_area_content)
                 text_content = loader.load()
