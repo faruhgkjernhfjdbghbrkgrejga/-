@@ -153,10 +153,15 @@ class CreateQuizTF(BaseModel):
     options2 = ("The true or false option of the created problem")
     correct_answer = ("One of the options1 or options2")
 
-def make_model(pages):
+@st.cache(allow_output_mutation=True)
+def make_model(documents):
     llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
     embeddings = OpenAIEmbeddings()
-
+    text_splitter = RecursiveCharacterTextSplitter()
+    documents = text_splitter.split_documents(documents)
+    vector = FAISS.from_documents(documents, embeddings)
+    return llm, vector
+"""
     # Rag
     text_splitter = RecursiveCharacterTextSplitter()
     documents = text_splitter.split_documents(pages)
@@ -194,6 +199,7 @@ def make_model(pages):
     # chainsub = promptsub | chat_model | parsersub
     # chaintf = prompttf | chat_model | parsertf
     return 0
+    """
 
 
 def process_text(text_area_content):
@@ -202,6 +208,7 @@ def process_text(text_area_content):
     return text_content
 
 # 파일 처리 함수
+@st.cache(allow_output_mutation=True)
 def process_file(uploaded_file, upload_option):
 
     uploaded_file = None
@@ -254,11 +261,90 @@ def process_file(uploaded_file, upload_option):
     return texts
 
     return texts
+    
+@st.cache(allow_output_mutation=True)
+def retrieve_results(user_query):
+    client = pymongo.MongoClient("mongodb+srv://username:password@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=YourApp")
+    response = client['sample_mflix']['movies'].aggregate([
+        {
+            '$compound': {
+                'must': [
+                    {
+                        'text': {
+                            'query': [
+                                user_query
+                            ],
+                            'path': 'plot'
+                        }
+                    }, {
+                        'regex': {
+                            'query': '([0-9]{4})',
+                            'path': 'plot',
+                            'allowAnalyzedField': True
+                        }
+                    }
+                ],
+                'mustNot': [
+                    {
+                        'text': {
+                            'query': [
+                                'Comedy', 'Romance'
+                            ],
+                            'path': 'genres'
+                        }
+                    }, {
+                        'text': {
+                            'query': [
+                                'Beach', 'Snow'
+                            ],
+                            'path': 'title'
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            '$project': {
+                'title': 1,
+                'plot': 1,
+                'genres': 1,
+                '_id': 0
+            }
+        }
+    ])
+
+    if not response:
+        return None
+
+    return response
+
 
 # 퀴즈 생성 함수
 @st.experimental_fragment
-def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf):
+@st.cache(allow_output_mutation=True)
+def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf, user_query, documents):
+    llm, other_components = make_model(documents)
     # Generate quiz prompt based on selected quiz type
+    quiz_questions = []
+    for example in examples:
+        question = example["Question"]
+        context = example["CONTEXT"].format(context=user_query)
+        format_instructions = example["FORMAT"]
+        answer = example["answer"]
+        
+        prompt_template = PromptTemplate.from_template(
+            f"{question}\n\nCONTEXT:\n{context}\n\nFORMAT:\n{format_instructions}"
+        )
+        prompt = prompt_template.partial(input="Please answer in KOREAN.")
+        
+        document_chain = create_stuff_documents_chain(llm, prompt)
+        retriever = other_components["vector"].as_retriever()
+        retrieval_chain = create_retrieval_chain(retriever, document_chain)
+        
+        response = retrieval_chain.invoke({"input": user_query})
+        if response:
+            quiz_questions.append(response)
+
     if quiz_type == "다중 선택 (객관식)":
         response = retrieval_chainoub.invoke(
             {
@@ -280,7 +366,7 @@ def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsu
     quiz_questions = response
 
     return quiz_questions
-
+@st.cache(allow_output_mutation=True)
 @st.experimental_fragment
 def grade_quiz_answer(user_answer, quiz_answer):
     if user_answer.lower() == quiz_answer.lower():
@@ -334,10 +420,25 @@ def quiz_creation_page():
             if upload_option == "토픽 선택":
                 topic = st.selectbox(
                    "토픽을 선택하세요",
-                   ("수학", "문학", "비문학", "과학"),
+                   ("Action", "American", "비문학", "과학"),
                    index=None,
                    placeholder="토픽을 선택하세요",
-                ) 
+                )
+                # 선택된 토픽에 따라 쿼리 생성
+                if topic is not none:
+                    user_query = topic
+            else:
+                user_query = None
+
+            user_query = None
+            if user_query is not None:
+                st.write("사용자 쿼리:", user_query)
+                response = retrieve_results(user_query)
+                if response:
+                    st.write("검색 결과:", response)
+                else:
+                    st.warning("검색 결과가 없습니다.")
+
 
             elif upload_option == "URL":
                 url_area_content = st.text_area("URL을 입력하세요.")
