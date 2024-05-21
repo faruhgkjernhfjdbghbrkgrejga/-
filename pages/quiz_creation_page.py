@@ -311,7 +311,7 @@ def quiz_creation_page():
             elif upload_option == "토픽 선택":
                 topic = st.selectbox(
                    "토픽을 선택하세요",
-                   ("토픽1", "토픽2", "토픽3" , "토픽4"),
+                   ("수학", "문학", "비문학", "과학"),
                    index=None,
                    placeholder="토픽을 선택하세요",
                 ) 
