@@ -22,7 +22,28 @@ from PyPDF2 import PdfReader
 import io
 from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
 import chardet
+from langchain_community.vectorstores import MongoDBAtlasVectorSearch
+from langchain_openai import OpenAIEmbeddings
 
+def retrieve_results(user_query):
+    # Create MongoDB Atlas Vector Search instance
+    vector_search = MongoDBAtlasVectorSearch.from_connection_string(
+        "mongodb+srv://username:password@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=YourApp",
+        "database.collection",
+        OpenAIEmbeddings(model="gpt-3.5-turbo-0125"),
+        index_name="vector_index"
+    )
+
+    # Perform vector search based on user input
+    response = vector_search.similarity_search_with_score(
+        input=user_query, k=5, pre_filter={"page": {"$eq": 1}}
+    )
+
+    # Check if any results are found
+    if not response:
+        return None
+
+    return response
 
 
 examples = [
@@ -285,7 +306,7 @@ def quiz_creation_page():
             num_quizzes = st.number_input("생성할 퀴즈의 개수를 입력하세요:", min_value=1, value=5, step=1)
 
             # 파일 업로드 옵션 선택
-            upload_option = st.radio("입력 유형을 선택하세요", ("직접 입력", "PDF 파일", "텍스트 파일", "URL", "토픽 선택"))
+            upload_option = st.radio("입력 유형을 선택하세요", ("PDF 파일", "텍스트 파일", "URL", "토픽 선택"))
 
             # 파일 업로드 옵션
             st.header("파일 업로드")
