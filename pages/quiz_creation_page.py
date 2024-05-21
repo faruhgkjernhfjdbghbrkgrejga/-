@@ -21,7 +21,7 @@ import pytesseract
 from PyPDF2 import PdfReader
 import io
 from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
-import chardet
+#import chardet
 
 
 
