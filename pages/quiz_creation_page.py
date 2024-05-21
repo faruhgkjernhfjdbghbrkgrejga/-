@@ -295,7 +295,7 @@ def quiz_creation_page():
 
             if upload_option == "직접 입력":               
                 text_input = st.text_area("텍스트를 입력하세요.")
-                text_content = text_input.read().encoding("utf-8", errors='ignore')
+                text_content = text_input.load().encoding("utf-8", errors='ignore')
                 
                 # result = chardet.detect(text_input)
                 # encoding = result['encoding']
