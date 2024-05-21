@@ -293,7 +293,7 @@ def quiz_creation_page():
 
             if upload_option == "직접 입력":               
                 text_input = st.text_area("텍스트를 입력하세요.")
-                text_content = text_input.read().decode("utf-8")
+                text_content = text_input.decode("utf-8")
             
             elif upload_option == "토픽 선택":
                 topic = st.selectbox(
