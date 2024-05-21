@@ -198,6 +198,7 @@ def quiz_creation_page():
 
             if upload_option == "직접 입력":               
                 text_content = st.text_area("텍스트를 입력하세요.")
+                text_content = text_content.read().decode("utf-8")
                 
 
             elif upload_option == "URL":
