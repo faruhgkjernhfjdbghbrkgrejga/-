@@ -291,6 +291,7 @@ def quiz_creation_page():
             st.header("파일 업로드")
             uploaded_file = None
             text_content = None
+            topic = None
             #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
 
             # if upload_option == "직접 입력":               
@@ -336,11 +337,9 @@ def quiz_creation_page():
 
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
-                        st.write(text_input)
                         documents = text_splitter.split_documents(text_content)
-                        st.write(documents)
                         vector = FAISS.from_documents(documents, embeddings)
-                        st.write(vector)
+
 
                         # PydanticOutputParser 생성
                         parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
@@ -376,6 +375,60 @@ def quiz_creation_page():
                         st.session_state.selected_page = "퀴즈 풀이"
                         st.session_state.selected_type = quiz_type
                         st.session_state.selected_num = num_quizzes
+
+                        st.success('퀴즈 생성이 완료되었습니다!')
+                        st.write(quiz_questions)
+                        st.session_state['quiz_created'] = True
+
+                if st.session_state.get('quiz_created', False):
+                    if st.button('퀴즈 풀기'):
+                        st.switch_page("pages/quiz_solve_page.py")
+
+            elif topic is not None:
+                if st.button('문제 생성 하기'):
+                    with st.spinner('퀴즈를 생성 중입니다...'):
+                        llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
+                        embeddings = OpenAIEmbeddings()
+
+                        # Rag
+                        text_splitter = RecursiveCharacterTextSplitter()
+                        # documents = text_splitter.split_documents(text_content)
+                        # vector = FAISS.from_documents(documents, embeddings)
+
+                        # # PydanticOutputParser 생성
+                        # parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
+                        # parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
+                        # parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
+
+                        # prompt = PromptTemplate.from_template(
+                        #     "{input}, Please answer in KOREAN."
+
+                        #     "CONTEXT:"
+                        #     "{context}."
+
+                        #     "FORMAT:"
+                        #     "{format}"
+                        # )
+                        # promptoub = prompt.partial(format=parseroub.get_format_instructions())
+                        # promptsub = prompt.partial(format=parsersub.get_format_instructions())
+                        # prompttf = prompt.partial(format=parsertf.get_format_instructions())
+
+                        # document_chainoub = create_stuff_documents_chain(llm, promptoub)
+                        # document_chainsub = create_stuff_documents_chain(llm, promptsub)
+                        # document_chaintf = create_stuff_documents_chain(llm, prompttf)
+
+                        # retriever = vector.as_retriever()
+
+                        # retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
+                        # retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
+                        # retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
+
+                        # for i in range(num_quizzes):
+                        #     quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
+                        #     st.session_state['quizs'] = quiz_questions
+                        # st.session_state.selected_page = "퀴즈 풀이"
+                        # st.session_state.selected_type = quiz_type
+                        # st.session_state.selected_num = num_quizzes
 
                         st.success('퀴즈 생성이 완료되었습니다!')
                         st.write(quiz_questions)
