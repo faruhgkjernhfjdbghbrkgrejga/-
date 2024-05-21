@@ -293,9 +293,9 @@ def quiz_creation_page():
             text_content = None
             #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
 
-            if upload_option == "직접 입력":               
-                text_input = st.text_area("텍스트를 입력하세요.")
-                st.write(text_input)
+            # if upload_option == "직접 입력":               
+            #     text_input = st.text_area("텍스트를 입력하세요.")
+            #     st.write(text_input)
                 # text_content = text_input.load().encoding("utf-8", errors='ignore')
                 
                 # result = chardet.detect(text_input)
@@ -309,7 +309,7 @@ def quiz_creation_page():
                 #     text_content = text_input.encoding("utf-8")
 
             
-            elif upload_option == "토픽 선택":
+            if upload_option == "토픽 선택":
                 topic = st.selectbox(
                    "토픽을 선택하세요",
                    ("수학", "문학", "비문학", "과학"),
