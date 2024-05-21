@@ -425,20 +425,20 @@ def quiz_creation_page():
                    index=None,
                    placeholder="토픽을 선택하세요",
                 )
-                # 선택된 토픽에 따라 쿼리 생성
-                if topic is not None:
-                    user_query = topic
-                else:
-                    user_query = None
+                # # 선택된 토픽에 따라 쿼리 생성
+                # if topic is not None:
+                #     user_query = topic
+                # else:
+                #     user_query = None
     
-                user_query = None
-                if user_query is not None:
-                    st.write("사용자 쿼리:", user_query)
-                    response = retrieve_results(user_query)
-                    if response:
-                        st.write("검색 결과:", response)
-                    else:
-                        st.warning("검색 결과가 없습니다.")
+                # user_query = None
+                # if user_query is not None:
+                #     st.write("사용자 쿼리:", user_query)
+                #     response = retrieve_results(user_query)
+                #     if response:
+                #         st.write("검색 결과:", response)
+                #     else:
+                #         st.warning("검색 결과가 없습니다.")
 
 
             elif upload_option == "URL":
