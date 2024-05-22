@@ -24,6 +24,52 @@ from langchain_community.document_loaders.recursive_url_loader import RecursiveU
 import chardet
 from langchain_community.vectorstores import MongoDBAtlasVectorSearch
 from langchain_openai import OpenAIEmbeddings
+from langchain.document_loaders import WebBaseLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+from pymongo import MongoClient
+import pymongo
+
+def connect_db():
+    client = MongoClient('mongodb://username:password@host:port/')
+    return client['your_database_name']
+
+def insert_documents(collection_name, documents):
+    db = connect_db()
+    collection = db[collection_name]
+    collection.insert_many(documents)
+
+def vectorize_and_store(data, collection_name):
+    embeddings = OpenAIEmbeddings(api_key='your_openai_api_key')
+    vector_operations = []
+
+    for document in data:
+        text = document['text']
+        vector = embeddings.embed_text(text)
+        operation = UpdateOne({'_id': document['_id']}, {'$set': {'vector': vector.tolist()}})
+        vector_operations.append(operation)
+
+    db = connect_db()
+    collection = db[collection_name]
+    collection.bulk_write(vector_operations)
+
+def search_vectors(collection_name, query_vector, top_k=10):
+    db = connect_db()
+    collection = db[collection_name]
+    results = collection.aggregate([
+        {
+            '$search': {
+                'vector': {
+                    'query': query_vector,
+                    'path': 'vector',
+                    'cosineSimilarity': True,
+                    'topK': top_k
+                }
+            }
+        }
+    ])
+    return list(results)
 
 def retrieve_results(user_query):
     # Create MongoDB Atlas Vector Search instance
