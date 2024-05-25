@@ -494,7 +494,7 @@ def quiz_creation_page():
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
                         # Define collection and index name
-                        client = MongoClient("mongodb+srv://username:password@host/database?retryWrites=true&w=majority&appName=Cluster0")
+                        client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
                         mongo_uri = os.getenv("MONGO_URI")
                         client = MongoClient(mongo_uri)
                     
