@@ -479,7 +479,7 @@ def quiz_creation_page():
                         db_name = "langchain_db"
                         collection_name = "test"
                         atlas_collection = client[db_name][collection_name]
-                        vector_search_index = "vector_index"
+                        vector_search_index = topic
     
     
                         # Define a prompt template
