@@ -506,8 +506,8 @@ def quiz_creation_page():
                         # Define a prompt template
     
                         # Rag
-                        text_splitter = RecursiveCharacterTextSplitter()
-                        documents = text_splitter.split_documents(text_content)
+                        # text_splitter = RecursiveCharacterTextSplitter()
+                        # documents = text_splitter.split_documents(text_content)
     
                         vector_search = MongoDBAtlasVectorSearch.from_documents(
                             documents=documents,
