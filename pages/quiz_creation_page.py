@@ -547,7 +547,7 @@ def quiz_creation_page():
                         # documents = text_splitter.split_documents(text_content)
     
                         vector_search = MongoDBAtlasVectorSearch.from_documents(
-                            documents=documents,
+                            documents=is_topic,
                             embedding=embeddings,
                             collection=atlas_collection,
                             index_name=vector_search_index
