@@ -494,8 +494,11 @@ def quiz_creation_page():
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
                         # Define collection and index name
+                        client = MongoClient("mongodb+srv://username:password@host:port/?retryWrites=true&w=majority&appName=Cluster0")
+                    
+                        # 데이터베이스 및 컬렉션 설정
                         db_name = "langchain_db"
-                        collection_name = topic
+                        collection_name = "test"
                         atlas_collection = client[db_name][collection_name]
                         vector_search_index = "vector_index"
     
