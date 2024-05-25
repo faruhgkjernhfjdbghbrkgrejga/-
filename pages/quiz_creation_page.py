@@ -529,9 +529,9 @@ def quiz_creation_page():
                         client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
                         if topic == "수학":
-                            topic = math
+                            topic = "math"
                         elif topic == "과학":
-                            topic = science
+                            topic = "science"
                     
                         # 데이터베이스 및 컬렉션 설정
                         db_name = "langchain_db"
