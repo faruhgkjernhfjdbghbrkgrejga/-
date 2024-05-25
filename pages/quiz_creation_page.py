@@ -45,7 +45,7 @@ client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mo
 #, langchain_db.test처럼 넣어서 쓰면 됩니다.
 
 def connect_db():
-    client = MongoClient('mongodb://username:password@host:port/')
+    client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
     return client['your_database_name']
 
 def insert_documents(collection_name, documents):
