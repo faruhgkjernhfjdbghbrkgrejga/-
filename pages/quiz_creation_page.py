@@ -409,7 +409,19 @@ def quiz_creation_page():
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
                         documents = text_splitter.split_documents(text_content)
-                        vector = FAISS.from_documents(documents, embeddings)
+
+                        vector_search = MongoDBAtlasVectorSearch.from_documents(
+                            documents=documents,
+                            embedding=embeddings,
+                            collection=atlas_collection,
+                            index_name=vector_search_index
+                        )
+    
+                        # Instantiate Atlas Vector Search as a retriever
+                        retriever = vector_search.as_retriever(
+                            search_type="similarity",
+                            search_kwargs={"k": 3, "score_threshold": 0.9}
+                        )
 
 
                         # PydanticOutputParser 생성
