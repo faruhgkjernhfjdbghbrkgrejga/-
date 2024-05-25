@@ -527,6 +527,11 @@ def quiz_creation_page():
                         text_splitter = RecursiveCharacterTextSplitter()
                         # Define collection and index name
                         client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+
+                        if topic == "수학":
+                            topic = math
+                        elif topic == "과학":
+                            topic = science
                     
                         # 데이터베이스 및 컬렉션 설정
                         db_name = "langchain_db"
