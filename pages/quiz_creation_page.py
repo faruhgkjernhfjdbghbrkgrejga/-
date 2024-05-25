@@ -469,8 +469,6 @@ def quiz_creation_page():
                             search_kwargs={"k": 3, "score_threshold": 0.9}
                         )
 
-            
-
 
                         # PydanticOutputParser 생성
                         parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
@@ -493,8 +491,6 @@ def quiz_creation_page():
                         document_chainoub = create_stuff_documents_chain(llm, promptoub)
                         document_chainsub = create_stuff_documents_chain(llm, promptsub)
                         document_chaintf = create_stuff_documents_chain(llm, prompttf)
-
-                        retriever = vector.as_retriever()
 
                         retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
                         retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
@@ -529,9 +525,11 @@ def quiz_creation_page():
                         client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
                         if topic == "수학":
-                            topic = "math"
+                            is_topic = "math"
                         elif topic == "과학":
-                            topic = "science"
+                            is_topic = "science"
+                        else:
+                            is_topic = topic
                     
                         # 데이터베이스 및 컬렉션 설정
                         db_name = "langchain_db"
@@ -558,6 +556,41 @@ def quiz_creation_page():
                             search_type="similarity",
                             search_kwargs={"k": 3, "score_threshold": 0.9}
                         )
+
+                        
+
+                        # PydanticOutputParser 생성
+                        parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
+                        parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
+                        parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
+
+                        prompt = PromptTemplate.from_template(
+                            "{input}, Please answer in KOREAN."
+
+                            "CONTEXT:"
+                            "{context}."
+
+                            "FORMAT:"
+                            "{format}"
+                        )
+                        promptoub = prompt.partial(format=parseroub.get_format_instructions())
+                        promptsub = prompt.partial(format=parsersub.get_format_instructions())
+                        prompttf = prompt.partial(format=parsertf.get_format_instructions())
+
+                        document_chainoub = create_stuff_documents_chain(llm, promptoub)
+                        document_chainsub = create_stuff_documents_chain(llm, promptsub)
+                        document_chaintf = create_stuff_documents_chain(llm, prompttf)
+
+                        retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
+                        retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
+                        retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
+
+                        for i in range(num_quizzes):
+                            quiz_questions.append(generate_quiz(quiz_type, is_topic, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
+                            st.session_state['quizs'] = quiz_questions
+                        st.session_state.selected_page = "퀴즈 풀이"
+                        st.session_state.selected_type = quiz_type
+                        st.session_state.selected_num = num_quizzes
 
                         st.success('퀴즈 생성이 완료되었습니다!')
                         st.write(quiz_questions)
