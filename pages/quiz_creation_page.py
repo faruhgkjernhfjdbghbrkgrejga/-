@@ -46,15 +46,15 @@ client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mo
 
 def connect_db():
     client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-    return client['your_database_name']
+    return client[langchain_db]
 
 def insert_documents(collection_name, documents):
     db = connect_db()
-    collection = db[collection_name]
+    collection = db[test]
     collection.insert_many(documents)
 
 def vectorize_and_store(data, collection_name):
-    embeddings = OpenAIEmbeddings(api_key='your_openai_api_key')
+    embeddings = OpenAIEmbeddings()
     vector_operations = []
 
     for document in data:
@@ -64,12 +64,12 @@ def vectorize_and_store(data, collection_name):
         vector_operations.append(operation)
 
     db = connect_db()
-    collection = db[collection_name]
+    collection = db[test]
     collection.bulk_write(vector_operations)
 
 def search_vectors(collection_name, query_vector, top_k=10):
     db = connect_db()
-    collection = db[collection_name]
+    collection = db[test]
     results = collection.aggregate([
         {
             '$search': {
@@ -92,7 +92,7 @@ def retrieve_results(user_query):
     # Create MongoDB Atlas Vector Search instance
     vector_search = MongoDBAtlasVectorSearch.from_connection_string(
         "mongodb+srv://username:password@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=YourApp",
-        "database.collection",
+        "langchain_db.test",
         OpenAIEmbeddings(model="gpt-3.5-turbo-0125"),
         index_name="vector_index"
     )
@@ -102,8 +102,8 @@ def retrieve_results(user_query):
         input=user_query, k=5, pre_filter={"page": {"$eq": 1}}
     )
 
-    #st.write("Question: " + user_query)
-    #st.write("Answer: " + response)
+    st.write("Question: " + user_query)
+    st.write("Answer: " + response)
 
     # Check if any results are found
     if not response:
