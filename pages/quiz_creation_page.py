@@ -443,31 +443,10 @@ def quiz_creation_page():
                         llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
                         embeddings = OpenAIEmbeddings()
 
-                        #Vectorstore
-                        client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-    
-                        # Define collection and index name
-                        db_name = "langchain_db"
-                        collection_name = "test"
-                        atlas_collection = client[db_name][collection_name]
-                        vector_search_index = "vector_index"
-
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
                         documents = text_splitter.split_documents(text_content)
-
-                        vector_search = MongoDBAtlasVectorSearch.from_documents(
-                            documents=documents,
-                            embedding=embeddings,
-                            collection=atlas_collection,
-                            index_name=vector_search_index
-                        )
-    
-                        # Instantiate Atlas Vector Search as a retriever
-                        retriever = vector_search.as_retriever(
-                            search_type="similarity",
-                            search_kwargs={"k": 3, "score_threshold": 0.9}
-                        )
+                        vector = FAISS.from_documents(documents, embeddings)
 
 
                         # PydanticOutputParser 생성
@@ -492,14 +471,14 @@ def quiz_creation_page():
                         document_chainsub = create_stuff_documents_chain(llm, promptsub)
                         document_chaintf = create_stuff_documents_chain(llm, prompttf)
 
+                        retriever = vector.as_retriever()
+
                         retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
                         retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
                         retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
 
-                        is_topic = None
-
                         for i in range(num_quizzes):
-                            quiz_questions.append(generate_quiz(quiz_type, is_topic, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
+                            quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
                             st.session_state['quizs'] = quiz_questions
                         st.session_state.selected_page = "퀴즈 풀이"
                         st.session_state.selected_type = quiz_type
