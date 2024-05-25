@@ -31,10 +31,6 @@ from langchain.vectorstores import FAISS
 from pymongo import MongoClient
 import pymongo
 
-#Vectorstore
-client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-
-
 def connect_db():
     client = MongoClient('mongodb://username:password@host:port/')
     return client['your_database_name']
