@@ -494,7 +494,9 @@ def quiz_creation_page():
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
                         # Define collection and index name
-                        client = MongoClient("mongodb+srv://username:password@host:port/?retryWrites=true&w=majority&appName=Cluster0")
+                        client = MongoClient("mongodb+srv://username:password@host/database?retryWrites=true&w=majority&appName=Cluster0")
+                        mongo_uri = os.getenv("MONGO_URI")
+                        client = MongoClient(mongo_uri)
                     
                         # 데이터베이스 및 컬렉션 설정
                         db_name = "langchain_db"
