@@ -323,27 +323,48 @@ def process_file(uploaded_file, upload_option):
 
 # 퀴즈 생성 함수
 @st.experimental_fragment
-def generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf):
+def generate_quiz(quiz_type, is_topic, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf):
     # Generate quiz prompt based on selected quiz type
-    if quiz_type == "다중 선택 (객관식)":
-        response = retrieval_chainoub.invoke(
-            {
-                "input": "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context"
-            }
-        )
-    elif quiz_type == "주관식":
-        response = retrieval_chainsub.invoke(
-            {
-                "input": "Create one open-ended question focusing on important concepts, following the given format, referring to the following context"
-            }
-        )
-    elif quiz_type == "OX 퀴즈":
-        response = retrieval_chaintf.invoke(
-            {
-                "input": "Create one true or false question focusing on important concepts, following the given format, referring to the following context"
-            }
-        )
-    quiz_questions = response
+    if is_topic == None:
+        if quiz_type == "다중 선택 (객관식)":
+            response = retrieval_chainoub.invoke(
+                {
+                    "input": "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context"
+                }
+            )
+        elif quiz_type == "주관식":
+            response = retrieval_chainsub.invoke(
+                {
+                    "input": "Create one open-ended question focusing on important concepts, following the given format, referring to the following context"
+                }
+            )
+        elif quiz_type == "OX 퀴즈":
+            response = retrieval_chaintf.invoke(
+                {
+                    "input": "Create one true or false question focusing on important concepts, following the given format, referring to the following context"
+                }
+            )
+        quiz_questions = response
+    else:
+        if quiz_type == "다중 선택 (객관식)":
+            response = retrieval_chainoub.invoke(
+                {
+                    "input": "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context"
+                }
+            )
+        elif quiz_type == "주관식":
+            response = retrieval_chainsub.invoke(
+                {
+                    "input": "Create one open-ended question focusing on important concepts, following the given format, referring to the following context"
+                }
+            )
+        elif quiz_type == "OX 퀴즈":
+            response = retrieval_chaintf.invoke(
+                {
+                    "input": "Create one true or false question focusing on important concepts, following the given format, referring to the following context"
+                }
+            )
+        quiz_questions = response
 
     return quiz_questions
 
@@ -479,8 +500,10 @@ def quiz_creation_page():
                         retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
                         retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
 
+                        is_topic = None
+
                         for i in range(num_quizzes):
-                            quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
+                            quiz_questions.append(generate_quiz(quiz_type, is_topic, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
                             st.session_state['quizs'] = quiz_questions
                         st.session_state.selected_page = "퀴즈 풀이"
                         st.session_state.selected_type = quiz_type
