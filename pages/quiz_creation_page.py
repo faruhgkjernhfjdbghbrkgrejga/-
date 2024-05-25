@@ -495,9 +495,9 @@ def quiz_creation_page():
                         text_splitter = RecursiveCharacterTextSplitter()
                         # Define collection and index name
                         db_name = "langchain_db"
-                        collection_name = "test"
+                        collection_name = topic
                         atlas_collection = client[db_name][collection_name]
-                        vector_search_index = topic
+                        vector_search_index = "vector_index"
     
     
                         # Define a prompt template
