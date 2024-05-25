@@ -105,7 +105,7 @@ def quiz_solve_page():
                 # st.write(f"{j+1}.{res['answer.q']uiz}")
                 st.write(f"{j+1}.{res}")
                 st.write(f"{j+1}.{res['quiz']}")
-                correct_answer = (f"{j+1}.{res['correct_answer']}")
+
                 st.write("\n")
                 if st.session_state.selected_type == "주관식":
                     st.write("\n")
@@ -137,6 +137,8 @@ def quiz_solve_page():
                         st.session_state.canswer = res['options2']
                         st.session_state.uanswer = res['options2']
                 st.write("-----------------------------------------")
+                st.session_state['user_answers'] = (f"{j+1}.{res['user_answers']}")
+                st.session_state['correct_answers'] = (f"{j+1}.{res['correct_answer']}")
                 st.write("\n")
                 if st.button("next", key= f"next{j}"):
                     if res['correct_answer'] == st.session_state.canswer:
