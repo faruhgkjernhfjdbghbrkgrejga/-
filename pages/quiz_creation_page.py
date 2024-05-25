@@ -82,6 +82,10 @@ def search_vectors(collection_name, query_vector, top_k=10):
             }
         }
     ])
+
+    #st.write("Question: " + query_vector)
+    #st.write("Answer: " + results)
+    
     return list(results)
 
 def retrieve_results(user_query):
@@ -97,6 +101,9 @@ def retrieve_results(user_query):
     response = vector_search.similarity_search_with_score(
         input=user_query, k=5, pre_filter={"page": {"$eq": 1}}
     )
+
+    #st.write("Question: " + user_query)
+    #st.write("Answer: " + response)
 
     # Check if any results are found
     if not response:
@@ -440,6 +447,8 @@ def quiz_creation_page():
                             search_type="similarity",
                             search_kwargs={"k": 3, "score_threshold": 0.9}
                         )
+
+            
 
 
                         # PydanticOutputParser 생성
