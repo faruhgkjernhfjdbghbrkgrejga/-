@@ -349,19 +349,19 @@ def generate_quiz(quiz_type, is_topic, retrieval_chainoub, retrieval_chainsub, r
         if quiz_type == "다중 선택 (객관식)":
             response = retrieval_chainoub.invoke(
                 {
-                    "input": "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context"
+                    "input": f"Create one {is_topic} multiple-choice question focusing on important concepts, following the given format, referring to the following context"
                 }
             )
         elif quiz_type == "주관식":
             response = retrieval_chainsub.invoke(
                 {
-                    "input": "Create one open-ended question focusing on important concepts, following the given format, referring to the following context"
+                    "input":  f"Create one {is_topic} open-ended question focusing on important concepts, following the given format, referring to the following context"
                 }
             )
         elif quiz_type == "OX 퀴즈":
             response = retrieval_chaintf.invoke(
                 {
-                    "input": "Create one true or false question focusing on important concepts, following the given format, referring to the following context"
+                    "input":  f"Create one {is_topic} true or false question focusing on important concepts, following the given format, referring to the following context"
                 }
             )
         quiz_questions = response
