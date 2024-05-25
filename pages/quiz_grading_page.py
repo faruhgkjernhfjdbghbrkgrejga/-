@@ -4,11 +4,18 @@ from quiz_solve_page import grade_quiz_answers
 
 def quiz_grading_page():
     # 세션 상태에서 사용자 답안과 정답 가져오기
-    user_answers = st.session_state.get("user_answers", [])
-    correct_answers = st.session_state.get("correct_answers", [])
+    user_answers = st.session_state.get('user_answers', [])
+    correct_answers = st.session_state.get('correct_answers', [])
 
     # 퀴즈 채점
     graded_answers = grade_quiz_answers(user_answers, correct_answers)
+
+    results = []
+    for user_answer, correct_answer in zip(user_answers, correct_answers):
+        if user_answer == correct_answer:
+            results.append('정답')
+        else:
+            results.append('오답')
 
     # 채점 결과 표시
     st.title("퀴즈 채점 결과")
