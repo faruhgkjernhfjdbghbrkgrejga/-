@@ -31,6 +31,10 @@ from langchain.vectorstores import FAISS
 from pymongo import MongoClient
 import pymongo
 
+#Vectorstore
+client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+
+
 def connect_db():
     client = MongoClient('mongodb://username:password@host:port/')
     return client['your_database_name']
@@ -459,43 +463,31 @@ def quiz_creation_page():
 
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
-                        # documents = text_splitter.split_documents(text_content)
-                        # vector = FAISS.from_documents(documents, embeddings)
-
-                        # # PydanticOutputParser 생성
-                        # parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
-                        # parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
-                        # parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
-
-                        # prompt = PromptTemplate.from_template(
-                        #     "{input}, Please answer in KOREAN."
-
-                        #     "CONTEXT:"
-                        #     "{context}."
-
-                        #     "FORMAT:"
-                        #     "{format}"
-                        # )
-                        # promptoub = prompt.partial(format=parseroub.get_format_instructions())
-                        # promptsub = prompt.partial(format=parsersub.get_format_instructions())
-                        # prompttf = prompt.partial(format=parsertf.get_format_instructions())
-
-                        # document_chainoub = create_stuff_documents_chain(llm, promptoub)
-                        # document_chainsub = create_stuff_documents_chain(llm, promptsub)
-                        # document_chaintf = create_stuff_documents_chain(llm, prompttf)
-
-                        # retriever = vector.as_retriever()
-
-                        # retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
-                        # retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
-                        # retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
-
-                        # for i in range(num_quizzes):
-                        #     quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
-                        #     st.session_state['quizs'] = quiz_questions
-                        # st.session_state.selected_page = "퀴즈 풀이"
-                        # st.session_state.selected_type = quiz_type
-                        # st.session_state.selected_num = num_quizzes
+                        # Define collection and index name
+                        db_name = "langchain_db"
+                        collection_name = "test"
+                        atlas_collection = client[db_name][collection_name]
+                        vector_search_index = "vector_index"
+    
+    
+                        # Define a prompt template
+    
+                        # Rag
+                        text_splitter = RecursiveCharacterTextSplitter()
+                        documents = text_splitter.split_documents(text_content)
+    
+                        vector_search = MongoDBAtlasVectorSearch.from_documents(
+                            documents=documents,
+                            embedding=embeddings,
+                            collection=atlas_collection,
+                            index_name=vector_search_index
+                        )
+    
+                        # Instantiate Atlas Vector Search as a retriever
+                        retriever = vector_search.as_retriever(
+                            search_type="similarity",
+                            search_kwargs={"k": 3, "score_threshold": 0.9}
+                        )
 
                         st.success('퀴즈 생성이 완료되었습니다!')
                         st.write(quiz_questions)
