@@ -1,6 +1,7 @@
 #quiz_grading_page.py
 import streamlit as st
-from quiz_solve_page import grade_quiz_answers
+from quiz_solve_page import user_answers, correct_answers
+from quiz_creation_page import quiz_questions
 
 def quiz_grading_page():
     # 세션 상태에서 사용자 답안과 정답 가져오기
