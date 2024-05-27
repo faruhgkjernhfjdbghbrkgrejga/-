@@ -105,7 +105,8 @@ def quiz_solve_page():
                     if st.button(f"{index+1}. {option}", key=f"{j}_{index}"):
                         st.session_state.user_selected_answers.append(option)  # 선택한 답변을 배열에 추가
                         st.session_state.number += 1  # 다음 문제로 이동
-                        if st.session_state.user_selected_answers.append == st.session_state.quizs[j]['answer']
+                        if st.session_state.user_selected_answers.append == st.session_state.quizs[j]['answer']:
+                            total_score += 1
                         # if st.session_state.number == len(st.session_state.quizs):
                         #     if st.button('퀴즈 채점'):
                         #         st.session_state['total_score'] = st.session_state.number  # 점수를 세션 상태에 저장
