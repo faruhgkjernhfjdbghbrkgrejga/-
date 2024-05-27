@@ -41,23 +41,24 @@ def quiz_grading_page():
         if current_question_index < len(questions) - 1:
             st.session_state['current_question_index'] = current_question_index + 1
 
-    question = questions[current_question_index]
-    user_answer = user_answers[current_question_index]
-    correct_answer = correct_answers[current_question_index]
-    result = graded_answers[current_question_index]
+    if questions and 0 <= current_question_index < len(questions):
+        question = questions[current_question_index]
+        user_answer = user_answers[current_question_index]
+        correct_answer = correct_answers[current_question_index]
+        result = graded_answers[current_question_index]
 
-    st.subheader(f"문제 {current_question_index + 1}")
-    st.write(f"문제: {question}")
-    st.write(f"사용자 답변: {user_answer}")
-    st.write(f"정답: {correct_answer}")
-    if result == "정답":
-        st.success("정답입니다!", key=f"result_success_{current_question_index}")
-        total_score += 1
-    else:
-        st.error("오답입니다.", key=f"result_error_{current_question_index}")
+        st.subheader(f"문제 {current_question_index + 1}")
+        st.write(f"문제: {question}")
+        st.write(f"사용자 답변: {user_answer}")
+        st.write(f"정답: {correct_answer}")
+        if result == "정답":
+            st.success("정답입니다!", key=f"result_success_{current_question_index}")
+            total_score += 1
+        else:
+            st.error("오답입니다.", key=f"result_error_{current_question_index}")
 
-    explanation = get_openai_explanation(question, user_answer, correct_answer)
-    st.write(f"해설: {explanation}")
+        explanation = get_openai_explanation(question, user_answer, correct_answer)
+        st.write(f"해설: {explanation}")
 
     st.write(f"당신의 점수는 {total_score}점 입니다.")
 
