@@ -95,6 +95,10 @@ def quiz_solve_page():
         st.session_state.user_answers = []  # 사용자 선택 답변을 저장할 배열 초기화
     if 'correct_answers' not in st.session_state:
         st.session_state.correct_answers = []  # 정답 여부를 저장할 배열 초기화
+    if 'canswer' not in st.session_state:
+        st.session_state.canswer = ""
+    if 'uanswer' not in st.session_state:
+        st.session_state.uanswer = ""
         
     for j, question in enumerate(st.session_state.quizs):
         res = json.loads(question["answer"])
@@ -153,5 +157,4 @@ def quiz_solve_page():
 
 if __name__ == "__main__":
     quiz_solve_page()
-
 
