@@ -492,92 +492,92 @@ def quiz_creation_page():
                     if st.button('퀴즈 풀기'):
                         st.switch_page("pages/quiz_solve_page.py")
 
-            elif topic is not None:
-                if st.button('문제 생성 하기'):
-                    with st.spinner('퀴즈를 생성 중입니다...'):
-                        llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
-                        embeddings = OpenAIEmbeddings()
+            # elif topic is not None:
+            #     if st.button('문제 생성 하기'):
+            #         with st.spinner('퀴즈를 생성 중입니다...'):
+            #             llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
+            #             embeddings = OpenAIEmbeddings()
 
-                        # Rag
-                        text_splitter = RecursiveCharacterTextSplitter()
-                        # Define collection and index name
-                        client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+            #             # Rag
+            #             text_splitter = RecursiveCharacterTextSplitter()
+            #             # Define collection and index name
+            #             client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
-                        if topic == "수학":
-                            is_topic = "math"
-                        elif topic == "과학":
-                            is_topic = "science"
-                        else:
-                            is_topic = topic
+            #             if topic == "수학":
+            #                 is_topic = "math"
+            #             elif topic == "과학":
+            #                 is_topic = "science"
+            #             else:
+            #                 is_topic = topic
                     
-                        # 데이터베이스 및 컬렉션 설정
-                        db_name = "langchain_db"
-                        collection_name = "test"
-                        atlas_collection = client[db_name][collection_name]
-                        vector_search_index = "vector_index"
+            #             # 데이터베이스 및 컬렉션 설정
+            #             db_name = "langchain_db"
+            #             collection_name = "test"
+            #             atlas_collection = client[db_name][collection_name]
+            #             vector_search_index = "vector_index"
     
     
-                        # Define a prompt template
+            #             # Define a prompt template
     
-                        # Rag
-                        # text_splitter = RecursiveCharacterTextSplitter()
-                        # documents = text_splitter.split_documents(text_content)
+            #             # Rag
+            #             # text_splitter = RecursiveCharacterTextSplitter()
+            #             # documents = text_splitter.split_documents(text_content)
     
-                        vector_search = MongoDBAtlasVectorSearch.from_documents(
-                            documents=is_topic,
-                            embedding=embeddings,
-                            collection=atlas_collection,
-                            index_name=vector_search_index
-                        )
+            #             vector_search = MongoDBAtlasVectorSearch.from_documents(
+            #                 documents=is_topic,
+            #                 embedding=embeddings,
+            #                 collection=atlas_collection,
+            #                 index_name=vector_search_index
+            #             )
     
-                        # Instantiate Atlas Vector Search as a retriever
-                        retriever = vector_search.as_retriever(
-                            search_type="similarity",
-                            search_kwargs={"k": 3, "score_threshold": 0.9}
-                        )
+            #             # Instantiate Atlas Vector Search as a retriever
+            #             retriever = vector_search.as_retriever(
+            #                 search_type="similarity",
+            #                 search_kwargs={"k": 3, "score_threshold": 0.9}
+            #             )
 
                         
 
-                        # PydanticOutputParser 생성
-                        parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
-                        parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
-                        parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
+            #             # PydanticOutputParser 생성
+            #             parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
+            #             parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
+            #             parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
 
-                        prompt = PromptTemplate.from_template(
-                            "{input}, Please answer in KOREAN."
+            #             prompt = PromptTemplate.from_template(
+            #                 "{input}, Please answer in KOREAN."
 
-                            "CONTEXT:"
-                            "{context}."
+            #                 "CONTEXT:"
+            #                 "{context}."
 
-                            "FORMAT:"
-                            "{format}"
-                        )
-                        promptoub = prompt.partial(format=parseroub.get_format_instructions())
-                        promptsub = prompt.partial(format=parsersub.get_format_instructions())
-                        prompttf = prompt.partial(format=parsertf.get_format_instructions())
+            #                 "FORMAT:"
+            #                 "{format}"
+            #             )
+            #             promptoub = prompt.partial(format=parseroub.get_format_instructions())
+            #             promptsub = prompt.partial(format=parsersub.get_format_instructions())
+            #             prompttf = prompt.partial(format=parsertf.get_format_instructions())
 
-                        document_chainoub = create_stuff_documents_chain(llm, promptoub)
-                        document_chainsub = create_stuff_documents_chain(llm, promptsub)
-                        document_chaintf = create_stuff_documents_chain(llm, prompttf)
+            #             document_chainoub = create_stuff_documents_chain(llm, promptoub)
+            #             document_chainsub = create_stuff_documents_chain(llm, promptsub)
+            #             document_chaintf = create_stuff_documents_chain(llm, prompttf)
 
-                        retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
-                        retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
-                        retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
+            #             retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
+            #             retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
+            #             retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
 
-                        for i in range(num_quizzes):
-                            quiz_questions.append(generate_quiz(quiz_type, is_topic, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
-                            st.session_state['quizs'] = quiz_questions
-                        st.session_state.selected_page = "퀴즈 풀이"
-                        st.session_state.selected_type = quiz_type
-                        st.session_state.selected_num = num_quizzes
+            #             for i in range(num_quizzes):
+            #                 quiz_questions.append(generate_quiz(quiz_type, is_topic, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
+            #                 st.session_state['quizs'] = quiz_questions
+            #             st.session_state.selected_page = "퀴즈 풀이"
+            #             st.session_state.selected_type = quiz_type
+            #             st.session_state.selected_num = num_quizzes
 
-                        st.success('퀴즈 생성이 완료되었습니다!')
-                        st.write(quiz_questions)
-                        st.session_state['quiz_created'] = True
+            #             st.success('퀴즈 생성이 완료되었습니다!')
+            #             st.write(quiz_questions)
+            #             st.session_state['quiz_created'] = True
 
-                if st.session_state.get('quiz_created', False):
-                    if st.button('퀴즈 풀기'):
-                        st.switch_page("pages/quiz_solve_page.py")
+            #     if st.session_state.get('quiz_created', False):
+            #         if st.button('퀴즈 풀기'):
+            #             st.switch_page("pages/quiz_solve_page.py")
 
 
 if __name__ == "__main__":
