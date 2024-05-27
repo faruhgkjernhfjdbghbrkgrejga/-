@@ -43,5 +43,3 @@ def quiz_grading_page():
 
 if __name__ == "__main__":
     quiz_grading_page()
-
-
