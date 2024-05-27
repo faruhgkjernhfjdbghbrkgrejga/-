@@ -133,15 +133,15 @@ def quiz_solve_page():
                         st.session_state.uanswer = res['options2']
                 st.write("-----------------------------------------")
                 st.write("\n")
-                if st.button("next", key= f"next{j}"):
-                    if res['correct_answer'] == st.session_state.canswer:
-                        st.write("Correct")
-                        st.session_state.number += 1
-                    elif res['correct_answer'] == st.session_state.uanswer:
-                        st.write("Correct")
-                        st.session_state.number += 1
-                    else:
-                        st.write("Wrong")
+                # if st.button("next", key= f"next{j}"):
+                #     if res['correct_answer'] == st.session_state.canswer:
+                #         st.write("Correct")
+                #         st.session_state.number += 1
+                #     elif res['correct_answer'] == st.session_state.uanswer:
+                #         st.write("Correct")
+                #         st.session_state.number += 1
+                #     else:
+                #         st.write("Wrong")
 
         j += 1
     if st.session_state.number == st.session_state.selected_num:
