@@ -11,7 +11,7 @@ def grade_quiz_answers(user_answers, correct_answers):
     return graded_answers
 
 def quiz_grading_page():
-    user_answers = st.session_state.get('user_answers', [])
+    user_answers = st.session_state.get('user_selected_answers', [])
     correct_answers = st.session_state.get('correct_answers', [])
     graded_answers = grade_quiz_answers(user_answers, correct_answers)
 
@@ -20,7 +20,7 @@ def quiz_grading_page():
 
     for i, (user_answer, correct_answer, result) in enumerate(zip(user_answers, correct_answers, graded_answers), start=1):
         st.subheader(f"문제 {i}")
-        st.write(f"사용자 답변: {user_answer}")
+        st.write(f"사용자 답변: {user_answer}")  # 사용자가 선택한 답변 출력
         st.write(f"정답: {correct_answer}")
         if result == "정답":
             st.success("정답입니다!", key=f"result_success_{i}")
