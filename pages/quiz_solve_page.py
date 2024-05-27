@@ -139,8 +139,7 @@ def quiz_solve_page():
                 st.write("-----------------------------------------")
                 # user_answers = st.session_state.user_selected_answers.append(st.session_state.uanswer)
                 # correct_answers = st.session_state.created_answers.append((f"{j+1}.{res['correct_answer']}"))
-                st.session_state['user_answers'] = (f"{j+1}.{res['user_answers']}")
-                st.session_state['correct_answers'] = (f"{j+1}.{res['correct_answer']}")
+                
                 st.write("\n")
                 if st.button("next", key= f"next{j}"):
                     if res['correct_answer'] == st.session_state.canswer:
@@ -151,6 +150,10 @@ def quiz_solve_page():
                         st.session_state.number += 1
                     else:
                         st.write("Wrong")
+
+
+        st.session_state['user_answers'] = (f"{j+1}.{res['user_answers']}")
+        st.session_state['correct_answers'] = (f"{j+1}.{res['correct_answer']}")
 
         j += 1
     if st.session_state.number == st.session_state.selected_num:
