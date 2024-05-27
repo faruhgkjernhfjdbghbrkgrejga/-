@@ -106,8 +106,11 @@ def quiz_solve_page():
                         st.session_state.user_selected_answers.append(option)  # 선택한 답변을 배열에 추가
                         st.session_state.number += 1  # 다음 문제로 이동
                         if st.session_state.number == len(st.session_state.quizs):
-                            st.session_state.number = 0  # 모든 문제를 다 풀면 처음으로 돌아감
-                            st.experimental_rerun()  # 페이지 새로고침
+                            if st.button('퀴즈 채점'):
+                                st.session_state['total_score'] = st.session_state.number  # 점수를 세션 상태에 저장
+                                st.switch_page("pages/quiz_grading_page.py")
+                            # st.session_state.number = 0  # 모든 문제를 다 풀면 처음으로 돌아감
+                            # st.experimental_rerun()  # 페이지 새로고침
 
     # 사용자가 선택한 답변 출력
     if st.session_state.user_selected_answers:
