@@ -11,9 +11,15 @@ def grade_quiz_answers(user_answers, correct_answers):
             graded_answers.append('오답')
     return graded_answers
 
-def get_openai_explanation(question, correct_answer):
+def get_openai_explanation(question, user_answer, correct_answer):
     llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
-    prompt = f"문제: {question}\n정답: {correct_answer}\n이 문제의 해설을 제공해주세요."
+    prompt = (
+        f"문제: {question}\n"
+        f"사용자 답변: {user_answer}\n"
+        f"정답: {correct_answer}\n"
+        "이 문제의 해설을 제공해주세요. "
+        "해설은 왜 정답이 맞는지, 왜 사용자 답변이 틀렸는지 설명해주세요."
+    )
     response = llm(prompt)
     return response
 
@@ -22,23 +28,36 @@ def quiz_grading_page():
     correct_answers = st.session_state.get('correct_answers', [])
     questions = st.session_state.get('quiz_questions', [])
     graded_answers = grade_quiz_answers(user_answers, correct_answers)
-
     st.title("퀴즈 채점 결과")
     total_score = 0
 
-    for i, (question, user_answer, correct_answer, result) in enumerate(zip(questions, user_answers, correct_answers, graded_answers), start=1):
-        st.subheader(f"문제 {i}")
-        st.write(f"문제: {question}")
-        st.write(f"사용자 답변: {user_answer}")
-        st.write(f"정답: {correct_answer}")
-        if result == "정답":
-            st.success("정답입니다!", key=f"result_success_{i}")
-            total_score += 1
-        else:
-            st.error("오답입니다.", key=f"result_error_{i}")
-        
-        explanation = get_openai_explanation(question, correct_answer)
-        st.write(f"해설: {explanation}")
+    current_question_index = st.session_state.get('current_question_index', 0)
+
+    if st.button("이전 문제", key="prev_question"):
+        if current_question_index > 0:
+            st.session_state['current_question_index'] = current_question_index - 1
+
+    if st.button("다음 문제", key="next_question"):
+        if current_question_index < len(questions) - 1:
+            st.session_state['current_question_index'] = current_question_index + 1
+
+    question = questions[current_question_index]
+    user_answer = user_answers[current_question_index]
+    correct_answer = correct_answers[current_question_index]
+    result = graded_answers[current_question_index]
+
+    st.subheader(f"문제 {current_question_index + 1}")
+    st.write(f"문제: {question}")
+    st.write(f"사용자 답변: {user_answer}")
+    st.write(f"정답: {correct_answer}")
+    if result == "정답":
+        st.success("정답입니다!", key=f"result_success_{current_question_index}")
+        total_score += 1
+    else:
+        st.error("오답입니다.", key=f"result_error_{current_question_index}")
+
+    explanation = get_openai_explanation(question, user_answer, correct_answer)
+    st.write(f"해설: {explanation}")
 
     st.write(f"당신의 점수는 {total_score}점 입니다.")
 
