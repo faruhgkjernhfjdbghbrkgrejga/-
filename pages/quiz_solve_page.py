@@ -1,50 +1,130 @@
 #quiz_solve_page.py
 
 import streamlit as st
+from langchain_core.pydantic_v1 import BaseModel, Field
+from PIL import Image
+import pytesseract
+from PyPDF2 import PdfReader
+import io
 import json
 
-def quiz_solve_page():
-    if 'quizs' not in st.session_state:
-        # 예시 퀴즈 데이터
-        st.session_state.quizs = [
-            {"question": "파이썬의 창시자는?", "options": ["가이드 반 로섬", "제임스 고슬링", "데니스 리치", "마크 주커버그"], "answer": "가이드 반 로섬"},
-            {"question": "HTML은 무엇의 약자인가?", "options": ["Hyper Trainer Marking Language", "Hyper Text Markup Language", "Home Tool Markup Language", "Hyperlinks and Text Markup Language"], "answer": "Hyper Text Markup Language"}
-        ]
+class CreateQuizoub(BaseModel):
+    quiz = "만들어진 문제"
+    options1 = "만들어진 문제의 첫 번째 보기"
+    options2 = "만들어진 문제의 두 번째 보기"
+    options3 = "만들어진 문제의 세 번째 보기"
+    options4 = "만들어진 문제의 네 번째 보기"
+    correct_answer = "options1 or options2 or options3 or options4"
 
+
+class CreateQuizsub(BaseModel):
+    quiz: str = Field(description="만들어진 문제")
+    correct_answer: str = Field(description="만들어진 문제의 답")
+
+
+class CreateQuizTF(BaseModel):
+    quiz: str = Field(description="만들어진 문제")
+    options1: str = Field(description="만들어진 문제의 참 또는 거짓인 보기")
+    options2: str = Field(description="만들어진 문제의 참 또는 거짓인 보기")
+    correct_answer: str = Field(description="만들어진 보기중 하나")
+
+# 퀴즈 채점 함수
+@st.experimental_fragment
+def grade_quiz_answers(user_answers, quiz_answers):
+    graded_answers = []
+    for user_answer, quiz_answer in zip(user_answers, quiz_answers):
+        if user_answer.lower() == quiz_answer.lower():
+            graded_answers.append("정답")
+        else:
+            graded_answers.append("오답")
+    st.session_state['ganswer'] = graded_answers
+    return graded_answers
+
+# 파일 처리 함수
+@st.experimental_fragment
+def process_file(uploaded_file):
+    if uploaded_file is None:
+        st.warning("파일을 업로드하세요.")
+        return None
+
+    # 업로드된 파일 처리
+    if uploaded_file.type == "text/plain":
+        text_content = uploaded_file.read().decode("utf-8")
+    elif uploaded_file.type.startswith("image/"):
+        image = Image.open(uploaded_file)
+        text_content = pytesseract.image_to_string(image)
+    elif uploaded_file.type == "application/pdf":
+        pdf_reader = PdfReader(io.BytesIO(uploaded_file.read()))
+        text_content = ""
+        for page in pdf_reader.pages:
+            text_content += page.extract_text()
+    else:
+        st.error("지원하지 않는 파일 형식입니다.")
+        return None
+
+    return text_content
+
+# 퀴즈 생성 함수
+@st.experimental_fragment
+def generate_quiz(quiz_type, text_content):
+    response = CreateQuizoub
+    response.quiz = '어댑터패턴이나 퍼사드패턴은 무엇을 위해 사용되는가?'
+    response.options1 = '인터페이스 호환성 때문에 같이 쓸 수 없는 클래스들을 연결해서 사용할 수 있게 함'
+    response.options2 = '복잡한 서브시스템을 더 쉽게 사용할 수 있게 해줌'
+    response.options3 = '객체의 인터페이스를 다른 인터페이스로 변환할 때 사용함'
+    response.options4 = '상속을 사용하여 서브클래스에 대해서 어댑터 역할을 수행함'
+    response.correct_answer = '인터페이스 호환성 때문에 같이 쓸 수 없는 클래스들을 연결해서 사용할 수 있게 함'
+    quiz_questions = response
+
+    return quiz_questions
+
+@st.experimental_fragment
+def grade_quiz_answer(user_answer, quiz_answer):
+    if user_answer.lower() == quiz_answer.lower():
+        grade = "정답"
+    else:
+        grade = "오답"
+    return grade
+
+
+def quiz_solve_page():
+    placeholder = st.empty()
     if 'number' not in st.session_state:
         st.session_state.number = 0
     if 'user_selected_answers' not in st.session_state:
-        st.session_state.user_selected_answers = []
+        st.session_state.user_selected_answers = []  # 사용자 선택 답변을 저장할 배열 초기화
 
-    placeholder = st.empty()
-    if st.session_state.number < len(st.session_state.quizs):
-        question = st.session_state.quizs[st.session_state.number]
-        with placeholder.container():
-            st.header(f"질문 {st.session_state.number + 1}: {question['question']}")
-            options = question['options']
-            
-            for index, option in enumerate(options):
-                if st.button(f"{index+1}. {option}", key=f"{st.session_state.number}_{index}"):
-                    st.session_state.user_selected_answers.append(option)
-                    st.session_state.number += 1
-                    placeholder.empty()
-                    if st.session_state.number == len(st.session_state.quizs):
-                        st.session_state.number = 0  # 모든 문제를 다 풀면 처음으로 돌아감
-                        st.experimental_rerun()
-                    else:
-                        quiz_solve_page()
-    else:
-        st.write("모든 퀴즈를 완료했습니다!")
+    for j, question in enumerate(st.session_state.quizs):
+        if st.session_state.number == j:
+            with placeholder.container():
+                res = json.loads(question["answer"])
+                st.header(f"질문 {j+1}")
+                options = [res.get('options1'), res.get('options2'), res.get('options3'), res.get('options4')]
+                
+                for index, option in enumerate(options):
+                    if st.button(f"{index+1}. {option}", key=f"{j}_{index}"):
+                        st.session_state.user_selected_answers.append(option)  # 선택한 답변을 배열에 추가
+                        st.session_state.number += 1  # 다음 문제로 이동
+                        if st.session_state.user_selected_answers.append ==
+                        # if st.session_state.number == len(st.session_state.quizs):
+                        #     if st.button('퀴즈 채점'):
+                        #         st.session_state['total_score'] = st.session_state.number  # 점수를 세션 상태에 저장
+                        #         st.switch_page("pages/quiz_grading_page.py")
+                            # st.session_state.number = 0  # 모든 문제를 다 풀면 처음으로 돌아감
+                            # st.experimental_rerun()  # 페이지 새로고침
+    
+    if st.session_state.number == st.session_state.selected_num:
+        if st.button('퀴즈 채점'):
+            st.session_state['total_score'] = st.session_state.number  # 점수를 세션 상태에 저장
+            st.switch_page("pages/quiz_grading_page.py")
+
+    # 사용자가 선택한 답변 출력
+    if st.session_state.user_selected_answers:
         st.write("사용자가 선택한 답변:")
-        for i, answer in enumerate(st.session_state.user_selected_answers):
-            correct_answer = st.session_state.quizs[i]['answer']
-            if answer == correct_answer:
-                st.write(f"질문 {i+1}: 정답입니다! ({answer})")
-            else:
-                st.write(f"질문 {i+1}: 오답입니다! (선택한 답: {answer}, 정답: {correct_answer})")
-        if st.button("퀴즈 채점 페이지로 이동"):
-            st.session_state.page = "quiz_grading_page"
+        for answer in st.session_state.user_selected_answers:
+            st.write(answer)
 
 if __name__ == "__main__":
     quiz_solve_page()
+
 
