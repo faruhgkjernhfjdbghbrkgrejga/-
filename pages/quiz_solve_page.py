@@ -93,6 +93,8 @@ def quiz_solve_page():
         st.session_state.number = 0
     if 'user_selected_answers' not in st.session_state:
         st.session_state.user_answers = []  # 사용자 선택 답변을 저장할 배열 초기화
+    if 'correct_answers' not in st.session_state:
+        st.session_state.correct_answers = []  # 정답 여부를 저장할 배열 초기화
         
     for j, question in enumerate(st.session_state.quizs):
         res = json.loads(question["answer"])
@@ -106,7 +108,6 @@ def quiz_solve_page():
                 st.write(type(res))
                 st.write("\n")
                 st.write(f"{question}")
-                # st.write(f"{j+1}.{res['answer.q']uiz}")
                 st.write(f"{j+1}.{res}")
                 st.write(f"{j+1}.{res['quiz']}")
 
@@ -133,21 +134,22 @@ def quiz_solve_page():
                 st.write("\n")
                 if st.button("next", key= f"next{j}"):
                     if res['correct_answer'] == st.session_state.canswer:
-                        st.write("Correct")
+                        st.write("정답입니다!")
+                        st.session_state.correct_answers.append(True)
                         st.session_state.number += 1
                     elif res['correct_answer'] == st.session_state.uanswer:
-                        st.write("Correct")
+                        st.write("정답입니다!")
+                        st.session_state.correct_answers.append(True)
                         st.session_state.number += 1
                     else:
-                        st.write("Wrong")
+                        st.write("오답입니다.")
+                        st.session_state.correct_answers.append(False)
 
         j += 1
     if st.session_state.number == st.session_state.selected_num:
         if st.button('퀴즈 채점'):
-            st.session_state['total_score'] = st.session_state.number  # 점수를 세션 상태에 저장
+            st.session_state['total_score'] = sum(st.session_state.correct_answers)  # 정답 개수를 점수로 저장
             st.switch_page("pages/quiz_grading_page.py")
-            #st.rerun()
-            #st.rerun()
 
     # 최종 점수 출력
     if 'total_score' in st.session_state:
