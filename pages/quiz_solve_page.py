@@ -133,9 +133,13 @@ def quiz_solve_page():
                 st.write(answer)
 
     elif st.session_state.selected_type == "주관식":
-        st.write("\n")
-        st.session_state.canswer = st.text_input(f"질문{j + 1}에 대한 답변 입력", key=f"{j}1")
-        st.session_state.uanswer = st.session_state.canswer
+        for j, question in enumerate(st.session_state.quizs):
+            if st.session_state.number == j:
+                with placeholder.container():
+                    st.header(f"질문 {j+1}: {question['question']}")
+                    st.session_state.canswer = st.text_input(f"질문 {j + 1}에 대한 답변 입력", key=f"{j}1")
+                    st.session_state.uanswer = st.session_state.canswer
+                    st.session_state.number += 1  # 다음 문제로 이동
 
     elif st.session_state.selected_type == 'OX 퀴즈':
         if st.button(f"1.{res['options1']}", key=f"{j}1"):
@@ -149,7 +153,4 @@ def quiz_solve_page():
     
 if __name__ == "__main__":
     quiz_solve_page()
-
-
-
 
