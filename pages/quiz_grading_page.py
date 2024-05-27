@@ -23,10 +23,10 @@ def quiz_grading_page():
         st.write(f"사용자 답변: {user_answer}")
         st.write(f"정답: {correct_answer}")
         if result == "정답":
-            st.success("정답입니다!", key=f"result_{i}")
+            st.success("정답입니다!", key=f"result_success_{i}")
             total_score += 1
         else:
-            st.error("오답입니다.", key=f"result_{i}")
+            st.error("오답입니다.", key=f"result_error_{i}")
 
     st.write(f"당신의 점수는 {total_score}점 입니다.")
 
