@@ -147,8 +147,8 @@ def quiz_solve_page():
 
         j += 1
     if st.session_state.number == st.session_state.selected_num:
+        st.session_state['total_score'] = sum(st.session_state.correct_answers)  # 정답 개수를 점수로 저장
         if st.button('퀴즈 채점'):
-            st.session_state['total_score'] = sum(st.session_state.correct_answers)  # 정답 개수를 점수로 저장
             st.switch_page("pages/quiz_grading_page.py")
 
     # 점수 확인 버튼 추가
