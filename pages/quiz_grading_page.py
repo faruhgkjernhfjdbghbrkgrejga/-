@@ -48,7 +48,14 @@ def quiz_grading_page():
         result = graded_answers[current_question_index]
 
         st.subheader(f"문제 {current_question_index + 1}")
-        st.write(f"문제: {question}")
+        st.write(f"문제: {question['quiz']}")
+        
+        if 'options1' in question:
+            st.write(f"1. {question['options1']}")
+            st.write(f"2. {question['options2']}")
+            st.write(f"3. {question['options3']}")
+            st.write(f"4. {question['options4']}")
+
         st.write(f"사용자 답변: {user_answer}")
         st.write(f"정답: {correct_answer}")
         if result == "정답":
@@ -57,8 +64,9 @@ def quiz_grading_page():
         else:
             st.error("오답입니다.", key=f"result_error_{current_question_index}")
 
-        explanation = get_openai_explanation(question, user_answer, correct_answer)
-        st.write(f"해설: {explanation}")
+        if st.button("AI 해설 요청", key=f"explanation_button_{current_question_index}"):
+            explanation = get_openai_explanation(question['quiz'], user_answer, correct_answer)
+            st.write(f"해설: {explanation}")
 
     st.write(f"당신의 점수는 {total_score}점 입니다.")
 
