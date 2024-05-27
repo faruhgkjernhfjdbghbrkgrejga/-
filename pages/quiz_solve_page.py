@@ -141,12 +141,6 @@ def quiz_solve_page():
                             st.error("오답입니다.")
                             st.session_state.correct_answers.append(False)
                         st.session_state.number += 1  # 다음 문제로 이동
-                with col2:
-                    if st.button('점수 확인', key=f"check_score{j}"):
-                        if 'total_score' in st.session_state:
-                            st.write(f"최종 점수: {st.session_state['total_score']}")
-                        else:
-                            st.write("아직 점수가 계산되지 않았습니다.")
 
         j += 1
     
@@ -155,7 +149,6 @@ def quiz_solve_page():
         if st.button('결과 확인', key="final_result"):
             st.switch_page("pages/quiz_grading_page.py")
 
-    # 점수 확인 버튼 추가
     if st.button('점수 확인', key="final_check_score"):
         if 'total_score' in st.session_state:
             st.write(f"최종 점수: {st.session_state['total_score']}")
