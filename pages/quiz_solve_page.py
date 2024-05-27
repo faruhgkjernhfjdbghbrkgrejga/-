@@ -91,6 +91,9 @@ def quiz_solve_page():
     placeholder = st.empty()
     if 'number' not in st.session_state:
         st.session_state.number = 0
+    if 'user_selected_answers' not in st.session_state:
+        st.session_state.user_selected_answers = []  # 사용자 선택 답변을 저장할 배열 초기화
+        
     for j, question in enumerate(st.session_state.quizs):
         res = json.loads(question["answer"])
         if st.session_state.number == j:
@@ -113,22 +116,13 @@ def quiz_solve_page():
                     st.session_state.canswer = st.text_input(f"질문{j + 1}에 대한 답변 입력", key=f"{j}1")
                     st.session_state.uanswer = st.session_state.canswer
                 elif st.session_state.selected_type == '다중 선택 (객관식)':
-                    if st.button(f"1.{res['options1']}", key=f"{j}1"):
-                        st.session_state.canswer = "options1"
-                        st.session_state.uanswer = res['options1']
-                        st.session_state.number += 1  # 다음 문제로 이동
-                    if st.button(f"2.{res['options2']}", key=f"{j}2"):
-                        st.session_state.canswer = "options2"
-                        st.session_state.uanswer = res['options2']
-                        st.session_state.number += 1  # 다음 문제로 이동
-                    if st.button(f"3.{res['options3']}", key=f"{j}3"):
-                        st.session_state.canswer = "options3"
-                        st.session_state.uanswer = res['options3']
-                        st.session_state.number += 1  # 다음 문제로 이동
-                    if st.button(f"4.{res['options4']}", key=f"{j}4"):
-                        st.session_state.canswer = "options4"
-                        st.session_state.uanswer = res['options4']
-                        st.session_state.number += 1  # 다음 문제로 이동
+                    # st.header(f"질문 {j+1}")
+                    options = [res.get('options1'), res.get('options2'), res.get('options3'), res.get('options4')]
+                    
+                    for index, option in enumerate(options):
+                        if st.button(f"{index+1}. {option}", key=f"{j}_{index}"):
+                            st.session_state.user_selected_answers.append(option)  # 선택한 답변을 배열에 추가
+                            st.session_state.number += 1  # 다음 문제로 이동
                 elif st.session_state.selected_type == 'OX 퀴즈':
                     if st.button(f"1.{res['options1']}", key=f"{j}1"):
                         st.session_state.canswer = res['options1']
