@@ -88,32 +88,40 @@ def grade_quiz_answer(user_answer, quiz_answer):
 
 
 def quiz_solve_page():
-    placeholder = st.empty()
+    if 'quizs' not in st.session_state:
+        # 예시 퀴즈 데이터
+        st.session_state.quizs = [
+            {"answer": json.dumps({"user_answers": "A", "correct_answer": "A", "options1": "A", "options2": "B", "options3": "C", "options4": "D"})},
+            {"answer": json.dumps({"user_answers": "B", "correct_answer": "B", "options1": "A", "options2": "B", "options3": "C", "options4": "D"})}
+        ]
+
     if 'number' not in st.session_state:
         st.session_state.number = 0
     if 'user_selected_answers' not in st.session_state:
-        st.session_state.user_selected_answers = []  # 사용자 선택 답변을 저장할 배열 초기화
+        st.session_state.user_selected_answers = []
 
-    for j, question in enumerate(st.session_state.quizs):
-        if st.session_state.number == j:
-            with placeholder.container():
-                res = json.loads(question["answer"])
-                st.header(f"질문 {j+1}")
-                options = [res.get('options1'), res.get('options2'), res.get('options3'), res.get('options4')]
-                
-                for index, option in enumerate(options):
-                    if st.button(f"{index+1}. {option}", key=f"{j}_{index}"):
-                        st.session_state.user_selected_answers.append(option)  # 선택한 답변을 배열에 추가
-                        st.session_state.number += 1  # 다음 문제로 이동
-                        if st.session_state.number == len(st.session_state.quizs):
-                            st.session_state.number = 0  # 모든 문제를 다 풀면 처음으로 돌아감
-                            st.experimental_rerun()  # 페이지 새로고침
-
-    # 사용자가 선택한 답변 출력
-    if st.session_state.user_selected_answers:
-        st.write("사용자가 선택한 답변:")
-        for answer in st.session_state.user_selected_answers:
-            st.write(answer)
+    placeholder = st.empty()
+    if st.session_state.number < len(st.session_state.quizs):
+        question = st.session_state.quizs[st.session_state.number]
+        res = json.loads(question["answer"])
+        with placeholder.container():
+            st.header(f"질문 {st.session_state.number + 1}")
+            options = [res['options1'], res['options2'], res['options3'], res['options4']]
+            
+            for index, option in enumerate(options):
+                if st.button(f"{index+1}. {option}", key=f"{st.session_state.number}_{index}"):
+                    st.session_state.user_selected_answers.append(option)
+                    st.session_state.number += 1
+                    placeholder.empty()
+                    if st.session_state.number == len(st.session_state.quizs):
+                        st.session_state.number = 0  # 모든 문제를 다 풀면 처음으로 돌아감
+                        st.experimental_rerun()
+                    else:
+                        quiz_solve_page()
+    else:
+        st.write("모든 퀴즈를 완료했습니다!")
+        if st.button("퀴즈 채점 페이지로 이동"):
+            st.session_state.page = "quiz_grading_page"
 
 if __name__ == "__main__":
     quiz_solve_page()
