@@ -1,6 +1,14 @@
 #quiz_grading_page.py
 import streamlit as st
-import json
+
+def grade_quiz_answers(user_answers, correct_answers):
+    graded_answers = []
+    for user_answer, correct_answer in zip(user_answers, correct_answers):
+        if user_answer == correct_answer:
+            graded_answers.append('정답')
+        else:
+            graded_answers.append('오답')
+    return graded_answers
 
 def quiz_grading_page():
     # 세션 상태에서 사용자 답안과 정답 가져오기
@@ -41,4 +49,5 @@ def quiz_grading_page():
         st.session_state["page"] = "quiz_creation_page"
 
 if __name__ == "__main__":
+    quiz_grading_page()
     quiz_grading_page()
