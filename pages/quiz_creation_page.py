@@ -16,6 +16,7 @@ import pytesseract
 from PyPDF2 import PdfReader
 import io
 import json
+from pydantic import BaseModel, Field
 
 class CreateQuiz(BaseModel):
     quiz: str = Field(description="The created problem")
