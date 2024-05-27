@@ -122,28 +122,24 @@ def quiz_solve_page():
                     for index, option in enumerate(options):
                         if st.button(f"{index+1}. {option}", key=f"{j}_{index}"):
                             st.session_state.user_answers.append(option)  # 선택한 답변을 배열에 추가
-                            st.session_state.number += 1  # 다음 문제로 이동
+                            st.session_state.uanswer = option
                 elif st.session_state.selected_type == 'OX 퀴즈':
                     options = [res.get('options1'), res.get('options2')]
                     
                     for index, option in enumerate(options):
                         if st.button(f"{index+1}. {option}", key=f"{j}_{index}"):
                             st.session_state.user_answers.append(option)  # 선택한 답변을 배열에 추가
-                            st.session_state.number += 1  # 다음 문제로 이동
+                            st.session_state.uanswer = option
                 st.write("-----------------------------------------")
                 st.write("\n")
                 if st.button("next", key= f"next{j}"):
-                    if res['correct_answer'] == st.session_state.canswer:
+                    if res['correct_answer'] == st.session_state.canswer or res['correct_answer'] == st.session_state.uanswer:
                         st.write("정답입니다!")
                         st.session_state.correct_answers.append(True)
-                        st.session_state.number += 1
-                    elif res['correct_answer'] == st.session_state.uanswer:
-                        st.write("정답입니다!")
-                        st.session_state.correct_answers.append(True)
-                        st.session_state.number += 1
                     else:
                         st.write("오답입니다.")
                         st.session_state.correct_answers.append(False)
+                    st.session_state.number += 1  # 다음 문제로 이동
 
         j += 1
     if st.session_state.number == st.session_state.selected_num:
@@ -157,4 +153,5 @@ def quiz_solve_page():
 
 if __name__ == "__main__":
     quiz_solve_page()
+
 
