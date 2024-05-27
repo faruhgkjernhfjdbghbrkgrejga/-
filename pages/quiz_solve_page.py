@@ -8,6 +8,11 @@ from PyPDF2 import PdfReader
 import io
 import json
 
+def store_answers(user_answers, correct_answers):
+    st.session_state['user_answers'] = user_answers
+    st.session_state['correct_answers'] = correct_answers
+
+
 class CreateQuizoub(BaseModel):
     quiz = "만들어진 문제"
     options1 = "만들어진 문제의 첫 번째 보기"
