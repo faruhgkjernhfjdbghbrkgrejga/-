@@ -1,6 +1,5 @@
 #quiz_grading_page.py
 import streamlit as st
-from quiz_creation_page import quiz_questions
 import json
 
 def quiz_grading_page():
