@@ -8,6 +8,9 @@ from PyPDF2 import PdfReader
 import io
 import json
 
+def store_answers(user_answers, correct_answers):
+    st.session_state['user_answers'] = user_answers
+    st.session_state['correct_answers'] = correct_answers
 
 def quiz_solve_page():
     placeholder = st.empty()
@@ -28,6 +31,7 @@ def quiz_solve_page():
                     if st.button(f"{index+1}. {option}", key=f"{j}_{index}"):
                         st.session_state.user_selected_answers.append(option)  # 선택한 답변을 배열에 추가
                         st.session_state.number += 1  # 다음 문제로 이동
+
                         if st.session_state.user_selected_answers.append == st.session_state.quizs[j]['answer']:
                             total_score += 1
                         # if st.session_state.number == len(st.session_state.quizs):
@@ -38,6 +42,7 @@ def quiz_solve_page():
                             # st.experimental_rerun()  # 페이지 새로고침
     
     if st.session_state.number == st.session_state.selected_num:
+        st.write("\n")
         if st.button('퀴즈 채점'):
             st.session_state['total_score'] = st.session_state.number  # 점수를 세션 상태에 저장
             st.switch_page("pages/quiz_grading_page.py")
