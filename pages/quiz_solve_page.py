@@ -92,7 +92,7 @@ def quiz_solve_page():
     if 'number' not in st.session_state:
         st.session_state.number = 0
     if 'user_selected_answers' not in st.session_state:
-        st.session_state.user_selected_answers = []  # 사용자 선택 답변을 저장할 배열 초기화
+        st.session_state.user_answers = []  # 사용자 선택 답변을 저장할 배열 초기화
         
     for j, question in enumerate(st.session_state.quizs):
         res = json.loads(question["answer"])
@@ -116,32 +116,30 @@ def quiz_solve_page():
                     st.session_state.canswer = st.text_input(f"질문{j + 1}에 대한 답변 입력", key=f"{j}1")
                     st.session_state.uanswer = st.session_state.canswer
                 elif st.session_state.selected_type == '다중 선택 (객관식)':
-                    # st.header(f"질문 {j+1}")
                     options = [res.get('options1'), res.get('options2'), res.get('options3'), res.get('options4')]
                     
                     for index, option in enumerate(options):
                         if st.button(f"{index+1}. {option}", key=f"{j}_{index}"):
-                            st.session_state.user_selected_answers.append(option)  # 선택한 답변을 배열에 추가
+                            st.session_state.user_answers.append(option)  # 선택한 답변을 배열에 추가
                             st.session_state.number += 1  # 다음 문제로 이동
                 elif st.session_state.selected_type == 'OX 퀴즈':
-                    if st.button(f"1.{res['options1']}", key=f"{j}1"):
-                        st.session_state.canswer = res['options1']
-                        st.session_state.uanswer = res['options1']
-                        st.session_state.number += 1  # 다음 문제로 이동
-                    if st.button(f"2.{res['options2']}", key=f"{j}2"):
-                        st.session_state.canswer = res['options2']
-                        st.session_state.uanswer = res['options2']
+                    options = [res.get('options1'), res.get('options2')]
+                    
+                    for index, option in enumerate(options):
+                        if st.button(f"{index+1}. {option}", key=f"{j}_{index}"):
+                            st.session_state.user_answers.append(option)  # 선택한 답변을 배열에 추가
+                            st.session_state.number += 1  # 다음 문제로 이동
                 st.write("-----------------------------------------")
                 st.write("\n")
-                # if st.button("next", key= f"next{j}"):
-                #     if res['correct_answer'] == st.session_state.canswer:
-                #         st.write("Correct")
-                #         st.session_state.number += 1
-                #     elif res['correct_answer'] == st.session_state.uanswer:
-                #         st.write("Correct")
-                #         st.session_state.number += 1
-                #     else:
-                #         st.write("Wrong")
+                if st.button("next", key= f"next{j}"):
+                    if res['correct_answer'] == st.session_state.canswer:
+                        st.write("Correct")
+                        st.session_state.number += 1
+                    elif res['correct_answer'] == st.session_state.uanswer:
+                        st.write("Correct")
+                        st.session_state.number += 1
+                    else:
+                        st.write("Wrong")
 
         j += 1
     if st.session_state.number == st.session_state.selected_num:
@@ -151,7 +149,10 @@ def quiz_solve_page():
             #st.rerun()
             #st.rerun()
 
+    # 최종 점수 출력
+    if 'total_score' in st.session_state:
+        st.write(f"최종 점수: {st.session_state['total_score']}")
+
 if __name__ == "__main__":
     quiz_solve_page()
-
 
