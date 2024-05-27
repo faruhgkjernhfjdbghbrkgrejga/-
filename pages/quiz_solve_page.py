@@ -151,9 +151,12 @@ def quiz_solve_page():
             st.session_state['total_score'] = sum(st.session_state.correct_answers)  # 정답 개수를 점수로 저장
             st.switch_page("pages/quiz_grading_page.py")
 
-    # 최종 점수 출력
-    if 'total_score' in st.session_state:
-        st.write(f"최종 점수: {st.session_state['total_score']}")
+    # 점수 확인 버튼 추가
+    if st.button('점수 확인'):
+        if 'total_score' in st.session_state:
+            st.write(f"최종 점수: {st.session_state['total_score']}")
+        else:
+            st.write("아직 점수가 계산되지 않았습니다.")
 
 if __name__ == "__main__":
     quiz_solve_page()
