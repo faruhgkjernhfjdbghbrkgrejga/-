@@ -481,7 +481,8 @@ def quiz_creation_page():
                         vector_search_index = "vector_index"
 
                         docs = WikipediaLoader(query=is_topic, load_max_docs=20).load()
-                        st.write(docs.page_content[:200])
+                        st.write(is_topic)
+                        st.write(docs[0].metadata)
                         
 
                         # Define a prompt template
