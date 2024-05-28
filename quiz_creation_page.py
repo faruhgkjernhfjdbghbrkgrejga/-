@@ -223,8 +223,8 @@ def process_file(uploaded_file, upload_option):
         
     text_splitter = RecursiveCharacterTextSplitter(
         # Set a really small chunk size, just to show.
-        chunk_size=100,
-        chunk_overlap=20,
+        chunk_size=1000,
+        chunk_overlap=150,
         length_function=len,
         is_separator_regex=False,
     )
