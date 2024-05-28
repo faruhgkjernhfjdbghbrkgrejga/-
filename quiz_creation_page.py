@@ -453,6 +453,14 @@ def quiz_creation_page():
                     with st.spinner('퀴즈를 생성 중입니다...'):
                         llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
                         embeddings = OpenAIEmbeddings()
+                        
+                        if topic == "수학":
+                            is_topic = "Mathematics"
+                        elif topic == "과학":
+                            is_topic = "science"
+                        else:
+                            is_topic = topic
+                        st.write(f"{is_topic}")
 
                         uri = "mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
                         # Create a new client and connect to the server
@@ -467,12 +475,6 @@ def quiz_creation_page():
                         # Vectorstore
                         # client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
-                        if topic == "수학":
-                            is_topic = "Mathematics"
-                        elif topic == "과학":
-                            is_topic = "science"
-                        else:
-                            is_topic = topic
 
                         # 데이터베이스 및 컬렉션 설정
                         db_name = "langchain_db"
@@ -481,8 +483,7 @@ def quiz_creation_page():
                         vector_search_index = "vector_index"
 
                         docs = WikipediaLoader(query=is_topic, load_max_docs=20).load()
-                        st.write(is_topic)
-                        st.write(docs[0].metadata)
+                        st.write(f"{docs[0].metadata}")
                         
 
                         # Define a prompt template
