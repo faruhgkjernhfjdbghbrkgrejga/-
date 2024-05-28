@@ -17,7 +17,7 @@ requests
 numpy
 chromadb
 schema
-pymongo
+pymongo[srv]
 dnspython
 chardet
 wikipedia
