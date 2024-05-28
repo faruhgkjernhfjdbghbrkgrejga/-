@@ -29,6 +29,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
 from pymongo import MongoClient
+from pymongo.errors import OperationFailure
 from pymongo.server_api import ServerApi
 from langchain_core.runnables import RunnablePassthrough
 from langchain_community.document_loaders import WikipediaLoader
