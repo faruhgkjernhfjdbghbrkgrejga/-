@@ -125,15 +125,15 @@ class CreateQuizoub(BaseModel):
     correct_answer: str = Field(description="One of the options1 or options2 or options3 or options4")
 
 class CreateQuizsub(BaseModel):
-    quiz = Field(description="The created problem")
-    correct_answer = Field(description="The answer to the problem")
-    commentary = Field(description="The commentary of answer to this problem")
+    quiz: str = Field(description="The created problem")
+    correct_answer: str = Field(description="The answer to the problem")
+    commentary: str = Field(description="The commentary of answer to this problem")
 
 class CreateQuizTF(BaseModel):
-    quiz = Field(description="The created problem")
-    options1 = Field(description="The true or false option of the created problem")
-    options2 = Field(description="The true or false option of the created problem")
-    correct_answer = Field(description="One of the options1 or options2")
+    quiz: str = Field(description="The created problem")
+    options1: str = Field(description="The true or false option of the created problem")
+    options2: str = Field(description="The true or false option of the created problem")
+    correct_answer: str = Field(description="One of the options1 or options2")
 
 def make_model(pages):
     llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
