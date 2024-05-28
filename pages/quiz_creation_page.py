@@ -483,7 +483,7 @@ def quiz_creation_page():
                         atlas_collection = client[db_name][collection_name]
                         vector_search_index = "vector_index"
 
-                        docs = WikipediaLoader(query=is_topic, load_max_docs=20).load()
+                        docs = WikipediaLoader(query=is_topic, lang='ko', load_max_docs=20).load()
                         st.write(f"{docs[0].metadata}")
                         
 
