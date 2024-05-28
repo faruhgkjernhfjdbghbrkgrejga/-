@@ -20,3 +20,4 @@ schema
 pymongo
 dnspython
 chardet
+wikipedia
