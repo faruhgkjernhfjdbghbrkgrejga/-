@@ -119,7 +119,7 @@ def quiz_solve_page():
                 st.write(f"문제 번호: {st.session_state.number + 1}")
                 st.markdown("---")
 
-                st.write(f"{question}")
+                st.write(f"{res}")
                 
                 st.write(f"**{res['quiz']}**")
                 st.write("\n")
