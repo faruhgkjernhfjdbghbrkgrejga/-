@@ -461,8 +461,8 @@ def quiz_creation_page():
                         try:
                           connection.test.foo.find_one()
                         except pymongo.errors.OperationFailure as e:
-                            print e.code
-                            print e.details
+                            st.write(e.code)
+                            st.write(e.details)
 
                         vector_search = MongoDBAtlasVectorSearch.from_documents(
                             documents=documents,
