@@ -88,7 +88,7 @@ def search_vectors(collection_name, query_vector, top_k=10):
 def retrieve_results(user_query):
     # Create MongoDB Atlas Vector Search instance
     vector_search = MongoDBAtlasVectorSearch.from_connection_string(
-        "mongodb+srv://username:password@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=YourApp",
+        "mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
         "langchain_db.test",
         OpenAIEmbeddings(model="gpt-3.5-turbo-0125"),
         index_name="vector_index"
@@ -368,6 +368,8 @@ def quiz_creation_page():
     upload_option = st.radio("입력 유형을 선택하세요", ("PDF 파일", "텍스트 파일", "URL", "토픽 선택"), horizontal=True)
 
     text_content = None
+    topic = None  # topic 변수를 초기화합니다.
+    
     if upload_option == "텍스트 파일":
         uploaded_file = st.file_uploader("텍스트 파일을 업로드하세요.", type=["txt"])
         if uploaded_file is not None:
@@ -399,7 +401,7 @@ def quiz_creation_page():
             with st.spinner('퀴즈를 생성 중입니다...'):
                 try:
                     vector_search = MongoDBAtlasVectorSearch.from_connection_string(
-                        "mongodb+srv://username:password@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=YourApp",
+                        "mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
                         "database.collection",
                         OpenAIEmbeddings(model="gpt-3.5-turbo-0125"),
                         index_name="vector_index"
@@ -427,7 +429,7 @@ def quiz_creation_page():
             with st.spinner('퀴즈를 생성 중입니다...'):
                 try:
                     vector_search = MongoDBAtlasVectorSearch.from_connection_string(
-                        "mongodb+srv://username:password@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=YourApp",
+                        "mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
                         "database.collection",
                         OpenAIEmbeddings(model="gpt-3.5-turbo-0125"),
                         index_name="vector_index"
