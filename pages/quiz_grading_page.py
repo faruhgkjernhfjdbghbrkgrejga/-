@@ -1,19 +1,64 @@
 import streamlit as st
-import openai
+from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain.prompts.prompt import PromptTemplate
+from langchain.output_parsers import PydanticOutputParser
+from langchain import hub
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.vectorstores import Chroma
+from langchain_openai import OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.document_loaders.image import UnstructuredImageLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import FAISS
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain.chains import create_retrieval_chain
+from PIL import Image
+import pytesseract
+from PyPDF2 import PdfReader
+import io
+from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
+import chardet
+from langchain_community.vectorstores import MongoDBAtlasVectorSearch
+from langchain_openai import OpenAIEmbeddings
+from langchain.document_loaders import WebBaseLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+from pymongo import MongoClient
+import pymongo
 import json
+import openai
 
 
 def get_explanation(quiz, correct_answer):
     prompt = f"문제: {quiz}\n정답: {correct_answer}\n이 문제의 해설을 작성해 주세요."
-    response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=prompt,
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ],
         max_tokens=150
     )
-    explanation = response.choices[0].text.strip()
+    explanation = response.choices[0].message['content'].strip()
     return explanation
 
-def quiz_review_page():
+
+def get_explanation(quiz, correct_answer):
+    prompt = f"문제: {quiz}\n정답: {correct_answer}\n이 문제의 해설을 작성해 주세요."
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=150
+    )
+    explanation = response.choices[0].message['content'].strip()
+    return explanation
+
+def quiz_grading_page():
     st.title("퀴즈 리뷰 페이지")
     st.markdown("---")
     
@@ -53,4 +98,4 @@ def quiz_review_page():
             st.switch_page("pages/quiz_solve_page.py")
 
 if __name__ == "__main__":
-    quiz_review_page()
+    quiz_grading_page()
