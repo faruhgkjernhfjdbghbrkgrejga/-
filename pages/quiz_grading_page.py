@@ -3,7 +3,6 @@ import streamlit as st
 from langchain_openai import ChatOpenAI
 import json
 from langchain_core.pydantic_v1 import BaseModel, Field
-import json
 
 def grade_quiz_answers(user_answers, correct_answers):
     graded_answers = []
@@ -36,7 +35,7 @@ def quiz_grading_page():
 
     current_question_index = st.session_state.get('current_question_index', 0)
 
-    if st.button("이전 문제", key="prev_question"):
+    if st.button("이전 ��제", key="prev_question"):
         if current_question_index > 0:
             st.session_state['current_question_index'] = current_question_index - 1
 
@@ -71,7 +70,12 @@ def quiz_grading_page():
             explanation = get_openai_explanation(question['quiz'], user_answer, correct_answer)
             st.write(f"해설: {explanation}")
 
-    st.write(f"당신의 점수는 {st.session_state['total_score']}점 입니다.")
+    # total_score를 세션 상태에 저장
+    st.session_state['total_score'] = total_score
+
+    # total_score 키가 존재하는지 확인하고 기본값을 설정
+    total_score = st.session_state.get('total_score', 0)
+    st.write(f"당신의 점수는 {total_score}점 입니다.")
 
     if st.button("퀴즈 생성 페이지로 이동", key="go_to_creation_page"):
         st.session_state["page"] = "quiz_creation_page"
