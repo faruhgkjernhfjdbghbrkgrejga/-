@@ -115,94 +115,6 @@ def retrieve_results(user_query):
     return response
 
 
-examples = [
-    {
-        "Question": "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context, Please answer in KOREAN.",
-
-        "CONTEXT": """
-        {context}
-        """,
-
-        "FORMAT": """
-        {
-            plusQA: str = Field(description="The plus question and answer")
-            quiz: str = Field(description="The created problem")
-            options1: str = Field(description="The first option of the created problem")
-            options2: str = Field(description="The second option of the created problem")
-            options3: str = Field(description="The third option of the created problem")
-            options4: str = Field(description="The fourth option of the created problem")
-            correct_answer: str = Field(description="One of the options1 or options2 or options3 or options4")
-        }
-        """,
-
-        "answer": """
-{"plusQA": "추가 질문: 이 자료는 수학, 문학, 비문학, 과학 중 어느 종류야? 
-중간 답변: 이 자료는 수학, 분야는 미적분입니다.
-추가 질문: 미적분에 관한 format에 맞는 다양한 multiple-choice 문제를 생성합니다.", "quiz": "실수 전체의 집합에서 연속인 함수 f{\left(x \\right)}\가 모든 실수 x 대하여 f{\left(x \\right)}\ ≥ 0이고, x < 0일 때 f{\left(x \\right)}\ = (-x)*($e$^((x)^))이다.
-모든 양수 t에 대하여 x에 대한 방정식 f{\letf(x \\right)}\ = t의 서로 다른
-실근의 개수는 2이고, 이 방정식의 두 실근 중 작은 값을 g{\left(t \\right)}\,
-큰 값을 h{\left(t \\right)}\라 하자.
-두 함수 g{\left(t \\right)}\, h{\left(t \\right)}\는 모든 양수 t에 대하여
-2g{\left(t \\right)}\ + h{\left(t \\right)}\ = k (k는 상수)
-를 만족시킨다. \int\limits_{0}^{7} f{\left(x \\right)}\, dx = $e$() - 1일 때,f{\left(9 \\right)}\/{\left(8 \\right)}\ 의 값은?",
-"options1": "1.) \\frac{3}{2}*$e$^5",
-"options2": "2.) \\frac{4}{3}*$e$^7",
-"options3": "3.) \\frac{5}{4}*$e$^9",
-"options4": "4.) \\frac{6}{5}*$e$^11",
-"correct_answer": "options4"}
-""",
-    },
-    {
-        "Question": "Create one open-ended question focusing on important concepts, following the given format, referring to the following context",
-
-        "CONTEXT": """
-        {context}
-        """,
-
-        "FORMAT": """
-        {
-            plusQA: str = Field(description="The plus question and answer")
-            quiz: str = Field(description="The created problem")
-            correct_answer: str = Field(description="correct_answer =The answer to the problem")
-        }
-        """,
-
-        "answer": """
-{"plusQA": "추가 질문: 이 자료는 수학, 문학, 비문학, 과학 중 어느 종류야?
-중간 답변: 이 자료는 수학, 분야는 기하 입니다.
-추가 질문: 미적분에 관한 format에 맞는 다양한 open-ended 문제를 생성합니다.",
-"quiz": "좌표평면에 한 변의 길이가 4인 정삼각형 ABC가 있다. 선분 AB를 1 : 3으로 내분하는 점을 D , 선분 BC를 1 : 3으로 내분하는 점을 E, 선분 CA 를 1 : 3으로 내분하는 점을 F라 하자. 네 점 P , Q , R, X가 다음 조건을 만족시킨다. \"(가)  \left|\overset{\\rightarrow}{DP}\\right| = \left|\overset{\\rightarrow}{EQ}\\right = \left\overset{\\rightarrow}{FR}\\right = 1\" \"(나) \overset{\\rightarrow}{AX} = \overset{\\rightarrow}{PB} + \overset{\\rightarrow}{QC} + \overset{\\rightarrow}{RA}\" |[A,X]| 의 값이 최대일 때, 삼각형 PQR의 넓이를 S라 하자. 16S^2 의 값을 구하시오,
-"correct_answer": "147"}
-""",
-    },
-    {
-        "Question": "Create one true or false question focusing on important concepts, following the given format, referring to the following context",
-
-        "CONTEXT": """
-        {context}
-        """,
-
-        "FORMAT": """
-        {
-            plusQA: str = Field(description="The plus question and answer")
-            quiz: str = Field(description="The created problem")
-            options1: str = Field(description="The true or false option of the created problem")
-            options2: str = Field(description="The true or false option of the created problem")
-            correct_answer: str = Field(description="One of the options1 or options2")
-        }
-        """,
-
-        "answer": """
-{"plusQA": "추가 질문: 이 자료는 수학, 문학, 비문학, 과학 중 어느 종류야?
-중간 답변: 이 자료는 수학, 분야는 다항식입니다.
-추가 질문: 미적분에 관한 format에 맞는 다양한 true or false 문제를 생성합니다.",
-"quiz": " 다항식의 덧셈이나 뺄셈을 계산할 때에는 계수가 같은 문자의 차수를 더하거나 뺀 후 정리하면 된다. 이 문장은 참인가 거짓인가?",
-"options1": "1.) 참",
-"options2": "2.) 거짓",
-"correct_answer": "options2"}
-""",
-    },
-]
 
 class CreateQuizoub(BaseModel):
     quiz: str = Field(description="The created problem")
@@ -213,14 +125,15 @@ class CreateQuizoub(BaseModel):
     correct_answer: str = Field(description="One of the options1 or options2 or options3 or options4")
 
 class CreateQuizsub(BaseModel):
-    quiz = ("quiz =The created problem")
-    correct_answer = ("correct_answer =The answer to the problem")
+    quiz = Field(description=The created problem")
+    correct_answer = Field(description=The answer to the problem")
+    commentary = Field(description=The commentary of answer to this problem")
 
 class CreateQuizTF(BaseModel):
-    quiz = ("The created problem")
-    options1 = ("The true or false option of the created problem")
-    options2 = ("The true or false option of the created problem")
-    correct_answer = ("One of the options1 or options2")
+    quiz = Field(description=The created problem")
+    options1 = Field(description=The true or false option of the created problem")
+    options2 = Field(description=The true or false option of the created problem")
+    correct_answer = Field(description=One of the options1 or options2")
 
 def make_model(pages):
     llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
