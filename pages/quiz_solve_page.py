@@ -92,17 +92,25 @@ def quiz_solve_page():
     st.markdown("---")
     
     placeholder = st.empty()
+    
+    # 세션 상태 초기화
     if 'number' not in st.session_state:
         st.session_state.number = 0
     if 'user_selected_answers' not in st.session_state:
-        st.session_state.user_answers = []  # 사용자 선택 답변을 저장할 배열 초기화
+        st.session_state.user_selected_answers = []  # 사용자 선택 답변을 저장할 배열 초기화
     if 'correct_answers' not in st.session_state:
         st.session_state.correct_answers = []  # 정답 여부를 저장할 배열 초기화
     if 'canswer' not in st.session_state:
         st.session_state.canswer = ""
     if 'uanswer' not in st.session_state:
         st.session_state.uanswer = ""
-        
+    if 'quizs' not in st.session_state:
+        st.session_state.quizs = []  # 퀴즈 목록 초기화
+    if 'selected_type' not in st.session_state:
+        st.session_state.selected_type = ""
+    if 'selected_num' not in st.session_state:
+        st.session_state.selected_num = 0
+
     for j, question in enumerate(st.session_state.quizs):
         res = json.loads(question["answer"])
         if st.session_state.number == j:
@@ -121,13 +129,13 @@ def quiz_solve_page():
                     options = [res.get('options1'), res.get('options2'), res.get('options3'), res.get('options4')]
                     for index, option in enumerate(options):
                         if st.button(f"{index+1}. {option}", key=f"{j}_{index}"):
-                            st.session_state.user_answers.append(option)  # 선택한 답변을 배열에 추가
+                            st.session_state.user_selected_answers.append(option)  # 선택한 답변을 배열에 추가
                             st.session_state.uanswer = option
                 elif st.session_state.selected_type == 'OX 퀴즈':
                     options = [res.get('options1'), res.get('options2')]
                     for index, option in enumerate(options):
                         if st.button(f"{index+1}. {option}", key=f"{j}_{index}"):
-                            st.session_state.user_answers.append(option)  # 선택한 답변을 배열에 추가
+                            st.session_state.user_selected_answers.append(option)  # 선택한 답변을 배열에 추가
                             st.session_state.uanswer = option
                 
                 st.markdown("---")
