@@ -41,8 +41,8 @@ class CreateQuiz(BaseModel):
     correct_answer: str = Field(description="One of the options1 or options2 or options3 or options4")
 
 def connect_db():
-    client = MongoClient("mongodb+srv://username:password@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=YourApp")
-    return client['your_database_name']
+    client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+    return client['langchain_db']
 
 def insert_documents(collection_name, documents):
     db = connect_db()
@@ -50,7 +50,7 @@ def insert_documents(collection_name, documents):
     collection.insert_many(documents)
 
 def vectorize_and_store(data, collection_name):
-    embeddings = OpenAIEmbeddings(api_key='your_openai_api_key')
+    embeddings = OpenAIEmbeddings()
     vector_operations = []
 
     for document in data:
