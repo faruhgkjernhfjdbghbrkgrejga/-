@@ -320,7 +320,7 @@ def process_file(uploaded_file, upload_option):
 
 # 퀴즈 생성 함수
 def generate_quiz(quiz_type, text_content, vector_search):
-    response = vector_search.similarity_search_with_score(input=text_content, k=5)
+    response = vector_search.similarity_search_with_score(text_content, k=5)
 
     if not response:
         return None
@@ -350,7 +350,6 @@ def generate_quiz(quiz_type, text_content, vector_search):
     )
 
     return response
-
 @st.experimental_fragment
 def grade_quiz_answer(user_answer, quiz_answer):
     if user_answer.lower() == quiz_answer.lower():
