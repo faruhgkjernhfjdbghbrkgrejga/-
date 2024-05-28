@@ -517,7 +517,7 @@ def quiz_creation_page():
                         # Define collection and index name
                         client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
-                                                if topic == "수학":
+                        if topic == "수학":
                             is_topic = "math"
                         elif topic == "과학":
                             is_topic = "science"
