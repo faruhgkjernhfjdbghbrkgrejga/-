@@ -80,7 +80,7 @@ def quiz_grading_page():
     # st.write(f"해설: {explanation}")
     # st.markdown("---")
     
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
     with col1:
         if st.button("이전 문제"):
             if st.session_state.number > 0:
@@ -93,9 +93,7 @@ def quiz_grading_page():
                 st.session_state.number += 1  # 다음 문제로 이동
             else:
                 st.warning("마지막 문제입니다.")
-    with col3:
-        if st.button('퀴즈 풀이 페이지로 돌아가기'):
-            st.switch_page("pages/quiz_solve_page.py")
+
 
 if __name__ == "__main__":
     quiz_grading_page()
