@@ -569,7 +569,8 @@ def quiz_creation_page():
                         atlas_collection = client[db_name][collection_name]
                         vector_search_index = "vector_index"
 
-                        docs = WikipediaLoader(query=f"{is_topic}", load_max_docs=3).load()
+                        docs = WikipediaLoader(query=is_topic, load_max_docs=20).load()
+                        docs.page_content[:200]
 
                         # Define a prompt template
 
