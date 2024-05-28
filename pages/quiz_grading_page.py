@@ -71,7 +71,7 @@ def quiz_grading_page():
             explanation = get_openai_explanation(question['quiz'], user_answer, correct_answer)
             st.write(f"해설: {explanation}")
 
-    st.write(f"당신의 점수는 {total_score}점 입니다.")
+    st.write(f"당신의 점수는 {st.session_state['total_score']}점 입니다.")
 
     if st.button("퀴즈 생성 페이지로 이동", key="go_to_creation_page"):
         st.session_state["page"] = "quiz_creation_page"
