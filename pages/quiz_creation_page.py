@@ -458,11 +458,11 @@ def quiz_creation_page():
                         documents = text_content
                         # documents = text_splitter.split_documents(text_content)
 
-                        try:
-                          connection.test.foo.find_one()
-                        except pymongo.errors.OperationFailure as e:
-                            st.write(e.code)
-                            st.write(e.details)
+                        # try:
+                        #   connection.test.foo.find_one()
+                        # except pymongo.errors.OperationFailure as e:
+                        #     st.write(e.code)
+                        #     st.write(e.details)
 
                         vector_search = MongoDBAtlasVectorSearch.from_documents(
                             documents=documents,
@@ -553,11 +553,11 @@ def quiz_creation_page():
                         text_splitter = RecursiveCharacterTextSplitter()
                         documents = text_splitter.split_documents(docs)
 
-                        try:
-                          connection.test.foo.find_one()
-                        except pymongo.errors.OperationFailure as e:
-                            st.write(e.code)
-                            st.write(e.details)
+                        # try:
+                        #   connection.test.foo.find_one()
+                        # except pymongo.errors.OperationFailure as e:
+                        #     st.write(e.code)
+                        #     st.write(e.details)
 
                         vector_search = MongoDBAtlasVectorSearch.from_documents(
                             documents=documents,
