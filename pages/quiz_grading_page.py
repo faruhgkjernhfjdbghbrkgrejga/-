@@ -33,23 +33,8 @@ def quiz_grading_page():
     st.title("퀴즈 채점 결과")
     total_score = 0
 
-    current_question_index = st.session_state.get('current_question_index', 0)
-
-    if st.button("이전 문제", key="prev_question"):
-        if current_question_index > 0:
-            st.session_state['current_question_index'] = current_question_index - 1
-
-    if st.button("다음 문제", key="next_question"):
-        if current_question_index < len(questions) - 1:
-            st.session_state['current_question_index'] = current_question_index + 1
-
-    if questions and 0 <= current_question_index < len(questions):
-        question = questions[current_question_index]
-        user_answer = user_answers[current_question_index]
-        correct_answer = correct_answers[current_question_index]
-        result = graded_answers[current_question_index]
-
-        st.subheader(f"문제 {current_question_index + 1}")
+    for i, question in enumerate(questions):
+        st.subheader(f"문제 {i + 1}")
         st.write(f"문제: {question['quiz']}")
         
         if 'options1' in question:
@@ -58,15 +43,19 @@ def quiz_grading_page():
             st.write(f"3. {question['options3']}")
             st.write(f"4. {question['options4']}")
 
+        user_answer = user_answers[i]
+        correct_answer = correct_answers[i]
+        result = graded_answers[i]
+
         st.write(f"사용자 답변: {user_answer}")
         st.write(f"정답: {correct_answer}")
         if result == "정답":
-            st.success("정답입니다!", key=f"result_success_{current_question_index}")
+            st.success("정답입니다!", key=f"result_success_{i}")
             total_score += 1
         else:
-            st.error("오답입니다.", key=f"result_error_{current_question_index}")
+            st.error("오답입니다.", key=f"result_error_{i}")
 
-        if st.button("AI 해설 요청", key=f"explanation_button_{current_question_index}"):
+        if st.button(f"AI 해설 요청 {i + 1}", key=f"explanation_button_{i}"):
             explanation = get_openai_explanation(question['quiz'], user_answer, correct_answer)
             st.write(f"해설: {explanation}")
 
