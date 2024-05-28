@@ -481,6 +481,7 @@ def quiz_creation_page():
                         vector_search_index = "vector_index"
 
                         docs = WikipediaLoader(query=is_topic, load_max_docs=20).load()
+                        st.write(docs.page_content[:200])
                         
 
                         # Define a prompt template
@@ -488,7 +489,6 @@ def quiz_creation_page():
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
                         documents = text_splitter.split_documents(docs)
-                        st.write(docs.page_content[:200])
 
                         # try:
                         #   connection.test.foo.find_one()
@@ -539,7 +539,7 @@ def quiz_creation_page():
 
                         for i in range(num_quizzes):
                             try:
-                                quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
+                                quiz_questions.append(generate_quiz(quiz_type, is_topic, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
                                 st.session_state['quizs'] = quiz_questions
                             except OperationFailure as e:
                                 st.write(f"Failed to fetch documents: {e}")
