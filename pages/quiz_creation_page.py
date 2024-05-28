@@ -29,7 +29,6 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
 from pymongo import MongoClient
-import pymongo
 from langchain_community.document_loaders import WikipediaLoader
 
 #아이디는 코드에 들어가진 않습니다.
