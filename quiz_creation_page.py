@@ -29,7 +29,10 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
 from pymongo import MongoClient
-import pymongo
+from pymongo.errors import OperationFailure
+from pymongo.server_api import ServerApi
+from langchain_core.runnables import RunnablePassthrough
+from langchain_community.document_loaders import WikipediaLoader
 
 #아이디는 코드에 들어가진 않습니다.
 #embedings 항목에 array 형식으로 저장된 벡터 값으로 벡터 검색이 되고 atlas vextet index 항목에서 검색기로 등록해주면 검색 가능하다고 합니다. 
@@ -317,9 +320,9 @@ def process_file(uploaded_file, upload_option):
     if text_area_content is not None:
         text_content = process_file(uploaded_file, text_area_content) #?
     texts = text_splitter.create_documents([text_content])
+    
     return texts
-
-    return texts
+    
 
 # 퀴즈 생성 함수
 @st.experimental_fragment
@@ -443,11 +446,48 @@ def quiz_creation_page():
                         llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
                         embeddings = OpenAIEmbeddings()
 
+                        uri = "mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+                        # Create a new client and connect to the server
+                        client = MongoClient(uri, server_api=ServerApi('1'))
+                        # Send a ping to confirm a successful connection
+                        try:
+                            client.admin.command('ping')
+                            st.write("Pinged your deployment. You successfully connected to MongoDB!")
+                        except Exception as e:
+                            st.write(e)
+
+                        # Vectorstore
+                        # client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+
+                        # Define collection and index name
+                        db_name = "langchain_db"
+                        collection_name = "test"
+                        atlas_collection = client[db_name][collection_name]
+                        vector_search_index = "vector_index"
+
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
-                        documents = text_splitter.split_documents(text_content)
-                        vector = FAISS.from_documents(documents, embeddings)
+                        documents = text_content
+                        # documents = text_splitter.split_documents(text_content)
 
+                        # try:
+                        #   connection.test.foo.find_one()
+                        # except pymongo.errors.OperationFailure as e:
+                        #     st.write(e.code)
+                        #     st.write(e.details)
+
+                        vector_search = MongoDBAtlasVectorSearch.from_documents(
+                            documents=documents,
+                            embedding=embeddings,
+                            collection=atlas_collection,
+                            index_name=vector_search_index
+                        )
+
+                        # Instantiate Atlas Vector Search as a retriever
+                        retriever = vector_search.as_retriever(
+                            search_type="similarity",
+                            search_kwargs={"k": 5, "score_threshold": 0.75}
+                        )
 
                         # PydanticOutputParser 생성
                         parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
@@ -471,15 +511,20 @@ def quiz_creation_page():
                         document_chainsub = create_stuff_documents_chain(llm, promptsub)
                         document_chaintf = create_stuff_documents_chain(llm, prompttf)
 
-                        retriever = vector.as_retriever()
+                        # retriever = vector.as_retriever()
 
                         retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
                         retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
                         retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
 
+                        is_topic = None
+
                         for i in range(num_quizzes):
-                            quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
-                            st.session_state['quizs'] = quiz_questions
+                            try:
+                                quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
+                                st.session_state['quizs'] = quiz_questions
+                            except OperationFailure as e:
+                                st.write(f"Failed to fetch documents: {e}")
                         st.session_state.selected_page = "퀴즈 풀이"
                         st.session_state.selected_type = quiz_type
                         st.session_state.selected_num = num_quizzes
@@ -495,34 +540,108 @@ def quiz_creation_page():
             elif topic is not None:
                 if st.button('문제 생성 하기'):
                     with st.spinner('퀴즈를 생성 중입니다...'):
+                        llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
+                        embeddings = OpenAIEmbeddings()
+
+                        uri = "mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+                        # Create a new client and connect to the server
+                        client = MongoClient(uri, server_api=ServerApi('1'))
+                        # Send a ping to confirm a successful connection
                         try:
-                            vector_search = MongoDBAtlasVectorSearch.from_connection_string(
-                                "mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
-                                "database.collection",
-                                OpenAIEmbeddings(model="gpt-3.5-turbo-0125"),
-                                index_name="vector_index"
-                            )
+                            client.admin.command('ping')
+                            st.write("Pinged your deployment. You successfully connected to MongoDB!")
+                        except Exception as e:
+                            st.write(e)
 
-                            quiz_questions = []
-                            for _ in range(num_quizzes):
-                                quiz = generate_quiz(quiz_type, topic, vector_search)
-                                if quiz:
-                                    quiz_questions.append(quiz)
+                        # Vectorstore
+                        # client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
-                            st.session_state['quizs'] = quiz_questions
-                            st.session_state.selected_page = "퀴즈 풀이"
-                            st.session_state.selected_type = quiz_type
-                            st.session_state.selected_num = num_quizzes
+                        if topic == "수학":
+                            is_topic = "Mathematics"
+                        elif topic == "과학":
+                            is_topic = "science"
+                        else:
+                            is_topic = topic
 
-                            st.success('퀴즈 생성이 완료되었습니다!')
-                            st.write(quiz_questions)
-                            st.session_state['quiz_created'] = True
-                        except pymongo.errors.OperationFailure as e:
-                            st.error(f"MongoDB 연결 오류: {e}")
+                        # 데이터베이스 및 컬렉션 설정
+                        db_name = "langchain_db"
+                        collection_name = "test"
+                        atlas_collection = client[db_name][collection_name]
+                        vector_search_index = "vector_index"
 
-            if st.session_state.get('quiz_created', False):
-                if st.button('퀴즈 풀기'):
-                    st.switch_page("pages/quiz_solve_page.py")
+                        docs = WikipediaLoader(query=f"{is_topic}", load_max_docs=3).load()
+
+                        # Define a prompt template
+
+                        # Rag
+                        text_splitter = RecursiveCharacterTextSplitter()
+                        documents = text_splitter.split_documents(docs)
+
+                        # try:
+                        #   connection.test.foo.find_one()
+                        # except pymongo.errors.OperationFailure as e:
+                        #     st.write(e.code)
+                        #     st.write(e.details)
+
+                        vector_search = MongoDBAtlasVectorSearch.from_documents(
+                            documents=documents,
+                            embedding=embeddings,
+                            collection=atlas_collection,
+                            index_name=vector_search_index
+                        )
+
+                        # Instantiate Atlas Vector Search as a retriever
+                        retriever = vector_search.as_retriever(
+                            search_type="similarity",
+                            search_kwargs={"k": 5, "score_threshold": 0.75}
+                        )
+
+                        
+
+                        # PydanticOutputParser 생성
+                        parseroub = PydanticOutputParser(pydantic_object=CreateQuizoub)
+                        parsersub = PydanticOutputParser(pydantic_object=CreateQuizsub)
+                        parsertf = PydanticOutputParser(pydantic_object=CreateQuizTF)
+
+                        prompt = PromptTemplate.from_template(
+                            "{input}, Please answer in KOREAN."
+
+                            "CONTEXT:"
+                            "{context}."
+
+                            "FORMAT:"
+                            "{format}"
+                        )
+                        promptoub = prompt.partial(format=parseroub.get_format_instructions())
+                        promptsub = prompt.partial(format=parsersub.get_format_instructions())
+                        prompttf = prompt.partial(format=parsertf.get_format_instructions())
+
+                        document_chainoub = create_stuff_documents_chain(llm, promptoub)
+                        document_chainsub = create_stuff_documents_chain(llm, promptsub)
+                        document_chaintf = create_stuff_documents_chain(llm, prompttf)
+
+                        retrieval_chainoub = create_retrieval_chain(retriever, document_chainoub)
+                        retrieval_chainsub = create_retrieval_chain(retriever, document_chainsub)
+                        retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
+
+                        for i in range(num_quizzes):
+                            try:
+                                quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
+                                st.session_state['quizs'] = quiz_questions
+                            except OperationFailure as e:
+                                st.write(f"Failed to fetch documents: {e}")
+                        st.session_state.selected_page = "퀴즈 풀이"
+                        st.session_state.selected_type = quiz_type
+                        st.session_state.selected_num = num_quizzes
+
+                        st.success('퀴즈 생성이 완료되었습니다!')
+                        st.write(quiz_questions)
+                        st.session_state['quiz_created'] = True
+
+                if st.session_state.get('quiz_created', False):
+                    if st.button('퀴즈 풀기'):
+                        st.switch_page("pages/quiz_solve_page.py")
+
 
 if __name__ == "__main__":
     quiz_creation_page()
