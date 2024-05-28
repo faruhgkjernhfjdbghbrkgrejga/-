@@ -486,7 +486,7 @@ def quiz_creation_page():
                         # Instantiate Atlas Vector Search as a retriever
                         retriever = vector_search.as_retriever(
                             search_type="similarity",
-                            search_kwargs={"k": 3, "score_threshold": 0.95}
+                            search_kwargs={"k": 5, "score_threshold": 0.75}
                         )
 
                         # PydanticOutputParser 생성
@@ -543,9 +543,18 @@ def quiz_creation_page():
                         llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
                         embeddings = OpenAIEmbeddings()
 
-                        
-                        # Define collection and index name
-                        client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+                        uri = "mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+                        # Create a new client and connect to the server
+                        client = MongoClient(uri, server_api=ServerApi('1'))
+                        # Send a ping to confirm a successful connection
+                        try:
+                            client.admin.command('ping')
+                            st.write("Pinged your deployment. You successfully connected to MongoDB!")
+                        except Exception as e:
+                            st.write(e)
+
+                        # Vectorstore
+                        # client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
                         if topic == "수학":
                             is_topic = "Mathematics"
@@ -584,7 +593,7 @@ def quiz_creation_page():
                         # Instantiate Atlas Vector Search as a retriever
                         retriever = vector_search.as_retriever(
                             search_type="similarity",
-                            search_kwargs={"k": 3, "score_threshold": 0.9}
+                            search_kwargs={"k": 5, "score_threshold": 0.75}
                         )
 
                         
@@ -616,8 +625,11 @@ def quiz_creation_page():
                         retrieval_chaintf = create_retrieval_chain(retriever, document_chaintf)
 
                         for i in range(num_quizzes):
-                            quiz_questions.append(generate_quiz(quiz_type, is_topic, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
-                            st.session_state['quizs'] = quiz_questions
+                            try:
+                                quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
+                                st.session_state['quizs'] = quiz_questions
+                            except OperationFailure as e:
+                                st.write(f"Failed to fetch documents: {e}")
                         st.session_state.selected_page = "퀴즈 풀이"
                         st.session_state.selected_type = quiz_type
                         st.session_state.selected_num = num_quizzes
