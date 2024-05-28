@@ -32,30 +32,25 @@ from pymongo import MongoClient
 import pymongo
 from langchain_community.document_loaders import WikipediaLoader
 
-#아이디는 코드에 들어가진 않습니다.
-#embedings 항목에 array 형식으로 저장된 벡터 값으로 벡터 검색이 되고 atlas vextet index 항목에서 검색기로 등록해주면 검색 가능하다고 합니다. 
-#acm41th:vCcYRo8b4hsWJkUj@cluster0 여기까지가 아이디:비밀번호:클러스터 주소라 필수적입니다. 마지막 앱네임도 클러스터명
-
-#Vectorstore
-client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-#client['your_database_name']이 데베 이름입니다. 데베1은 파이썬 관련 정보가 용량이 적길래 일단 넣어줬습니다.
-#임베딩 항목은 따로 처리해서 넣어줘야 할 겁니다.
-#랭체인도 데모 데이터로 몽고디비 관련 내용이고 엠플릭스도 영화 관련 데모 데이터입니다.
-#콜렉션은 각 디비 안에 있는 데이터셋을 뜻합니다. 디비가 폴더고 얘가 파일 같습니다.
-#임베딩값이 들어 있는 콜렉션은 일단 embeded_movies랑 test가 있습니다. 각각 sample_mflix.embedded_movies
-#, langchain_db.test처럼 넣어서 쓰면 됩니다.
+class CreateQuiz(BaseModel):
+    quiz: str = Field(description="The created problem")
+    options1: str = Field(description="The first option of the created problem")
+    options2: str = Field(description="The second option of the created problem")
+    options3: str = Field(description="The third option of the created problem")
+    options4: str = Field(description="The fourth option of the created problem")
+    correct_answer: str = Field(description="One of the options1 or options2 or options3 or options4")
 
 def connect_db():
-    client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-    return client[langchain_db]
+    client = MongoClient("mongodb+srv://username:password@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=YourApp")
+    return client['your_database_name']
 
 def insert_documents(collection_name, documents):
     db = connect_db()
-    collection = db[test]
+    collection = db[collection_name]
     collection.insert_many(documents)
 
 def vectorize_and_store(data, collection_name):
-    embeddings = OpenAIEmbeddings()
+    embeddings = OpenAIEmbeddings(api_key='your_openai_api_key')
     vector_operations = []
 
     for document in data:
@@ -65,8 +60,9 @@ def vectorize_and_store(data, collection_name):
         vector_operations.append(operation)
 
     db = connect_db()
-    collection = db[test]
+    collection = db[collection_name]
     collection.bulk_write(vector_operations)
+
 
 def search_vectors(collection_name, query_vector, top_k=10):
     db = connect_db()
@@ -323,51 +319,37 @@ def process_file(uploaded_file, upload_option):
     
 
 # 퀴즈 생성 함수
-@st.experimental_fragment
-def generate_quiz(quiz_type, is_topic, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf):
-    # Generate quiz prompt based on selected quiz type
-    if is_topic == None:
-        if quiz_type == "다중 선택 (객관식)":
-            response = retrieval_chainoub.invoke(
-                {
-                    "input": "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context"
-                }
-            )
-        elif quiz_type == "주관식":
-            response = retrieval_chainsub.invoke(
-                {
-                    "input": "Create one open-ended question focusing on important concepts, following the given format, referring to the following context"
-                }
-            )
-        elif quiz_type == "OX 퀴즈":
-            response = retrieval_chaintf.invoke(
-                {
-                    "input": "Create one true or false question focusing on important concepts, following the given format, referring to the following context"
-                }
-            )
-        quiz_questions = response
-    else:
-        if quiz_type == "다중 선택 (객관식)":
-            response = retrieval_chainoub.invoke(
-                {
-                    "input": f"Create one {is_topic} multiple-choice question focusing on important concepts, following the given format, referring to the following context"
-                }
-            )
-        elif quiz_type == "주관식":
-            response = retrieval_chainsub.invoke(
-                {
-                    "input":  f"Create one {is_topic} open-ended question focusing on important concepts, following the given format, referring to the following context"
-                }
-            )
-        elif quiz_type == "OX 퀴즈":
-            response = retrieval_chaintf.invoke(
-                {
-                    "input":  f"Create one {is_topic} true or false question focusing on important concepts, following the given format, referring to the following context"
-                }
-            )
-        quiz_questions = response
+def generate_quiz(quiz_type, text_content, vector_search):
+    response = vector_search.similarity_search_with_score(input=text_content, k=5)
 
-    return quiz_questions
+    if not response:
+        return None
+
+    documents = [doc['content'] for doc in response]
+    llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
+    embeddings = OpenAIEmbeddings()
+
+    text_splitter = RecursiveCharacterTextSplitter()
+    documents = text_splitter.split_documents(documents)
+    vector = FAISS.from_documents(documents, embeddings)
+
+    parser = PydanticOutputParser(pydantic_object=CreateQuiz)
+    prompt = PromptTemplate.from_template(
+        "Question: {input}, Please answer in KOREAN.\n\nCONTEXT:\n{context}.\n\nFORMAT:\n{format}"
+    )
+    prompt = prompt.partial(format=parser.get_format_instructions())
+
+    document_chain = create_stuff_documents_chain(llm, prompt)
+    retriever = vector.as_retriever()
+    retrieval_chain = create_retrieval_chain(retriever, document_chain)
+
+    response = retrieval_chain.invoke(
+        {
+            "input": f"Create one {quiz_type} question focusing on important concepts, following the given format, referring to the following context"
+        }
+    )
+
+    return response
 
 @st.experimental_fragment
 def grade_quiz_answer(user_answer, quiz_answer):
