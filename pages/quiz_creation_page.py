@@ -29,6 +29,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import FAISS
 from pymongo import MongoClient
+from pymongo.server_api import ServerApi
 from langchain_community.document_loaders import WikipediaLoader
 
 #아이디는 코드에 들어가진 않습니다.
@@ -443,8 +444,18 @@ def quiz_creation_page():
                         llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
                         embeddings = OpenAIEmbeddings()
 
+                        uri = "mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+                        # Create a new client and connect to the server
+                        client = MongoClient(uri, server_api=ServerApi('1'))
+                        # Send a ping to confirm a successful connection
+                        try:
+                            client.admin.command('ping')
+                            print("Pinged your deployment. You successfully connected to MongoDB!")
+                        except Exception as e:
+                            print(e)
+
                         # Vectorstore
-                        client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+                        # client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
                         # Define collection and index name
                         db_name = "langchain_db"
