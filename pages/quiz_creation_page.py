@@ -519,7 +519,7 @@ def quiz_creation_page():
                         client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 
                         if topic == "수학":
-                            is_topic = "math"
+                            is_topic = "Mathematics"
                         elif topic == "과학":
                             is_topic = "science"
                         else:
