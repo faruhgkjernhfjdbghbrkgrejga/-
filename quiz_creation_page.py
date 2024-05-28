@@ -481,14 +481,14 @@ def quiz_creation_page():
                         vector_search_index = "vector_index"
 
                         docs = WikipediaLoader(query=is_topic, load_max_docs=20).load()
-                        docs.page_content[:200]
+                        
 
                         # Define a prompt template
 
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
                         documents = text_splitter.split_documents(docs)
-                        st.write(documents)
+                        st.write(docs.page_content[:200])
 
                         # try:
                         #   connection.test.foo.find_one()
