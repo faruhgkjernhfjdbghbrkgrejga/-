@@ -35,7 +35,7 @@ def quiz_grading_page():
 
     current_question_index = st.session_state.get('current_question_index', 0)
 
-    if st.button("이전 ��제", key="prev_question"):
+    if st.button("이전 문제", key="prev_question"):
         if current_question_index > 0:
             st.session_state['current_question_index'] = current_question_index - 1
 
