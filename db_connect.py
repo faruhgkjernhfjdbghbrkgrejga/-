@@ -41,11 +41,10 @@ def quiz_creation_page():
             # 토픽에 따른 벡터 검색 결과 출력
             embeddings = get_embeddings()
             retriever = MongoDBAtlasVectorSearch.from_connection_string(
-                connection_string,
-                "db1.PythonDatascienceinterview",
+                connection_string = connection_string,
+                collection = "db1.PythonDatascienceinterview",
                 embeddings,
-                "vector_index"
-            )
+                vector_index = "vector_index")
 
             docs = WikipediaLoader(query=topic, load_max_docs=3).load()
             db_collection = client[db1][PythonDatascienceinterview]
@@ -111,7 +110,7 @@ def quiz_creation_page():
                 connection_string,
                 atlas_collection,
                 solution,
-                vector_search_index
+                vector_search_index,
             )
 
             # 텍스트 검색 및 퀴즈 생성 체인 설정
@@ -126,7 +125,7 @@ def quiz_creation_page():
                     generate_quiz(
                         quiz_type,
                         is_topic,
-                        retriever_chain
+                        retriever_chain,
                     )
                 )
 
@@ -149,7 +148,7 @@ def search_vectors(collection_name, query_vector, top_k=10):
                     'query': query_vector,
                     'path': 'vector',
                     'cosineSimilarity': True,
-                    'topK': top_k
+                    'topK': top_k,
                 }
             }
         }
