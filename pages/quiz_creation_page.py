@@ -519,8 +519,11 @@ def quiz_creation_page():
                         is_topic = None
 
                         for i in range(num_quizzes):
-                            quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
-                            st.session_state['quizs'] = quiz_questions
+                            try:
+                                quiz_questions.append(generate_quiz(quiz_type, text_content, retrieval_chainoub, retrieval_chainsub,retrieval_chaintf))
+                                st.session_state['quizs'] = quiz_questions
+                            except OperationFailure as e:
+                                st.write(f"Failed to fetch documents: {e}")
                         st.session_state.selected_page = "퀴즈 풀이"
                         st.session_state.selected_type = quiz_type
                         st.session_state.selected_num = num_quizzes
