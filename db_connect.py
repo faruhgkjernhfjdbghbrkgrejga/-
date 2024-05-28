@@ -5,8 +5,6 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import MongoDBAtlasVectorSearch
 from pymongo import MongoClient
 
-
-
 # MongoDB 연결
 client = MongoClient("mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 connection_string = "mongodb+srv://acm41th:vCcYRo8b4hsWJkUj@cluster0.ctxcrvl.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
@@ -41,14 +39,14 @@ def quiz_creation_page():
             # 토픽에 따른 벡터 검색 결과 출력
             embeddings = get_embeddings()
             retriever = MongoDBAtlasVectorSearch.from_connection_string(
-                connection_string = connection_string,
-                collection = "db1.PythonDatascienceinterview",
+                connection_string,
+                "db1.PythonDatascienceinterview",
                 embeddings,
-                vector_index = "vector_index"
+                vector_index="vector_index"
             )
 
             docs = WikipediaLoader(query=topic, load_max_docs=3).load()
-            db_collection = client[db1][PythonDatascienceinterview]
+            db_collection = client["db1"]["PythonDatascienceinterview"]
             text_splitter = RecursiveCharacterTextSplitter()
             documents = text_splitter.split_documents(docs)
             vector_search = MongoDBAtlasVectorSearch.from_documents(
@@ -86,57 +84,7 @@ def quiz_creation_page():
         st.success('퀴즈 생성이 완료되었습니다!')
         st.write(quiz_questions)
         st.session_state['quiz_created'] = True
-"""
-    elif upload_option == "URL":
-        url_area_content = st.text_area("URL을 입력하세요.")
-        loader = RecursiveUrlLoader(url=url_area_content)
-        text_content = loader.load()
 
-    else:
-        uploaded_file = st.file_uploader("파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
-        if uploaded_file:
-            text_content = process_file(uploaded_file, upload_option)"""
-"""
-    if text_content is not None or (topic is not None and upload_option == "토픽 선택"):
-        if st.button('퀴즈 생성'):
-            # MongoDB 연결 및 설정
-            db_name = "db1"
-            collection_name = "PythonDatascienceinterview"
-            atlas_collection = client[db_name][collection_name]
-            vector_search_index = "vector_index"
-
-            # 벡터 검색기 생성
-            embeddings = get_embeddings()
-            retriever = MongoDBAtlasVectorSearch.from_connection_string(
-                connection_string,
-                atlas_collection,
-                solution,
-                vector_search_index,
-            )
-
-            # 텍스트 검색 및 퀴즈 생성 체인 설정
-            retriever_chain = create_retrieval_chain(retriever)
-
-            # 토픽 선택 여부에 따라 퀴즈 생성
-            is_topic = topic if upload_option == "토픽 선택" else None
-
-            quiz_questions = []
-            for _ in range(num_quizzes):
-                quiz_questions.append(
-                    generate_quiz(
-                        quiz_type,
-                        is_topic,
-                        retriever_chain,
-                    )
-                )
-
-            st.success('퀴즈 생성이 완료되었습니다!')
-            st.write(quiz_questions)
-            st.session_state['quiz_created'] = True
-
-    elif topic is not None:
-        st.warning("토픽을 선택하고 '토픽에 따른 벡터 검색' 버튼을 눌러주세요.")
-"""
 def search_vectors(collection_name, query_vector, top_k=10):
     """
     MongoDB에서 벡터 검색을 수행하는 함수
@@ -157,7 +105,6 @@ def search_vectors(collection_name, query_vector, top_k=10):
 
     return list(results)
 
-
 def quiz_page():
     """
     퀴즈 풀이 페이지를 렌더링하는 함수
@@ -175,7 +122,6 @@ def quiz_page():
         st.write(f"정답: {quiz['correct_answer']}")
         st.write("=" * 50)
 
-
 def main():
     """
     메인 애플리케이션 함수
@@ -190,7 +136,6 @@ def main():
         quiz_creation_page()
     elif page == "퀴즈 풀이":
         quiz_page()
-
 
 if __name__ == "__main__":
     main()
