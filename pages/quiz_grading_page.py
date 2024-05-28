@@ -1,34 +1,6 @@
 import streamlit as st
-from langchain_core.pydantic_v1 import BaseModel, Field
-from langchain.prompts.prompt import PromptTemplate
-from langchain.output_parsers import PydanticOutputParser
-from langchain import hub
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_community.vectorstores import Chroma
-from langchain_openai import OpenAIEmbeddings
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_community.document_loaders.image import UnstructuredImageLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import FAISS
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain.chains import create_retrieval_chain
-from PIL import Image
-import pytesseract
-from PyPDF2 import PdfReader
-import io
-from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
-import chardet
-from langchain_community.vectorstores import MongoDBAtlasVectorSearch
-from langchain_openai import OpenAIEmbeddings
-from langchain.document_loaders import WebBaseLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import FAISS
-from pymongo import MongoClient
-import pymongo
-import json
 import openai
+import json
 
 
 def get_explanation(quiz, correct_answer):
@@ -74,6 +46,16 @@ def quiz_grading_page():
     
     st.header(f"문제 {st.session_state.number + 1}")
     st.write(f"**{res['quiz']}**")
+    
+    # 객관식 문제의 경우 선택지 출력
+    if 'options1' in res and 'options2' in res:
+        st.write(f"1. {res['options1']}")
+        st.write(f"2. {res['options2']}")
+        if 'options3' in res:
+            st.write(f"3. {res['options3']}")
+        if 'options4' in res:
+            st.write(f"4. {res['options4']}")
+    
     st.write(f"정답: {res['correct_answer']}")
     
     # explanation = get_explanation(res['quiz'], res['correct_answer'])
