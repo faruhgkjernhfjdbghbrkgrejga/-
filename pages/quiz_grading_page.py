@@ -12,65 +12,85 @@ def grade_quiz_answers(user_answers, correct_answers):
             graded_answers.append('오답')
     return graded_answers
 
-# def get_openai_explanation(question, user_answer, correct_answer):
-#     llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
-#     prompt = (
-#         f"문제: {question}\n"
-#         f"사용자 답변: {user_answer}\n"
-#         f"정답: {correct_answer}\n"
-#         "이 문제의 해설을 제공해주세요. "
-#         "해설은 왜 정답이 맞는지, 왜 사용자 답변이 틀렸는지 설명해주세요."
-#     )
-#     response = llm(prompt)
-#     return response
+def get_openai_explanation(question, user_answer, correct_answer):
+    llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
+    prompt = (
+        f"문제: {question}\n"
+        f"사용자 답변: {user_answer}\n"
+        f"정답: {correct_answer}\n"
+        "이 문제의 해설을 제공해주세요. "
+        "해설은 왜 정답이 맞는지, 왜 사용자 답변이 틀렸는지 설명해주세요."
+    )
+    response = llm(prompt)
+    return response
 
 def quiz_grading_page():
     user_answers = st.session_state.get('user_selected_answers', [])
     correct_answers = st.session_state.get('correct_answers', [])
     questions = st.session_state.get('quizs', [])
     
-    # 세션 상태 초기화
-    if 'number' not in st.session_state:
-        st.session_state.number = 0
-    if 'quizs' not in st.session_state or not st.session_state.quizs:
-        st.warning("퀴즈가 없습니다. 먼저 퀴즈를 풀어주세요.")
+    # 모든 리스트의 길이가 동일한지 확인
+    if not (len(user_answers) == len(correct_answers) == len(questions)):
+        st.error("데이터 불일치 오류: 사용자 답변, 정답, 문제의 수가 일치하지 않습니다.")
         return
     
     graded_answers = grade_quiz_answers(user_answers, correct_answers)
     st.title("퀴즈 채점 결과")
     total_score = 0
 
-    for i, question in enumerate(questions):
-        res = json.loads(question["answer"])
-        st.subheader(f"문제 {i + 1}")
-        st.write(f"문제: {res['quiz']}")
-        
-        if 'options1' in res:
-            st.write(f"1. {res['options1']}")
-            st.write(f"2. {res['options2']}")
-            st.write(f"3. {res['options3']}")
-        if 'options4' in res:
-            st.write(f"4. {res['options4']}")
+    # 현재 문제 인덱스 초기화
+    if 'current_question_index' not in st.session_state:
+        st.session_state.current_question_index = 0
+
+    current_question_index = st.session_state.current_question_index
+    question = questions[current_question_index]
+    res = json.loads(question["answer"])
+
+    st.subheader(f"문제 {current_question_index + 1}")
+    st.write(f"문제: {res['quiz']}")
     
-    st.write(f"정답: {res['correct_answer']}")
-    
-    # explanation = get_explanation(res['quiz'], res['correct_answer'])
-    # st.write(f"해설: {explanation}")
-    # st.markdown("---")
-    
-    col1, col2= st.columns(2)
+    if 'options1' in res:
+        st.write(f"1. {res['options1']}")
+        st.write(f"2. {res['options2']}")
+        st.write(f"3. {res['options3']}")
+        st.write(f"4. {res['options4']}")
+
+    user_answer = user_answers[current_question_index]
+    correct_answer = res['correct_answer']
+    result = graded_answers[current_question_index]
+
+    st.write(f"사용자 답변: {user_answer}")
+    st.write(f"정답: {correct_answer}")
+    if result == "정답":
+        st.success("정답입니다!", key=f"result_success_{current_question_index}")
+        total_score += 1
+    else:
+        st.error("오답입니다.", key=f"result_error_{current_question_index}")
+
+    if st.button(f"AI 해설 요청", key=f"explanation_button_{current_question_index}"):
+        explanation = get_openai_explanation(res['quiz'], user_answer, correct_answer)
+        st.write(f"해설: {explanation}")
+
+    col1, col2 = st.columns(2)
     with col1:
-        if st.button("이전 문제"):
-            if st.session_state.number > 0:
-                st.session_state.number -= 1  # 이전 문제로 이동
-            else:
-                st.warning("첫 번째 문제입니다.")
+        if st.button("이전 문제", key="prev_question"):
+            if st.session_state.current_question_index > 0:
+                st.session_state.current_question_index -= 1
+
     with col2:
-        if st.button("다음 문제"):
-            if st.session_state.number < len(st.session_state.quizs) - 1:
-                st.session_state.number += 1  # 다음 문제로 이동
-            else:
-                st.warning("마지막 문제입니다.")
+        if st.button("다음 문제", key="next_question"):
+            if st.session_state.current_question_index < len(questions) - 1:
+                st.session_state.current_question_index += 1
+
+    # total_score를 세션 상태에 저장
+    st.session_state['total_score'] = total_score
+
+    # total_score 키가 존재하는지 확인하고 기본값을 설정
+    total_score = st.session_state.get('total_score', 0)
+    st.write(f"당신의 점수는 {total_score}점 입니다.")
+
+    if st.button("퀴즈 생성 페이지로 이동", key="go_to_creation_page"):
+        st.session_state["page"] = "quiz_creation_page"
 
 if __name__ == "__main__":
     quiz_grading_page()
