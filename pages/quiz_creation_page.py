@@ -28,6 +28,14 @@ from langchain_community.document_loaders.recursive_url_loader import RecursiveU
 from langchain_community.document_loaders.image import UnstructuredImageLoader
 from langchain_community.vectorstores import FAISS
 from bs4 import BeautifulSoup as Soup
+from urllib.parse import urlparse
+
+def is_url(input_string):
+    try:
+        result = urlparse(input_string)
+        return all([result.scheme, result.netloc])
+    except:
+        return False
 
 
 #아이디는 코드에 들어가진 않습니다.
@@ -344,9 +352,13 @@ def quiz_creation_page():
 
             elif upload_option == "URL":
                 url_area_content = st.text_area("URL을 입력하세요.")
-                if not url_area_content:  # Check if URL is empty
-                    st.error("URL을 입력해야 합니다.")  # Display error message
-                    return
+                # if not url_area_content:  # Check if URL is empty
+                #     st.error("URL을 입력해야 합니다.")  # Display error message
+                #     return
+                
+                if not is_url(url_area_content):
+                    st.error("URL을 입력해야 합니다.")
+
                 loader = RecursiveUrlLoader(
                     url=url_area_content, max_depth=2, extractor=lambda x: Soup(x, "html.parser").text
                 )
