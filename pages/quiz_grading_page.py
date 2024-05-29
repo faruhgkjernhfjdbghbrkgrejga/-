@@ -28,7 +28,7 @@ def quiz_grading_page():
     user_answers = st.session_state.get('user_selected_answers', [])
     correct_answers = st.session_state.get('correct_answers', [])
     questions = st.session_state.get('quizs', [])
-    
+
     if st.session_state.number >= len(questions):
         st.session_state.number = 0
 
@@ -40,7 +40,8 @@ def quiz_grading_page():
         return
     
     graded_answers = grade_quiz_answers(user_answers, correct_answers)
-    st.title("퀴즈 채점 결과")
+    st.title("quiz review page")
+    st.markdown("---")
     total_score = 0
 
     current_question_index = st.session_state.number
@@ -54,6 +55,7 @@ def quiz_grading_page():
     res = json.loads(question["answer"])
     
     st.subheader(f"문제 {current_question_index + 1}")
+    st.write("\n")
     st.write(f"문제: {res['quiz']}")
     
     if 'options1' in res:
