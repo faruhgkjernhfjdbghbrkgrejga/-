@@ -379,8 +379,8 @@ def quiz_creation_page():
 
                         # Rag
                         text_splitter = RecursiveCharacterTextSplitter()
-                        documents = text_content
-                        # documents = text_splitter.split_documents(text_content)
+                        # documents = text_content
+                        documents = text_splitter.split_documents(text_content)
 
                         # try:
                         #   connection.test.foo.find_one()
