@@ -34,6 +34,14 @@ from pymongo.server_api import ServerApi
 from langchain_core.runnables import RunnablePassthrough
 from langchain_community.document_loaders import WikipediaLoader
 from langchain.document_loaders.recursive_url_loader import RecursiveUrlLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+def split_text(text, chunk_size=1000, chunk_overlap=100):
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap
+    )
+    return text_splitter.split_text(text)
 
 #아이디는 코드에 들어가진 않습니다.
 #embedings 항목에 array 형식으로 저장된 벡터 값으로 벡터 검색이 되고 atlas vextet index 항목에서 검색기로 등록해주면 검색 가능하다고 합니다. 
@@ -239,50 +247,62 @@ def process_file(uploaded_file, upload_option):
 
 # 퀴즈 생성 함수
 @st.experimental_fragment
-def generate_quiz(quiz_type, is_topic, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf):
-    # Generate quiz prompt based on selected quiz type
-    if is_topic == None:
-        if quiz_type == "다중 선택 (객관식)":
-            response = retrieval_chainoub.invoke(
-                {
-                    "input": "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context"
-                }
-            )
-        elif quiz_type == "주관식":
-            response = retrieval_chainsub.invoke(
-                {
-                    "input": "Create one open-ended question focusing on important concepts, following the given format, referring to the following context"
-                }
-            )
-        elif quiz_type == "OX 퀴즈":
-            response = retrieval_chaintf.invoke(
-                {
-                    "input": "Create one true or false question focusing on important concepts, following the given format, referring to the following context"
-                }
-            )
-        quiz_questions = response
-    else:
-        if quiz_type == "다중 선택 (객관식)":
-            response = retrieval_chainoub.invoke(
-                {
-                    "input": f"Create one {is_topic} multiple-choice question focusing on important concepts, following the given format, referring to the following context"
-                }
-            )
-        elif quiz_type == "주관식":
-            response = retrieval_chainsub.invoke(
-                {
-                    "input":  f"Create one {is_topic} open-ended question focusing on important concepts, following the given format, referring to the following context"
-                }
-            )
-        elif quiz_type == "OX 퀴즈":
-            response = retrieval_chaintf.invoke(
-                {
-                    "input":  f"Create one {is_topic} true or false question focusing on important concepts, following the given format, referring to the following context"
-                }
-            )
-        quiz_questions = response
+def generate_quiz(quiz_type, is_topic, retrieval_chainoub, retrieval_chainsub, retrieval_chaintf, text_content):
+    try:
+        # 텍스트를 작은 청크로 분할
+        text_chunks = split_text(text_content)
 
-    return quiz_questions
+        quiz_questions = []
+        for chunk in text_chunks:
+            if is_topic is None:
+                if quiz_type == "다중 선택 (객관식)":
+                    response = retrieval_chainoub.invoke(
+                        {
+                            "input": "Create one multiple-choice question focusing on important concepts, following the given format, referring to the following context",
+                            "context": chunk
+                        }
+                    )
+                elif quiz_type == "주관식":
+                    response = retrieval_chainsub.invoke(
+                        {
+                            "input": "Create one open-ended question focusing on important concepts, following the given format, referring to the following context",
+                            "context": chunk
+                        }
+                    )
+                elif quiz_type == "OX 퀴즈":
+                    response = retrieval_chaintf.invoke(
+                        {
+                            "input": "Create one true or false question focusing on important concepts, following the given format, referring to the following context",
+                            "context": chunk
+                        }
+                    )
+            else:
+                if quiz_type == "다중 선택 (객관식)":
+                    response = retrieval_chainoub.invoke(
+                        {
+                            "input": f"Create one {is_topic} multiple-choice question focusing on important concepts, following the given format, referring to the following context",
+                            "context": chunk
+                        }
+                    )
+                elif quiz_type == "주관식":
+                    response = retrieval_chainsub.invoke(
+                        {
+                            "input": f"Create one {is_topic} open-ended question focusing on important concepts, following the given format, referring to the following context",
+                            "context": chunk
+                        }
+                    )
+                elif quiz_type == "OX 퀴즈":
+                    response = retrieval_chaintf.invoke(
+                        {
+                            "input": f"Create one {is_topic} true or false question focusing on important concepts, following the given format, referring to the following context",
+                            "context": chunk
+                        }
+                    )
+            quiz_questions.append(response)
+        return quiz_questions
+    except openai.error.OpenAIError as e:
+        st.error(f"OpenAI API 호출 중 오류가 발생했습니다: {e}")
+        return None
 
 @st.experimental_fragment
 def grade_quiz_answer(user_answer, quiz_answer):
