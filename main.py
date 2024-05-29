@@ -1,8 +1,12 @@
 import streamlit as st
-import quiz_creation_page
-import quiz_solve_page
-import quiz_grading_page
+import pages.quiz_creation_page
+import pages.quiz_solve_page
+import pages.quiz_grading_page
 import sign
+from streamlit_option_menu import option_menu
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 def main():
     st.sidebar.title("Navigation")
