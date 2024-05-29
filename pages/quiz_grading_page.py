@@ -45,6 +45,19 @@ def get_explanation(quiz, correct_answer):
     return explanation
 
 
+def get_explanation(quiz, correct_answer):
+    prompt = f"문제: {quiz}\n정답: {correct_answer}\n이 문제의 해설을 작성해 주세요."
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=150
+    )
+    explanation = response.choices[0].message['content'].strip()
+    return explanation
+
 def quiz_grading_page():
     st.title("퀴즈 리뷰 페이지")
     st.markdown("---")
@@ -54,10 +67,6 @@ def quiz_grading_page():
         st.session_state.number = 0
     if 'quizs' not in st.session_state or not st.session_state.quizs:
         st.warning("퀴즈가 없습니다. 먼저 퀴즈를 풀어주세요.")
-        return
-    
-    if st.session_state.number >= len(st.session_state.quizs):
-        st.warning("유효하지 않은 문제 번호입니다.")
         return
     
     question = st.session_state.quizs[st.session_state.number]
