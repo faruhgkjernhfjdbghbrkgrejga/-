@@ -183,7 +183,7 @@ def process_file(uploaded_file, upload_option):
 
     uploaded_file = None
     text_area_content = None
-    # url_area_content = None
+    url_area_content = None
     selected_topic = None
     
     # # 파일 업로드 옵션 선택
