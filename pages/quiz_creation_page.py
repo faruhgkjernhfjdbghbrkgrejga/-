@@ -315,7 +315,7 @@ def quiz_creation_page():
             uploaded_file = None
             text_content = None
             topic = None
-            url_area_content = None
+            # url_area_content = None
             #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
 
             # if upload_option == "직접 입력":               
