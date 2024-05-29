@@ -1,6 +1,14 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
-import home, trending, account, your, about, buy_me_a_coffee
+import streamlit as st
+import pages.quiz_creation_page
+import pages.quiz_solve_page
+import pages.quiz_grading_page
+import sign
+from streamlit_option_menu import option_menu
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 st.set_page_config(page_title="Pondering")
 
