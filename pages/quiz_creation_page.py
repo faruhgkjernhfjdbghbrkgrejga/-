@@ -315,6 +315,7 @@ def quiz_creation_page():
             uploaded_file = None
             text_content = None
             topic = None
+            url_area_content = None
             #uploaded_file = st.file_uploader("텍스트, 이미지, 또는 PDF 파일을 업로드하세요.", type=["txt", "jpg", "jpeg", "png", "pdf"])
 
             # if upload_option == "직접 입력":               
@@ -343,9 +344,8 @@ def quiz_creation_page():
 
             elif upload_option == "URL":
                 url_area_content = st.text_area("URL을 입력하세요.")
-                if st.button("URL 로드"):
-                    loader = RecursiveUrlLoader(urls=[url_area_content])
-                    text_content = asyncio.run(loader.load())
+                loader = RecursiveUrlLoader(url=url_area_content)
+                text_content = loader.load()
                 
             else:
                 text_content = process_file(uploaded_file, upload_option)
