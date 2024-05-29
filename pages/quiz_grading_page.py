@@ -66,7 +66,7 @@ def quiz_grading_page():
         st.write(f"4. {res['options4']}")
         st.write("\n")
     
-        st.write(f"정답:  {res['correct_answer']}")
+        st.write(f"정답 : {res['correct_answer']}")
     
     # explanation = get_explanation(res['quiz'], res['correct_answer'])
     # st.write(f"해설: {explanation}")
