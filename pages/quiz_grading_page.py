@@ -29,6 +29,8 @@ def quiz_grading_page():
     correct_answers = st.session_state.get('correct_answers', [])
     questions = st.session_state.get('quizs', [])
     
+    st.session_state.number = 0
+
     # 세션 상태 초기화
     if 'number' not in st.session_state:
         st.session_state.number = 0
