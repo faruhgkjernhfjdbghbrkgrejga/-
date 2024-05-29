@@ -2,8 +2,6 @@ import streamlit as st
 import openai
 import json
 
-# OpenAI API 키 설정
-openai.api_key = 'your_openai_api_key'
 
 def get_explanation(quiz, correct_answer):
     prompt = f"문제: {quiz}\n정답: {correct_answer}\n이 문제의 해설을 작성해 주세요."
@@ -51,9 +49,9 @@ def quiz_grading_page():
     
     st.write(f"정답: {res['correct_answer']}")
     
-    # explanation = get_explanation(res['quiz'], res['correct_answer'])
-    # st.write(f"해설: {explanation}")
-    # st.markdown("---")
+    explanation = get_explanation(res['quiz'], res['correct_answer'])
+    st.write(f"해설: {explanation}")
+    st.markdown("---")
     
     col1, col2= st.columns(2)
     with col1:
