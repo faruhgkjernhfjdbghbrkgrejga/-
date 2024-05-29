@@ -30,6 +30,21 @@ import pymongo
 import json
 import openai
 
+
+def get_explanation(quiz, correct_answer):
+    prompt = f"문제: {quiz}\n정답: {correct_answer}\n이 문제의 해설을 작성해 주세요."
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=150
+    )
+    explanation = response.choices[0].message['content'].strip()
+    return explanation
+
+
 def get_explanation(quiz, correct_answer):
     prompt = f"문제: {quiz}\n정답: {correct_answer}\n이 문제의 해설을 작성해 주세요."
     response = openai.ChatCompletion.create(
@@ -54,28 +69,11 @@ def quiz_grading_page():
         st.warning("퀴즈가 없습니다. 먼저 퀴즈를 풀어주세요.")
         return
     
-    if st.session_state.number >= len(st.session_state.quizs):
-        st.warning("유효하지 않은 문제 번호입니다.")
-        return
-    
     question = st.session_state.quizs[st.session_state.number]
     res = json.loads(question["answer"])
     
     st.header(f"문제 {st.session_state.number + 1}")
     st.write(f"**{res['quiz']}**")
-    
-    if 'options1' in res:
-        st.write("선택지:")
-        st.write(f"1. {res['options1']}")
-        st.write(f"2. {res['options2']}")
-        st.write(f"3. {res['options3']}")
-        st.write(f"4. {res['options4']}")
-    
-    if 'user_selected_answers' in st.session_state and len(st.session_state.user_selected_answers) > st.session_state.number:
-        st.write(f"사용자의 답변: {st.session_state.user_selected_answers[st.session_state.number]}")
-    else:
-        st.write("사용자의 답변: 없음")
-    
     st.write(f"정답: {res['correct_answer']}")
     
     explanation = get_explanation(res['quiz'], res['correct_answer'])
@@ -100,9 +98,4 @@ def quiz_grading_page():
             st.switch_page("pages/quiz_solve_page.py")
 
 if __name__ == "__main__":
-    quiz_grading_page()
-    quiz_grading_page()
-    quiz_grading_page()
-    quiz_grading_page()
-    quiz_grading_page()
     quiz_grading_page()
