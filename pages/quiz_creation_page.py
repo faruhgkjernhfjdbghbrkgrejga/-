@@ -300,7 +300,6 @@ def grade_quiz_answer(user_answer, quiz_answer):
 
 # 메인 함수
 def quiz_creation_page():
-    st.set_page_config(page_title="퀴즈 생성")
     placeholder = st.empty()
     st.session_state.page = 0
     if st.session_state.page == 0:
