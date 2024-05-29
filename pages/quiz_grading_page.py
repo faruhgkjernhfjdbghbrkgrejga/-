@@ -71,7 +71,11 @@ def quiz_grading_page():
         st.write(f"3. {res['options3']}")
         st.write(f"4. {res['options4']}")
     
-    st.write(f"사용자의 답변: {st.session_state.user_selected_answers[st.session_state.number]}")
+    if 'user_selected_answers' in st.session_state and len(st.session_state.user_selected_answers) > st.session_state.number:
+        st.write(f"사용자의 답변: {st.session_state.user_selected_answers[st.session_state.number]}")
+    else:
+        st.write("사용자의 답변: 없음")
+    
     st.write(f"정답: {res['correct_answer']}")
     
     explanation = get_explanation(res['quiz'], res['correct_answer'])
@@ -96,4 +100,9 @@ def quiz_grading_page():
             st.switch_page("pages/quiz_solve_page.py")
 
 if __name__ == "__main__":
+    quiz_grading_page()
+    quiz_grading_page()
+    quiz_grading_page()
+    quiz_grading_page()
+    quiz_grading_page()
     quiz_grading_page()
