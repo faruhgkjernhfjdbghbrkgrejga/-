@@ -2,6 +2,9 @@ import streamlit as st
 from langchain_openai import ChatOpenAI
 import json
 from langchain_core.pydantic_v1 import BaseModel, Field
+from langchain.docstore.document import Document
+from langchain.document_loaders import ApifyDatasetLoader
+from langchain.indexes import VectorstoreIndexCreator
 
 def grade_quiz_answers(user_answers, correct_answers):
     graded_answers = []
