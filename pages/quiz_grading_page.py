@@ -41,6 +41,12 @@ def quiz_grading_page():
     total_score = 0
 
     current_question_index = st.session_state.number
+    
+    # 질문 리스트의 길이를 확인
+    if current_question_index >= len(questions):
+        st.warning("유효하지 않은 질문 인덱스입니다.")
+        return
+    
     question = questions[current_question_index]
     res = json.loads(question["answer"])
     
