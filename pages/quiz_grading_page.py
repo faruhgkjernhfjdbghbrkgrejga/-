@@ -29,12 +29,11 @@ def quiz_grading_page():
     correct_answers = st.session_state.get('correct_answers', [])
     questions = st.session_state.get('quizs', [])
 
-    if st.session_state.number >= len(questions):
-        st.session_state.number = 0
-
     # 세션 상태 초기화
-    if 'number' not in st.session_state:
-        st.session_state.number = 0
+    if st.session_state.number >= len(questions):
+    st.session_state.number = 0
+    # if 'number' not in st.session_state:
+    #     st.session_state.number = 0
     if 'quizs' not in st.session_state or not st.session_state.quizs:
         st.warning("퀴즈가 없습니다. 먼저 퀴즈를 풀어주세요.")
         return
