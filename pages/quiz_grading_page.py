@@ -56,7 +56,7 @@ def quiz_grading_page():
     
     st.subheader(f"문제 {current_question_index + 1}")
     st.write("\n")
-    st.write(f"문제: {res['quiz']}")
+    st.write(f"{res['quiz']}")
     
     if 'options1' in res:
         st.write(f"1. {res['options1']}")
