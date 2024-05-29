@@ -146,15 +146,19 @@ def quiz_solve_page():
     
     if st.session_state.number == st.session_state.selected_num:
         st.session_state['total_score'] = sum(st.session_state.correct_answers)  # 정답 개수를 점수로 저장
-        if st.button('결과 확인'):
-            st.switch_page("pages/quiz_grading_page.py")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            if st.button('결과 확인'):
+                st.switch_page("pages/quiz_grading_page.py")
 
-        # 점수 확인 버튼 추가
-        if st.button('점수 확인'):
-            if 'total_score' in st.session_state:
-                st.write(f"최종 점수: {st.session_state['total_score']}")
-            else:
-                st.write("아직 점수가 계산되지 않았습니다.")
+        with col2:
+            if st.button('점수 확인'):
+                if 'total_score' in st.session_state:
+                    st.write(f"최종 점수: {st.session_state['total_score']}")
+                else:
+                    st.write("아직 점수가 계산되지 않았습니다.")
 
 if __name__ == "__main__":
     quiz_solve_page()
