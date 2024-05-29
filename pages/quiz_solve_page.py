@@ -88,7 +88,7 @@ def grade_quiz_answer(user_answer, quiz_answer):
 
 
 def quiz_solve_page():
-    st.title("퀴즈 풀이 페이지")
+    st.title("quiz solve page")
     st.markdown("---")
     
     placeholder = st.empty()
@@ -108,11 +108,12 @@ def quiz_solve_page():
         if st.session_state.number == j:
             with placeholder.container():
                 st.header(f"문제 {j+1}")
-                st.write(st.session_state.selected_page)
-                st.write(f"문제 번호: {st.session_state.number + 1}")
-                st.markdown("---")
+                # st.write(st.session_state.selected_page)
+                # st.write(f"문제 번호: {st.session_state.number + 1}")
+                # st.markdown("---")
                 
                 st.write(f"**{res['quiz']}**")
+                st.write("\n")
                 st.write("\n")
                 
                 if st.session_state.selected_type == "주관식":
@@ -148,12 +149,12 @@ def quiz_solve_page():
         if st.button('결과 확인'):
             st.switch_page("pages/quiz_grading_page.py")
 
-    # 점수 확인 버튼 추가
-    if st.button('점수 확인'):
-        if 'total_score' in st.session_state:
-            st.write(f"최종 점수: {st.session_state['total_score']}")
-        else:
-            st.write("아직 점수가 계산되지 않았습니다.")
+        # 점수 확인 버튼 추가
+        if st.button('점수 확인'):
+            if 'total_score' in st.session_state:
+                st.write(f"최종 점수: {st.session_state['total_score']}")
+            else:
+                st.write("아직 점수가 계산되지 않았습니다.")
 
 if __name__ == "__main__":
     quiz_solve_page()
