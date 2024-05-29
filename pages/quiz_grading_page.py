@@ -31,7 +31,7 @@ def quiz_grading_page():
 
     # 세션 상태 초기화
     if st.session_state.number >= len(questions):
-    st.session_state.number = 0
+        st.session_state.number = 0
     # if 'number' not in st.session_state:
     #     st.session_state.number = 0
     if 'quizs' not in st.session_state or not st.session_state.quizs:
