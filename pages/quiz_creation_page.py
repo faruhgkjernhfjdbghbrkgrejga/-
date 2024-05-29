@@ -358,6 +358,7 @@ def quiz_creation_page():
                 
                 if not is_url(url_area_content):
                     st.error("URL을 입력해야 합니다.")
+                    return
 
                 loader = RecursiveUrlLoader(
                     url=url_area_content, max_depth=2, extractor=lambda x: Soup(x, "html.parser").text
