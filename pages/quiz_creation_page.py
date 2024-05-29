@@ -343,8 +343,9 @@ def quiz_creation_page():
 
             elif upload_option == "URL":
                 url_area_content = st.text_area("URL을 입력하세요.")
-                loader = RecursiveUrlLoader(urls=[url_area_content])
-                text_content = loader.load()
+                if st.button("URL 로드"):
+                    loader = RecursiveUrlLoader(urls=[url_area_content])
+                    text_content = asyncio.run(loader.load())
                 
             else:
                 text_content = process_file(uploaded_file, upload_option)
