@@ -40,19 +40,21 @@ def quiz_grading_page():
     st.title("퀴즈 채점 결과")
     total_score = 0
 
-    for i, question in enumerate(questions):
-        res = json.loads(question["answer"])
-        st.subheader(f"문제 {i + 1}")
-        st.write(f"문제: {res['quiz']}")
-        
-        if 'options1' in res:
-            st.write(f"1. {res['options1']}")
-            st.write(f"2. {res['options2']}")
-            st.write(f"3. {res['options3']}")
-        if 'options4' in res:
-            st.write(f"4. {res['options4']}")
+    current_question_index = st.session_state.number
+    question = questions[current_question_index]
+    res = json.loads(question["answer"])
     
-    st.write(f"정답: {res['correct_answer']}")
+    st.subheader(f"문제 {current_question_index + 1}")
+    st.write(f"문제: {res['quiz']}")
+    
+    if 'options1' in res:
+        st.write(f"1. {res['options1']}")
+        st.write(f"2. {res['options2']}")
+        st.write(f"3. {res['options3']}")
+    if 'options4' in res:
+        st.write(f"4. {res['options4']}")
+    
+        st.write(f"정답: {res['correct_answer']}")
     
     # explanation = get_explanation(res['quiz'], res['correct_answer'])
     # st.write(f"해설: {explanation}")
