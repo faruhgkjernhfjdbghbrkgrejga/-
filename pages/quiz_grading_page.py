@@ -12,17 +12,17 @@ def grade_quiz_answers(user_answers, correct_answers):
             graded_answers.append('오답')
     return graded_answers
 
-def get_openai_explanation(question, user_answer, correct_answer):
-    llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
-    prompt = (
-        f"문제: {question}\n"
-        f"사용자 답변: {user_answer}\n"
-        f"정답: {correct_answer}\n"
-        "이 문제의 해설을 제공해주세요. "
-        "해설은 왜 정답이 맞는지, 왜 사용자 답변이 틀렸는지 설명해주세요."
-    )
-    response = llm(prompt)
-    return response
+# def get_openai_explanation(question, user_answer, correct_answer):
+#     llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
+#     prompt = (
+#         f"문제: {question}\n"
+#         f"사용자 답변: {user_answer}\n"
+#         f"정답: {correct_answer}\n"
+#         "이 문제의 해설을 제공해주세요. "
+#         "해설은 왜 정답이 맞는지, 왜 사용자 답변이 틀렸는지 설명해주세요."
+#     )
+#     response = llm(prompt)
+#     return response
 
 def quiz_grading_page():
     user_answers = st.session_state.get('user_selected_answers', [])
@@ -54,9 +54,9 @@ def quiz_grading_page():
     
     st.write(f"정답: {res['correct_answer']}")
     
-    explanation = get_explanation(res['quiz'], res['correct_answer'])
-    st.write(f"해설: {explanation}")
-    st.markdown("---")
+    # explanation = get_explanation(res['quiz'], res['correct_answer'])
+    # st.write(f"해설: {explanation}")
+    # st.markdown("---")
     
     col1, col2= st.columns(2)
     with col1:
