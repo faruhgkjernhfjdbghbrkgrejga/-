@@ -73,9 +73,9 @@ def quiz_grading_page():
     
         st.write(f"정답 : {res['correct_answer']}")
     
-    explanation = get_explanation(res['quiz'], res['correct_answer'])
-    st.write(f"해설: {explanation}")
-    st.markdown("---")
+    # explanation = get_explanation(res['quiz'], res['correct_answer'])
+    # st.write(f"해설: {explanation}")
+    # st.markdown("---")
     
     col1, col2= st.columns(2)
     with col1:
