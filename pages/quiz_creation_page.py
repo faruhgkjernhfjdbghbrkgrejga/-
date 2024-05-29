@@ -35,6 +35,7 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain_community.document_loaders import WikipediaLoader
 from langchain.document_loaders.recursive_url_loader import RecursiveUrlLoader
 
+st.set_page_config(page_title="퀴즈 생성")
 
 #아이디는 코드에 들어가진 않습니다.
 #embedings 항목에 array 형식으로 저장된 벡터 값으로 벡터 검색이 되고 atlas vextet index 항목에서 검색기로 등록해주면 검색 가능하다고 합니다. 
