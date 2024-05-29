@@ -344,9 +344,12 @@ def quiz_creation_page():
 
             elif upload_option == "URL":
                 url_area_content = st.text_area("URL을 입력하세요.")
+                if not url_area_content:  # Check if URL is empty
+                    st.error("URL을 입력해야 합니다.")  # Display error message
+                    return
                 loader = RecursiveUrlLoader(url=url_area_content)
                 text_content = loader.load()
-                if url_area_content is None:
+                if not url_area_content: 
                     st.warning("유효하지 않은 url입니다.")
                     return
                 
