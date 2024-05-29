@@ -22,4 +22,4 @@ dnspython
 chardet
 wikipedia
 streamlit_option_menu 
-BeautifulSoup
+
