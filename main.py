@@ -5,9 +5,9 @@ import quiz_grading_page
 import sign
 
 def main():
-    selected_page = "퀴즈 생성"
-    #showSidebarNavigation = "false"
-    # 선택된 페이지 표시
+    st.sidebar.title("Navigation")
+    selected_page = st.sidebar.radio("Go to", ["퀴즈 생성", "퀴즈 풀이", "퀴즈 채점", "로그인"])
+
     if selected_page == "퀴즈 생성":
         quiz_creation_page.quiz_creation_page()
     elif selected_page == "퀴즈 풀이":
