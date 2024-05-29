@@ -343,7 +343,7 @@ def quiz_creation_page():
 
             elif upload_option == "URL":
                 url_area_content = st.text_area("URL을 입력하세요.")
-                loader = RecursiveUrlLoader(url=url_area_content)
+                loader = RecursiveUrlLoader(urls=[url_area_content])
                 text_content = loader.load()
                 
             else:
