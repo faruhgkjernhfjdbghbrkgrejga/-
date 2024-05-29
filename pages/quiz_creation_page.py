@@ -27,7 +27,7 @@ from langchain_community.vectorstores import Chroma, MongoDBAtlasVectorSearch
 from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
 from langchain_community.document_loaders.image import UnstructuredImageLoader
 from langchain_community.vectorstores import FAISS
-
+from bs4 import BeautifulSoup as Soup
 
 
 #아이디는 코드에 들어가진 않습니다.
@@ -347,7 +347,9 @@ def quiz_creation_page():
                 if not url_area_content:  # Check if URL is empty
                     st.error("URL을 입력해야 합니다.")  # Display error message
                     return
-                loader = RecursiveUrlLoader(url="{url_area_content}")
+                loader = RecursiveUrlLoader(
+                    url=url_area_content, max_depth=2, extractor=lambda x: Soup(x, "html.parser").text
+                )
                 text_content = loader.load()
                 
             else:
