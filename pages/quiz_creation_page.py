@@ -305,7 +305,7 @@ def quiz_creation_page():
     st.session_state.page = 0
     if st.session_state.page == 0:
         with placeholder.container():
-            st.title("AI 퀴즈 생성기")
+            st.title("AI Quiz Generator")
             if 'selected_page' not in st.session_state:
                 st.session_state.selected_page = ""
 
