@@ -23,4 +23,6 @@ chardet
 wikipedia
 streamlit_option_menu 
 beautifulsoup4
+streamlit_cognito_auth
 boto3
+CognitoAuth
