@@ -10,7 +10,7 @@ load_dotenv()
 
 def main():
     st.sidebar.title("Navigation")
-    selected_page = st.sidebar.radio("Go to", ["퀴즈 생성", "퀴즈 풀기", "퀴즈 리뷰", "로그인"])
+    selected_page = st.sidebar.radio("Go to", ["퀴즈 생성", "퀴즈 풀기", "퀴즈 리뷰", "로그인", "회원가입"])
 
     if selected_page == "퀴즈 생성":
         quiz_creation_page.quiz_creation_page()
@@ -19,6 +19,8 @@ def main():
     elif selected_page == "퀴즈 리뷰":
         quiz_grading_page.quiz_grading_page()
     elif selected_page == "로그인":
+        awscog.start()
+    elif selected_page == "회원가입":
         sign.sign()
 
 if __name__ == "__main__":
